@@ -1,49 +1,62 @@
-import { heroStats, impactMetrics, pipelineSteps } from './data';
+import { subagentCards, codeDiff, footerStats } from './data';
 
-const statsRoot = document.querySelector('#stats');
-const pipelineRoot = document.querySelector('#pipeline');
-const impactRoot = document.querySelector('#impact-cards');
+// ─── Subagent cards ───────────────────────────────────────────────────────────
 
-if (statsRoot) {
-  statsRoot.innerHTML = heroStats
+const subagentRoot = document.querySelector('#subagent-cards');
+if (subagentRoot) {
+  subagentRoot.innerHTML = subagentCards
+    .map((card) => {
+      const pct = Math.round((card.progressDone / card.progressTotal) * 100);
+      const fillClass =
+        card.status === 'running' ? '' : card.status === 'verifying' ? 'amber' : 'muted';
+      return `
+        <div class="subagent-card">
+          <div class="sa-header">
+            <span class="sa-id">${card.id}</span>
+            <span class="sa-status ${card.status}">${card.status}</span>
+          </div>
+          <div class="sa-title">${card.title}</div>
+          <div class="sa-desc">${card.description}</div>
+          <div class="sa-progress-wrap">
+            <div class="sa-progress-meta">
+              <span>${card.progressDone.toLocaleString()} / ${card.progressTotal.toLocaleString()} ${card.progressUnit}</span>
+              <span class="sa-progress-pct">${pct}%</span>
+            </div>
+            <div class="sa-progress-track">
+              <div class="sa-progress-fill ${fillClass}" style="width:${pct}%"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+}
+
+// ─── Code diff ────────────────────────────────────────────────────────────────
+
+const diffLabel = document.querySelector('#diff-label');
+if (diffLabel) diffLabel.textContent = codeDiff.label;
+
+const diffLegacy = document.querySelector('#diff-legacy');
+if (diffLegacy) diffLegacy.innerHTML = codeDiff.legacy;
+
+const diffModern = document.querySelector('#diff-modern');
+if (diffModern) diffModern.innerHTML = codeDiff.modern;
+
+const diffParity = document.querySelector('#diff-parity');
+if (diffParity) diffParity.textContent = codeDiff.parityLine;
+
+// ─── Footer stats ─────────────────────────────────────────────────────────────
+
+const statsFooter = document.querySelector('#stats-footer');
+if (statsFooter) {
+  statsFooter.innerHTML = footerStats
     .map(
       (stat) => `
-        <div class="stat-card">
-          <span class="stat-value">${stat.value}</span>
-          <span class="stat-label">${stat.label}</span>
-          <small>${stat.detail}</small>
+        <div class="stat-block">
+          <span class="stat-num">${stat.value}</span>
+          <span class="stat-desc">${stat.label}</span>
         </div>
-      `,
-    )
-    .join('');
-}
-
-if (pipelineRoot) {
-  pipelineRoot.innerHTML = pipelineSteps
-    .map(
-      (step) => `
-        <article class="pipeline-card ${step.accent}">
-          <div class="step-tag">${step.id}</div>
-          <h4>${step.title}</h4>
-          <p>${step.summary}</p>
-          <ul>
-            ${step.deliverables.map((item) => `<li>${item}</li>`).join('')}
-          </ul>
-        </article>
-      `,
-    )
-    .join('');
-}
-
-if (impactRoot) {
-  impactRoot.innerHTML = impactMetrics
-    .map(
-      (metric) => `
-        <article class="impact-card">
-          <p class="impact-value">${metric.value}</p>
-          <h4>${metric.title}</h4>
-          <p>${metric.description}</p>
-        </article>
       `,
     )
     .join('');

@@ -1,90 +1,97 @@
-export type Stat = {
-  label: string;
-  value: string;
-  detail: string;
-};
+// ─── Subagent live status cards ───────────────────────────────────────────────
 
-export type PipelineStep = {
+export type SubagentStatus = 'running' | 'verifying' | 'queued';
+
+export type SubagentCard = {
   id: string;
   title: string;
-  accent: string;
-  summary: string;
-  deliverables: string[];
-};
-
-export type ImpactMetric = {
-  title: string;
-  value: string;
+  status: SubagentStatus;
   description: string;
+  progressLabel: string;
+  progressDone: number;
+  progressTotal: number;
+  progressUnit: string;
 };
 
-export const heroStats: Stat[] = [
+export const subagentCards: SubagentCard[] = [
   {
-    label: 'Refactor Speed',
-    value: '70%',
-    detail: 'faster legacy modernization cycle',
-  },
-  {
-    label: 'Parity Confidence',
-    value: '100%',
-    detail: 'business logic preserved in validation',
-  },
-  {
-    label: 'Release Readiness',
-    value: '3x',
-    detail: 'faster deployment with containers and K8s',
-  },
-];
-
-export const pipelineSteps: PipelineStep[] = [
-  {
-    id: '01',
-    title: 'Document Understanding',
-    accent: 'cyan',
-    summary:
-      'Read legacy system docs, architecture blueprints, and business rules to build a modernization map.',
-    deliverables: ['Legacy system analysis', 'Target architecture mapping', 'Risk & dependency scan'],
-  },
-  {
-    id: '02',
+    id: '01 — refactorer',
     title: 'Code Refactorer',
-    accent: 'violet',
-    summary:
-      'Convert legacy Java 8 and outdated frameworks to Java 17 and Spring Boot 3 using guided transformations.',
-    deliverables: ['Syntax modernization', 'Framework migration', 'Cloud-ready code structure'],
+    status: 'running',
+    description:
+      'Rewriting OrderService.java: javax.servlet → jakarta, XML bean config → annotations.',
+    progressLabel: 'files',
+    progressDone: 142,
+    progressTotal: 220,
+    progressUnit: 'files',
   },
   {
-    id: '03',
+    id: '02 — parity tests',
     title: 'Parity Test Generator',
-    accent: 'green',
-    summary:
-      'Generate input/output equivalence tests to confirm business behavior remains identical across versions.',
-    deliverables: ['Regression suite', 'Golden test data', 'Behavior parity reports'],
+    status: 'verifying',
+    description:
+      'Replaying 1,204 production requests against legacy and modern endpoints, diffing responses byte for byte.',
+    progressLabel: 'matched',
+    progressDone: 975,
+    progressTotal: 1204,
+    progressUnit: 'matched',
   },
   {
-    id: '04',
+    id: '03 — deployer',
     title: 'CI/CD Deployer',
-    accent: 'amber',
-    summary:
-      'Create Dockerfiles, Kubernetes manifests, and release pipelines for repeatable production deployments.',
-    deliverables: ['Containerization', 'Kubernetes manifests', 'Deployment automation'],
+    status: 'queued',
+    description:
+      'Waiting on parity sign-off before generating Dockerfile, Helm chart, and pipeline manifests.',
+    progressLabel: 'manifests',
+    progressDone: 2,
+    progressTotal: 24,
+    progressUnit: 'manifests',
   },
 ];
 
-export const impactMetrics: ImpactMetric[] = [
-  {
-    title: 'Manual effort reduction',
-    value: '−70%',
-    description: 'Less time spent rewriting legacy code by hand and more focus on validation and governance.',
-  },
-  {
-    title: 'Regression protection',
-    value: '100%',
-    description: 'Parity checks ensure business logic is preserved before release to production.',
-  },
-  {
-    title: 'Cloud readiness',
-    value: '24/7',
-    description: 'Automated containers and release workflows keep the target platform continuously deployable.',
-  },
+// ─── Code diff sample ─────────────────────────────────────────────────────────
+
+export type CodeDiff = {
+  label: string;
+  legacy: string;
+  modern: string;
+  parityLine: string;
+};
+
+export const codeDiff: CodeDiff = {
+  label: 'OrderService.calculateTotal()',
+  legacy: `<span class="kw">public</span> <span class="ty">BigDecimal</span> <span class="fn">calculateTotal</span>(
+    <span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; items) {
+  <span class="ty">BigDecimal</span> t = <span class="ty">BigDecimal</span>.ZERO;
+  <span class="kw">for</span> (<span class="ty">Item</span> i : items) {
+    t = t.add(i.getPrice()
+      .multiply(<span class="kw">new</span> <span class="ty">BigDecimal</span>(
+        i.getQty())));
+  }
+  <span class="kw">return</span> t;
+}`,
+  modern: `<span class="kw">public</span> <span class="ty">BigDecimal</span> <span class="fn">calculateTotal</span>(
+    <span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; items) {
+  <span class="kw">return</span> items.stream()
+    .map(i -&gt; i.price()
+      .multiply(<span class="ty">BigDecimal</span>
+        .valueOf(i.qty())))
+    .reduce(<span class="ty">BigDecimal</span>.ZERO,
+      <span class="ty">BigDecimal</span>::add);
+}`,
+  parityLine: '↳ 1,204 / 1,204 replayed requests — output parity 100%',
+};
+
+// ─── Footer stats ─────────────────────────────────────────────────────────────
+
+export type FooterStat = {
+  value: string;
+  label: string;
+};
+
+export const footerStats: FooterStat[] = [
+  { value: '312',  label: 'files refactored' },
+  { value: '100%', label: 'parity on shipped services' },
+  { value: '18',   label: 'k8s manifests generated' },
+  { value: '6',    label: 'services in flight' },
 ];
