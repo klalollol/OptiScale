@@ -3,166 +3,103 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Legacy-to-Cloud Modernization Pipeline demo for IBM Bob IDE inspired modernization automation."
-    />
-    <title>Legacy-to-Cloud Modernization Pipeline</title>
+    <meta name="description" content="OptiScale — Automated Code Modernization & Verification Engine." />
+    <title>OptiScale · Automated Modernization Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
     <div class="page-shell">
+
+      <!-- ── Top bar ─────────────────────────────────────────────────────── -->
       <header class="topbar">
         <div class="logo-wrap">
-          <div class="logo-mark">B</div>
-          <div>
-            <p class="eyebrow">IBM Bob IDE</p>
-            <h1>Modernization Pipeline</h1>
-          </div>
+          <span class="logo-diamond">◇</span>
+          <span class="logo-name">OptiScale</span>
         </div>
-        <nav class="nav">
-          <a href="#problem">Problem</a>
-          <a href="#workflow">Workflow</a>
-          <a href="#impact">Impact</a>
-          <a href="#evidence">Evidence</a>
-        </nav>
+        <div class="pipeline-status">
+          <span class="status-dot"></span>
+          <span id="pipeline-status-text">pipeline live — 3 subagents active</span>
+        </div>
       </header>
 
-      <main>
-        <section class="hero">
-          <div class="hero-content">
-            <p class="badge">Idea 3 · Legacy-to-Cloud Modernization Pipeline</p>
-            <h2>Turn legacy systems into cloud-native platforms without losing business logic.</h2>
-            <p class="subtitle">
-              An automated modernization engine that reads legacy documents, upgrades code in parallel,
-              generates parity tests, and deploys release pipelines with confidence.
-            </p>
-            <div class="cta-row">
-              <button class="primary-btn">View workflow</button>
-              <button class="secondary-btn">Download summary</button>
-            </div>
-            <div id="stats" class="stats-grid"></div>
+      <!-- ── Hero ───────────────────────────────────────────────────────── -->
+      <section class="hero-section">
+        <div class="hero-left">
+          <h1 class="hero-headline">Every legacy call gets a modern counterpart, verified line for line.</h1>
+          <p class="hero-sub">
+            Point OptiScale at a Java 8 monolith and a target architecture spec. Three subagents refactor,
+            cross-test, and package the result — nothing ships until old and new agree on every output.
+          </p>
+          <div class="stack-pills">
+            <span class="pill label">source</span>
+            <span class="pill value">Java 8 · Spring MVC</span>
+            <span class="pill arrow">→</span>
+            <span class="pill label">target</span>
+            <span class="pill value">Java 17 · Spring Boot 3</span>
           </div>
-          <div class="hero-panel">
-            <div class="panel-header">
-              <span class="dot danger"></span>
-              <span class="dot warning"></span>
-              <span class="dot success"></span>
-            </div>
-            <div class="panel-body">
-              <div class="mini-chart">
-                <div class="chart-bar large"></div>
-                <div class="chart-bar medium"></div>
-                <div class="chart-bar small"></div>
-                <div class="chart-bar xsmall"></div>
-              </div>
-              <ul class="signal-list">
-                <li><span class="signal-dot"></span> Legacy code intake</li>
-                <li><span class="signal-dot"></span> Refactor orchestration</li>
-                <li><span class="signal-dot"></span> Test parity validation</li>
-                <li><span class="signal-dot"></span> Container + K8s release</li>
-              </ul>
-            </div>
-          </div>
-        </section>
+        </div>
+        <div class="hero-right">
+          <div class="diagram-label">migration route</div>
+          <svg class="pipeline-diagram" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- nodes -->
+            <circle cx="30"  cy="110" r="7" fill="#f59f00" />
+            <circle cx="290" cy="110" r="7" fill="#4ade80" />
+            <!-- connecting lines -->
+            <line x1="37"  y1="110" x2="110" y2="70"  stroke="#1e3a5f" stroke-width="1.5"/>
+            <line x1="37"  y1="110" x2="110" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
+            <line x1="37"  y1="110" x2="110" y2="150" stroke="#1e3a5f" stroke-width="1.5"/>
+            <line x1="210" y1="70"  x2="283" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
+            <line x1="210" y1="110" x2="283" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
+            <line x1="210" y1="150" x2="283" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
+            <!-- hex shapes -->
+            <polygon points="110,52 130,63 130,85 110,96 90,85 90,63"  stroke="#00bcd4" stroke-width="1.5" fill="none"/>
+            <polygon points="110,92 130,103 130,125 110,136 90,125 90,103" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
+            <polygon points="210,52 230,63 230,85 210,96 190,85 190,63"  stroke="#00bcd4" stroke-width="1.5" fill="none"/>
+            <polygon points="210,92 230,103 230,125 210,136 190,125 190,103" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
+            <polygon points="110,132 130,143 130,165 110,176 90,165 90,143" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
+            <polygon points="210,132 230,143 230,165 210,176 190,165 190,143" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
+            <!-- labels -->
+            <text x="160" y="76"  text-anchor="middle" fill="#00bcd4" font-size="11" font-family="JetBrains Mono,monospace">refactor</text>
+            <text x="160" y="116" text-anchor="middle" fill="#00bcd4" font-size="11" font-family="JetBrains Mono,monospace">parity test</text>
+            <text x="160" y="156" text-anchor="middle" fill="#00bcd4" font-size="11" font-family="JetBrains Mono,monospace">ci/cd</text>
+            <text x="30"  y="132" text-anchor="middle" fill="#9db1c9" font-size="10" font-family="JetBrains Mono,monospace">monolith</text>
+            <text x="290" y="132" text-anchor="middle" fill="#9db1c9" font-size="10" font-family="JetBrains Mono,monospace">cloud</text>
+          </svg>
+        </div>
+      </section>
 
-        <section id="problem" class="info-grid">
-          <article class="card feature-card">
-            <p class="section-label">Problem Statement</p>
-            <h3>Legacy modernization is slow, risky, and expensive.</h3>
-            <p>
-              Organizations still depend on Java 8 monoliths, brittle SQL logic, and outdated frameworks.
-              Migrations usually rely on large teams, scattered documentation, and manual validation,
-              leading to long delivery cycles and hidden business logic loss.
-            </p>
-          </article>
+      <!-- ── Subagents ──────────────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">subagents</p>
+        <div id="subagent-cards" class="subagent-grid"></div>
+      </section>
 
-          <article class="card feature-card">
-            <p class="section-label">Solution</p>
-            <h3>Automated modernization with proof-driven verification.</h3>
-            <p>
-              Bob IDE acts as the control plane for document understanding, orchestration, code refactoring,
-              parity testing, and deployment automation. Every step is designed to preserve business behavior
-              while accelerating the path to cloud-native delivery.
-            </p>
-          </article>
-        </section>
+      <!-- ── Code diff ──────────────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">sample diff — <span id="diff-label">OrderService.calculateTotal()</span></p>
+        <div class="diff-panel">
+          <div class="diff-col">
+            <div class="diff-col-header legacy-header">legacy · java 8</div>
+            <pre class="diff-code" id="diff-legacy"></pre>
+          </div>
+          <div class="diff-col">
+            <div class="diff-col-header modern-header">modern · java 17</div>
+            <pre class="diff-code" id="diff-modern"></pre>
+          </div>
+        </div>
+        <p class="diff-parity-line" id="diff-parity"></p>
+      </section>
 
-        <section id="workflow" class="workflow-section">
-          <div class="section-heading">
-            <p class="section-label">Pipeline Workflow</p>
-            <h3>Three parallel subagents working in sync.</h3>
-          </div>
-          <div id="pipeline" class="pipeline-grid"></div>
-        </section>
+      <!-- ── Stats footer ───────────────────────────────────────────────── -->
+      <section id="stats-footer" class="stats-footer"></section>
 
-        <section class="system-section">
-          <div class="section-heading">
-            <p class="section-label">Modernization Stack</p>
-            <h3>From old interfaces to modern deployment patterns.</h3>
-          </div>
-          <div class="stack-grid">
-            <div class="stack-card">
-              <h4>Before</h4>
-              <ul>
-                <li>Java 8 + legacy Spring</li>
-                <li>Monolithic deployment model</li>
-                <li>Manual SQL and script changes</li>
-                <li>Limited release confidence</li>
-              </ul>
-            </div>
-            <div class="stack-card highlight">
-              <h4>After</h4>
-              <ul>
-                <li>Java 17 + Spring Boot 3</li>
-                <li>Containerized microservices</li>
-                <li>Versioned API and schema parity</li>
-                <li>Automated CI/CD and K8s release</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section id="impact" class="impact-section">
-          <div class="section-heading">
-            <p class="section-label">Impact</p>
-            <h3>Business outcomes you can measure.</h3>
-          </div>
-          <div id="impact-cards" class="impact-grid"></div>
-        </section>
-
-        <section id="evidence" class="evidence-section">
-          <div class="section-heading">
-            <p class="section-label">Bob IDE Evidence</p>
-            <h3>Required session documentation and proof of usage.</h3>
-          </div>
-          <div class="evidence-grid">
-            <div class="card evidence-card">
-              <h4>Task 01 · Document understanding</h4>
-              <p>Legacy architecture review, target state mapping, and modernization scope definition.</p>
-              <span class="meta-tag">bob_sessions/legacy_task_01_summary.svg</span>
-            </div>
-            <div class="card evidence-card">
-              <h4>Task 02 · Parity verification</h4>
-              <p>Input/output equivalence checks between legacy and targeted cloud-native systems.</p>
-              <span class="meta-tag">bob_sessions/legacy_task_02_summary.svg</span>
-            </div>
-            <div class="card evidence-card">
-              <h4>Task 03 · Release deployment</h4>
-              <p>Docker, Kubernetes manifests, and CI/CD release workflow automation for production-ready delivery.</p>
-              <span class="meta-tag">bob_sessions/legacy_task_03_summary.svg</span>
-            </div>
-          </div>
-        </section>
-      </main>
     </div>
-
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
