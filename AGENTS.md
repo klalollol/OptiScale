@@ -4,7 +4,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Project
 
-Vanilla TypeScript + Vite static page (no framework, no test runner). ESM-only (`"type": "module"`). JetBrains Mono is the sole font — Inter was removed in the redesign.
+Vanilla TypeScript + Vite routed app (no framework). ESM-only (`"type": "module"`). JetBrains Mono is the sole font — Inter was removed in the redesign.
 
 ## Commands
 
@@ -12,18 +12,30 @@ Vanilla TypeScript + Vite static page (no framework, no test runner). ESM-only (
 npm run dev      # dev server on port 5173 (binds 0.0.0.0)
 npm run build    # tsc type-check + vite bundle → dist/
 npm run preview  # preview built output on port 4173
+npm run lint     # ESLint, zero warnings
+npm test         # Vitest unit and DOM integration tests
 ```
 
-No lint script, no test script.
+Tests live alongside the modules they verify. Use strict TypeScript throughout.
 
 ## Architecture
 
-- `index.html` — DOM skeleton; CSS loaded here via `<link>` (not imported in TS)
-- `src/data.ts` — all typed content: `SubagentCard[]`, `CodeDiff`, `FooterStat[]`
-- `src/main.ts` — queries container IDs and injects HTML strings; imports only from `./data`
-- `src/styles.css` — full blueprint/grid design; all CSS vars defined in `:root`
+- `index.html` — root and original homepage template, including its inline SVG; CSS loaded via `<link>` (not imported in TS)
+- `src/data.ts` — original homepage data and shared UI copy; never mutate the DOM here
+- `src/main.ts` — bootstrap only: mount root and initialize router; no page markup
+- `src/router.ts` — route resolution, navigation, page lifecycle and 404 fallback
+- `src/pages/` — independently importable page renderers; `HomePage.ts` preserves the original rendering logic
+- `src/components/` — reusable UI rendering and interaction
+- `src/services/` — validation, API requests, demo data and exports; no page rendering
+- `src/state/appStore.ts` — current job/result and extension selections
+- `src/types/review.ts` — shared types and runtime validation at API boundaries
+- `src/mocks/demo-result.json` — bundled sample result, checked against the shared schema
+- `src/styles.css` — blueprint/grid design and all colour tokens in `:root`
+- `src/styles/` — page styles scoped beneath page classes, loaded from HTML
 
-### Container IDs rendered by `src/main.ts`
+These architecture changes were approved for the three-page refactor. The original design rules below still apply.
+
+### Homepage container IDs rendered by `src/pages/HomePage.ts`
 
 | ID | Data source |
 |---|---|
@@ -35,7 +47,7 @@ No lint script, no test script.
 
 - TypeScript strict mode + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**
 - `moduleResolution: "Bundler"` — no `.js` extensions on local imports
-- All content data in `src/data.ts`; all DOM mutation in `src/main.ts` — keep this separation
+- Keep content and services separate from DOM rendering. Homepage data stays in `src/data.ts`; review data uses the shared types and demo JSON. DOM mutation belongs in pages/components and router lifecycle code.
 - CSS uses `--bg`, `--border`, `--border-bright`, `--cyan`, `--cyan-soft`, `--green`, `--amber`, `--muted`, `--red`, `--mono` — use these vars, never hard-coded values
 - `SubagentCard.status` values (`running`/`verifying`/`queued`) map directly to CSS class names on `.sa-status`
 - `sa-progress-fill` colour modifier: `running` = no extra class (cyan default), `verifying` = `amber`, `queued` = `muted`

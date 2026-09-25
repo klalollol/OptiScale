@@ -1,0 +1,28 @@
+.upload-page .impact-strip { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 24px; color: var(--muted); font-size: 0.7rem; }
+.upload-page .impact-strip strong { color: var(--cyan); font-weight: 500; }
+.upload-page .upload-workspace { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1px; margin-top: 32px; background: var(--border); border: 1px solid var(--border); }
+.upload-page .upload-main, .upload-page .constraints-panel { padding: 28px; background: var(--bg); min-width: 0; }
+.upload-page .dropzone { border: 1px dashed var(--border-bright); background: var(--cyan-soft); transition: border-color 0.15s, background-color 0.15s; }
+.upload-page .dropzone.dragging, .upload-page .dropzone:focus-within { border-color: var(--cyan); }
+.upload-page .dropzone-button { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 240px; padding: 28px 16px; gap: 12px; color: var(--text); background: none; font-size: 0.8rem; }
+.upload-page .dropzone-button:disabled { cursor: wait; opacity: 0.5; }
+.upload-page .dropzone-button span:last-child { color: var(--muted); font-size: 0.72rem; }
+.upload-page .dropzone-symbol { color: var(--cyan); font-size: 2.1rem; margin-bottom: 12px; }
+.upload-page .selected-file { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.upload-page .selected-file[hidden] { display: none; }
+.upload-page .selected-file strong { display: block; font-size: 0.76rem; overflow-wrap: anywhere; }
+.upload-page .selected-file span { display: block; color: var(--muted); font-size: 0.7rem; margin-top: 4px; }
+.upload-page .file-actions { display: flex; flex-shrink: 0; }
+.upload-page .action-row .action-button { flex: 1; }
+.upload-page .constraints-panel h2 { font-size: 0.9rem; margin-bottom: 24px; }
+.upload-page .constraints-panel dt { color: var(--cyan); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 22px; }
+.upload-page .constraints-panel dd { color: var(--muted); font-size: 0.74rem; line-height: 1.8; margin-top: 6px; overflow-wrap: anywhere; }
+.upload-page .constraints-panel code { color: var(--text); font-size: 0.72rem; }
+.upload-page #upload-progress { margin-top: 24px; color: var(--cyan); font-size: 0.74rem; }
+@media (max-width: 860px) {
+  .upload-page .upload-workspace { grid-template-columns: 1fr; }
+}
+@media (max-width: 500px) {
+  .upload-page .upload-main, .upload-page .constraints-panel { padding: 20px; }
+  .upload-page .selected-file { align-items: flex-start; flex-direction: column; }
+}
