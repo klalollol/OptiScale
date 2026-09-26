@@ -1,41 +1,27 @@
-# OptiScale — Test Cases
+OptiScale — Test Cases
+This folder is used to store sample projects for testing the OptiScale upload flow.
 
-โฟลเดอร์นี้ใช้เก็บ project ตัวอย่างสำหรับทดสอบ upload flow ของ OptiScale
-
-## โครงสร้างที่แนะนำ
-
-```
 test-cases/
 ├── README.md
-├── <project-name-1>/          ← แตก ZIP ออกมาไว้ที่นี่ (optional)
+├── <project-name-1>/          ← Unzipped project folder (optional)
 │   ├── app/
 │   ├── requirements.txt
 │   └── ...
-├── <project-name-1>.zip       ← ไฟล์ ZIP ที่จะใช้ upload จริง
+├── <project-name-1>.zip       ← ZIP file to be actually uploaded
 ├── <project-name-2>/
 └── <project-name-2>.zip
-```
+How to Use
+Place the .zip file of the project you want to test in this folder.
+Open app.html and drag the ZIP file into the upload box or click SELECT FILE.
+Select the file from this folder.
+Supported Formats (MVP)
 
-## วิธีใช้
-
-1. วาง `.zip` ของ project ที่ต้องการทดสอบไว้ในโฟลเดอร์นี้
-2. เปิด `app.html` แล้วลาก ZIP ไปวางในช่อง upload หรือกด **SELECT FILE**
-3. เลือกไฟล์จากโฟลเดอร์นี้
-
-## Format ที่รองรับ (MVP)
-
-| Stack       | รายละเอียด                      |
-|-------------|----------------------------------|
-| Python      | 3.10 / 3.11                      |
-| Framework   | FastAPI                          |
-| Database    | PostgreSQL                       |
-
-## ข้อกำหนดไฟล์ ZIP
-
-- นามสกุลต้องเป็น `.zip` เท่านั้น
-- ไม่มีขีดจำกัดขนาดไฟล์ (no maximum file size)
-- ควรมี `requirements.txt` หรือ `pyproject.toml` อยู่ใน root หรือ subfolder
-
----
-
-> โฟลเดอร์นี้ถูก ignore โดย git (ดู `.gitignore`) — ไม่มีไฟล์ใดถูก commit ขึ้น repo
+Stack	Details
+Python	3.10 / 3.11
+Framework	FastAPI
+Database	PostgreSQL
+ZIP File Requirements
+Must have a .zip extension.
+No maximum file size limit.
+Should contain requirements.txt or pyproject.toml in the root directory or a subfolder.
+This folder is ignored by git (see .gitignore) — no files are committed to the repo.
