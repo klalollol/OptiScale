@@ -1,0 +1,124 @@
+/* ─── app.css — SPA single-page flow styles ──────────────────────────────── */
+
+/* ─── Sticky header + workflow bar ──────────────────────────────────────── */
+.spa-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  /* re-apply the border; topbar normally has border-bottom already */
+}
+
+.spa-workflow-bar {
+  position: sticky;
+  top: 65px; /* height of topbar */
+  z-index: 99;
+  background: var(--bg);
+}
+
+/* ─── Section dividers ───────────────────────────────────────────────────── */
+.spa-section {
+  position: relative;
+}
+
+.spa-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0 0;
+  margin-bottom: 0;
+}
+
+.spa-section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.spa-section-tag {
+  font-size: 0.65rem;
+  color: var(--cyan);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-bright);
+  padding: 4px 12px;
+  border-radius: 2px;
+  background: var(--cyan-soft);
+  flex-shrink: 0;
+}
+
+/* ─── Locked state ───────────────────────────────────────────────────────── */
+.spa-locked {
+  position: relative;
+}
+
+/* Dim the section content when locked */
+.spa-locked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
+  opacity: 0.18;
+  pointer-events: none;
+  user-select: none;
+  filter: blur(0.5px);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+/* Overlay shown on locked sections */
+.spa-lock-overlay {
+  position: absolute;
+  top: 60px;      /* below the divider */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.spa-lock-overlay.hidden {
+  display: none;
+}
+
+.spa-lock-icon {
+  font-size: 1.8rem;
+  color: var(--border-bright);
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.spa-lock-text {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  border: 1px solid var(--border);
+  padding: 5px 14px;
+  border-radius: 3px;
+  background: var(--bg);
+}
+
+/* ─── Unlocked reveal animation ──────────────────────────────────────────── */
+.spa-section.spa-unlocking > *:not(.spa-section-divider):not(.spa-lock-overlay) {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+
+.spa-section.spa-unlocked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+
+/* ─── Section reveal keyframe ────────────────────────────────────────────── */
+@keyframes spa-reveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.spa-section.spa-unlocked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
+  animation: spa-reveal 0.45s ease both;
+}
