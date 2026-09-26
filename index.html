@@ -3,132 +3,112 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="OptiScale — Automated Code Modernization & Verification Engine." />
-    <title>OptiScale · Automated Modernization Engine</title>
+    <meta name="description" content="OptiScale helps you review potential FastAPI performance bottlenecks from a project ZIP or demo, with suggested changes and an illustrative benchmark comparison." />
+    <title>OptiScale · Find FastAPI Performance Bottlenecks</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="stylesheet" href="./src/home.css" />
   </head>
-  <body>
-    <div class="page-shell">
-
-      <!-- ── Top bar ─────────────────────────────────────────────────────── -->
+  <body class="home-page">
+    <div class="page-shell" id="top">
       <header class="topbar">
-        <div class="logo-wrap">
-          <span class="logo-diamond">◇</span>
+        <a class="logo-wrap" href="./index.html" aria-label="OptiScale home">
+          <span class="logo-diamond" aria-hidden="true">◇</span>
           <span class="logo-name">OptiScale</span>
-        </div>
+        </a>
         <div class="pipeline-status">
-          <span class="status-dot"></span>
-          <span id="pipeline-status-text">pipeline live — 3 subagents active</span>
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>FastAPI demo ready</span>
         </div>
       </header>
 
-      <!-- ── Hero ───────────────────────────────────────────────────────── -->
-      <section class="hero-section">
-        <div class="hero-left">
-          <h1 class="hero-headline">Every legacy call gets a modern counterpart, verified line for line.</h1>
-          <p class="hero-sub">
-            Point OptiScale at a Java 8 monolith and a target architecture spec. Three subagents refactor,
-            cross-test, and package the result — nothing ships until old and new agree on every output.
+      <main>
+        <section class="hero-section home-hero" aria-labelledby="home-title">
+          <div class="hero-left">
+            <p class="section-label home-eyebrow">Performance analysis / Python + FastAPI</p>
+            <h1 class="hero-headline" id="home-title">Find what may be slowing down your FastAPI app.</h1>
+            <p class="hero-sub">
+              Upload a project ZIP or choose a demo. OptiScale checks for selected code patterns,
+              explains a possible bottleneck, and shows a suggested change with an illustrative benchmark comparison.
+            </p>
+            <div class="stack-pills" aria-label="Input and output">
+              <span class="pill label">input</span>
+              <span class="pill value">project .ZIP or demo</span>
+              <span class="pill arrow" aria-hidden="true">→</span>
+              <span class="pill label">view</span>
+              <span class="pill value">finding + suggestion</span>
+            </div>
+            <div class="home-actions">
+              <a href="./terms.html" class="cta-btn">START ANALYSIS →</a>
+              <a href="#how-it-works" class="home-secondary-btn">HOW IT WORKS ↓</a>
+            </div>
+            <p class="home-start-note">Review the project terms, then choose your ZIP or a demo project.</p>
+          </div>
+          <div class="hero-right">
+            <div class="diagram-label">guided analysis route</div>
+            <svg class="pipeline-diagram home-diagram" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Project ZIP or demo moves through scan, suggestion, and demo comparison">
+              <circle cx="30" cy="110" r="7" fill="var(--amber)" />
+              <circle cx="290" cy="110" r="7" fill="var(--green)" />
+              <line x1="37" y1="110" x2="110" y2="70" stroke="var(--border)" stroke-width="1.5" />
+              <line x1="37" y1="110" x2="110" y2="110" stroke="var(--border)" stroke-width="1.5" />
+              <line x1="37" y1="110" x2="110" y2="150" stroke="var(--border)" stroke-width="1.5" />
+              <line x1="210" y1="70" x2="283" y2="110" stroke="var(--border)" stroke-width="1.5" />
+              <line x1="210" y1="110" x2="283" y2="110" stroke="var(--border)" stroke-width="1.5" />
+              <line x1="210" y1="150" x2="283" y2="110" stroke="var(--border)" stroke-width="1.5" />
+              <polygon points="110,52 130,63 130,85 110,96 90,85 90,63" stroke="var(--cyan)" stroke-width="1.5" />
+              <polygon points="110,92 130,103 130,125 110,136 90,125 90,103" stroke="var(--cyan)" stroke-width="1.5" />
+              <polygon points="210,52 230,63 230,85 210,96 190,85 190,63" stroke="var(--cyan)" stroke-width="1.5" />
+              <polygon points="210,92 230,103 230,125 210,136 190,125 190,103" stroke="var(--cyan)" stroke-width="1.5" />
+              <polygon points="110,132 130,143 130,165 110,176 90,165 90,143" stroke="var(--cyan)" stroke-width="1.5" />
+              <polygon points="210,132 230,143 230,165 210,176 190,165 190,143" stroke="var(--cyan)" stroke-width="1.5" />
+              <text x="160" y="76" text-anchor="middle">scan</text>
+              <text x="160" y="116" text-anchor="middle">suggest</text>
+              <text x="160" y="156" text-anchor="middle">compare</text>
+              <text x="30" y="133" text-anchor="middle">ZIP</text>
+              <text x="290" y="133" text-anchor="middle">view</text>
+            </svg>
+          </div>
+        </section>
+
+        <section class="section" id="how-it-works" aria-labelledby="workflow-title">
+          <div class="home-section-head">
+            <div>
+              <p class="section-label">The workflow / 01–04</p>
+              <h2 class="home-section-title" id="workflow-title">From project ZIP to a clearer next step.</h2>
+            </div>
+            <p class="home-section-intro">Follow one guided path. A demo project is available if you want to explore it first.</p>
+          </div>
+          <ol class="home-step-grid" id="home-steps"></ol>
+        </section>
+
+        <section class="section" aria-labelledby="output-title">
+          <div class="home-section-head">
+            <div>
+              <p class="section-label">What you will see</p>
+              <h2 class="home-section-title" id="output-title">A finding, a proposal, and a comparison.</h2>
+            </div>
+          </div>
+          <div class="home-feature-grid" id="home-highlights"></div>
+          <p class="home-scope-note">
+            <span class="home-scope-label">PROTOTYPE NOTE</span>
+            Analysis uses pattern matching. Benchmark figures are simulated demo data, not measurements of your uploaded project.
           </p>
-          <div class="stack-pills">
-            <span class="pill label">source</span>
-            <span class="pill value">Java 8 · Spring MVC</span>
-            <span class="pill arrow">→</span>
-            <span class="pill label">target</span>
-            <span class="pill value">Java 17 · Spring Boot 3</span>
-          </div>
-          <div style="margin-top:28px;">
-            <a href="./terms.html" class="cta-btn">GET STARTED →</a>
-          </div>
-        </div>
-        <div class="hero-right">
-          <div class="diagram-label">migration route</div>
-          <svg class="pipeline-diagram" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- nodes -->
-            <circle cx="30"  cy="110" r="7" fill="#f59f00" />
-            <circle cx="290" cy="110" r="7" fill="#4ade80" />
-            <!-- connecting lines -->
-            <line x1="37"  y1="110" x2="110" y2="70"  stroke="#1e3a5f" stroke-width="1.5"/>
-            <line x1="37"  y1="110" x2="110" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
-            <line x1="37"  y1="110" x2="110" y2="150" stroke="#1e3a5f" stroke-width="1.5"/>
-            <line x1="210" y1="70"  x2="283" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
-            <line x1="210" y1="110" x2="283" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
-            <line x1="210" y1="150" x2="283" y2="110" stroke="#1e3a5f" stroke-width="1.5"/>
-            <!-- hex shapes -->
-            <polygon points="110,52 130,63 130,85 110,96 90,85 90,63"  stroke="#00bcd4" stroke-width="1.5" fill="none"/>
-            <polygon points="110,92 130,103 130,125 110,136 90,125 90,103" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
-            <polygon points="210,52 230,63 230,85 210,96 190,85 190,63"  stroke="#00bcd4" stroke-width="1.5" fill="none"/>
-            <polygon points="210,92 230,103 230,125 210,136 190,125 190,103" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
-            <polygon points="110,132 130,143 130,165 110,176 90,165 90,143" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
-            <polygon points="210,132 230,143 230,165 210,176 190,165 190,143" stroke="#00bcd4" stroke-width="1.5" fill="none"/>
-            <!-- labels -->
-            <text x="160" y="76"  text-anchor="middle" fill="#00bcd4" font-size="11" font-family="JetBrains Mono,monospace">refactor</text>
-            <text x="160" y="116" text-anchor="middle" fill="#00bcd4" font-size="11" font-family="JetBrains Mono,monospace">parity test</text>
-            <text x="160" y="156" text-anchor="middle" fill="#00bcd4" font-size="11" font-family="JetBrains Mono,monospace">ci/cd</text>
-            <text x="30"  y="132" text-anchor="middle" fill="#9db1c9" font-size="10" font-family="JetBrains Mono,monospace">monolith</text>
-            <text x="290" y="132" text-anchor="middle" fill="#9db1c9" font-size="10" font-family="JetBrains Mono,monospace">cloud</text>
-          </svg>
-        </div>
-      </section>
+        </section>
 
-      <!-- ── Subagents ──────────────────────────────────────────────────── -->
-      <section class="section">
-        <p class="section-label">subagents</p>
-        <div id="subagent-cards" class="subagent-grid"></div>
-      </section>
+        <section class="section home-final" aria-labelledby="final-title">
+          <p class="section-label">Ready to begin?</p>
+          <h2 class="home-section-title" id="final-title">Use your own ZIP or start with a demo.</h2>
+          <p class="home-final-copy">The upload screen lets you choose either path after reviewing the project terms.</p>
+          <a href="./terms.html" class="cta-btn">START ANALYSIS →</a>
+        </section>
+      </main>
 
-      <!-- ── Code diff ──────────────────────────────────────────────────── -->
-      <section class="section">
-        <p class="section-label">sample diff — <span id="diff-label">OrderService.calculateTotal()</span></p>
-        <div class="diff-panel">
-          <div class="diff-col">
-            <div class="diff-col-header legacy-header">legacy · java 8</div>
-            <pre class="diff-code" id="diff-legacy"></pre>
-          </div>
-          <div class="diff-col">
-            <div class="diff-col-header modern-header">modern · java 17</div>
-            <pre class="diff-code" id="diff-modern"></pre>
-          </div>
-        </div>
-        <p class="diff-parity-line" id="diff-parity"></p>
-      </section>
-
-      <!-- ── Page 2: File upload + preflight checklist ────────────────── -->
-      <section class="section">
-        <p class="section-label">upload project archive</p>
-        <label class="upload-zone" for="archive-input">
-          drop a .zip or click to select — preflight runs automatically
-          <input type="file" id="archive-input" accept=".zip" style="display:none" />
-        </label>
-        <div id="preflight-checks"></div>
-        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
-          <button id="review-btn" class="review-btn" disabled>review modernization →</button>
-        </div>
-      </section>
-
-      <!-- ── Page 3: Requirements panel + performance table ────────────── -->
-      <section class="section">
-        <p class="section-label">verification requirements</p>
-        <div id="requirements-panel" class="requirements-panel"></div>
-        <p class="section-label" style="margin-top:32px;">performance comparison</p>
-        <div id="perf-table"></div>
-      </section>
-
-      <!-- ── Page 3: Code suggestions ─────────────────────────────────── -->
-      <section class="section">
-        <p class="section-label">anti-pattern findings &amp; fix hints</p>
-        <div id="suggestions-panel"></div>
-      </section>
-
-      <!-- ── Stats footer ───────────────────────────────────────────────── -->
-      <section id="stats-footer" class="stats-footer"></section>
-
+      <footer class="home-footer">
+        <span>◇ OptiScale · Optimize before you scale.</span>
+        <a href="#top">BACK TO TOP ↑</a>
+      </footer>
     </div>
     <script type="module" src="./src/main.ts"></script>
   </body>
