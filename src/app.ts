@@ -3,6 +3,7 @@ export {};
 
 import { analyzeZip } from './lib/zip-analyzer';
 import type { AnalysisProfile } from './lib/zip-analyzer';
+import { initSwipeNext } from './swipe';
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
 
@@ -16,26 +17,22 @@ function formatBytes(bytes: number): string {
   return (bytes / 1024).toFixed(1) + ' KB';
 }
 
-/** Eased scroll — lands at the section divider, accounts for sticky header height. */
-function smoothScrollTo(targetY: number, duration = 750): void {
-  const startY = window.scrollY;
-  const diff   = targetY - startY;
-  if (Math.abs(diff) < 2) return;
-
-  let startTime: number | null = null;
-
-  function easeInOutCubic(t: number): number {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+/** Smooth eased scroll — starts immediately, no delay. */
+function smoothScrollTo(targetY: number, duration = 600): void {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo({ top: Math.max(0, targetY), behavior: 'instant' as ScrollBehavior });
+    return;
   }
-
+  const startY = window.scrollY;
+  const delta  = Math.max(0, targetY) - startY;
+  if (Math.abs(delta) < 2) return;
+  let startTime: number | null = null;
   function step(now: number): void {
     if (startTime === null) startTime = now;
-    const elapsed  = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    window.scrollTo(0, startY + diff * easeInOutCubic(progress));
-    if (progress < 1) requestAnimationFrame(step);
+    const p = Math.min((now - startTime) / duration, 1);
+    window.scrollTo(0, startY + delta * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
   }
-
   requestAnimationFrame(step);
 }
 
@@ -77,20 +74,20 @@ function unlockSection(sectionId: string, lockId: string, stepIdx: number): void
   const lock = document.getElementById(lockId);
   if (!sec || !lock) return;
 
-  // 1. Hide overlay, remove locked class, add unlocked class
+  // Read position BEFORE changing classes so getBoundingClientRect() is accurate
+  // and we can start scrolling immediately without waiting for a layout frame.
+  const rect   = sec.getBoundingClientRect();
+  const absTop = rect.top + window.scrollY;
+  const target = Math.max(0, absTop - stickyHeight());
+
+  // Unlock visually
   lock.classList.add('hidden');
   sec.classList.remove('spa-locked');
   sec.classList.add('spa-unlocked');
   setActiveStep(stepIdx);
 
-  // 2. Wait one frame for the layout to settle after class changes,
-  //    then eased-scroll so the section divider sits just below the sticky bars.
-  requestAnimationFrame(() => {
-    const rect    = sec.getBoundingClientRect();
-    const absTop  = rect.top + window.scrollY;
-    const target  = Math.max(0, absTop - stickyHeight());
-    smoothScrollTo(target, 750);
-  });
+  // Scroll starts on the very next animation frame — no extra delay
+  smoothScrollTo(target, 600);
 }
 
 // ─── Active analysis profile (set after upload, read by all sections) ─────────
@@ -658,6 +655,43 @@ toProveBtn.addEventListener('click', () => {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 showUploadState('empty');
+
+// ─── Dynamic breadcrumb via IntersectionObserver ──────────────────────────────
+
+const SECTION_STEP_MAP: Array<{ id: string; idx: number }> = [
+  { id: 'sec-upload',    idx: 0 },
+  { id: 'sec-analyze',   idx: 1 },
+  { id: 'sec-optimize',  idx: 2 },
+  { id: 'sec-benchmark', idx: 3 },
+  { id: 'sec-prove',     idx: 4 },
+];
+
+(function initBreadcrumbObserver(): void {
+  // Use a top-biased root margin so a section triggers when it crosses ~25% from the top
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const match = SECTION_STEP_MAP.find((s) => s.id === entry.target.id);
+        if (match == null) return;
+        const bc = document.getElementById('spa-breadcrumb');
+        if (bc) bc.textContent = STEP_LABELS[match.idx] ?? '';
+      });
+    },
+    {
+      root: null,
+      // Top threshold: fire when the section top edge enters the top 30% of the viewport
+      rootMargin: '-5% 0px -65% 0px',
+      threshold: 0,
+    },
+  );
+
+  SECTION_STEP_MAP.forEach(({ id }) => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+})();
 setOptState('idle');
 setBenchState('idle');
 setActiveStep(0);
+initSwipeNext();
