@@ -24,17 +24,31 @@ npm run preview  # preview built output on port 4173
 
 ## Architecture
 
-- `src/pages/<page>/index.html` — page DOM skeletons; CSS loaded via `<link>` from `src/css/`
-- `src/data.ts` — **all content data lives here**; `src/pages/home/main.ts` only renders
-- `src/pages/home/main.ts` — home page renderer; imports shared data from `../../data`
-- `src/pages/<page>/` — each page's HTML and TypeScript entry point
-- `src/css/` — shared and page-specific stylesheets
-- `src/lib/preflight/` — pure TS library (browser-safe; no Node APIs); compiled by Vite
-- `src/services/` — Node-only service (`harnessService.ts`); **excluded from tsconfig** (DOM types would conflict)
-- `src/types/review.ts` — shared types for `merge-report.mjs`; referenced via JSDoc only
-- `templates/modernization/` — harness templates copied verbatim (with `@PLACEHOLDER@` substitution) into `<project>/.modernization/`
+### Multi-page build
+The Vite build has **8 HTML entry points**: `index.html`, `app.html`, `upload.html`, `analyze.html`, `optimize.html`, `benchmark.html`, `prove.html`, `terms.html` — each with a matching `src/<page>.ts`. All are listed in `vite.config.ts` under `rollupOptions.input`.
 
-### Container IDs rendered by `src/pages/home/main.ts`
+- `app.html` / `src/app.ts` — SPA variant: all 5 pipeline sections in one DOM, revealed + autoscrolled.
+- Other inner pages (`upload`, `analyze`, `optimize`, `benchmark`, `prove`) — standalone pages, each with its own TS module.
+
+### Data files
+- `src/data.ts` — data for `index.html` only (demo panel, diff, preflight, perf table).
+- `src/demo-data.ts` — data for the inner pipeline pages (`app.ts`, `analyze.ts`, `prove.ts`, etc.). **Do not mix them.**
+
+### CSS cascade (inner pages)
+Each inner-page HTML stacks CSS in this exact order:
+1. `src/styles.css` — base tokens + global layout
+2. `src/upload.css` — topbar breadcrumb + shared upload widget
+3. `src/pages.css` — shared page hero, workflow steps, section patterns
+4. `src/app.css` — SPA-specific sticky topbar/workflow-bar (only on `app.html`)
+
+### Libraries
+- `src/lib/preflight/` — pure TS, browser-safe; compiled by Vite as part of main bundle.
+- `src/lib/suggestions/` — pure TS, browser-safe; anti-pattern detection engine. `AntiPattern.beforeCode`/`afterCode` are illustrative text (not generated from real files).
+- `src/services/` — Node-only (`harnessService.ts`); **excluded from tsconfig** (DOM types would conflict).
+- `types/review.ts` — shared types for `merge-report.mjs`; outside Vite bundle, referenced via JSDoc only.
+- `templates/modernization/` — harness templates with `@PLACEHOLDER@` tokens substituted at injection time.
+
+### Container IDs rendered by `src/main.ts` (index.html only)
 
 | ID | Data source |
 |---|---|
@@ -48,13 +62,12 @@ npm run preview  # preview built output on port 4173
 
 ## Code Style
 
-- TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**
-- `moduleResolution: "Bundler"` — no `.js` extensions on local imports
-- All content data in `src/data.ts`; page DOM mutation stays in its `src/pages/<page>/` script
-- CSS uses `--bg`, `--border`, `--border-bright`, `--cyan`, `--cyan-soft`, `--green`, `--amber`, `--muted`, `--red`, `--mono` — use these vars, never hard-coded values
-- `SubagentCard.status` values (`running`/`verifying`/`queued`) map directly to CSS class names on `.sa-status`
-- `sa-progress-fill` colour modifier: `running` = no extra class (cyan default), `verifying` = `amber`, `queued` = `muted`
-- Code diff HTML in `codeDiff.legacy` / `codeDiff.modern` — assign to `.innerHTML`, never `.textContent`
+- TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**. Use `void expr;` to silence intentional imports wired for future backend replacement (see `analyze.ts`, `prove.ts`).
+- `moduleResolution: "Bundler"` — no `.js` extensions on local imports.
+- CSS uses `--bg`, `--border`, `--border-bright`, `--cyan`, `--cyan-soft`, `--green`, `--amber`, `--muted`, `--red`, `--mono` — use these vars, never hard-coded hex.
+- `SubagentCard.status` values (`running`/`verifying`/`queued`) map directly to CSS class names on `.sa-status`.
+- `sa-progress-fill` colour modifier: `running` = no extra class (cyan default), `verifying` = `amber`, `queued` = `muted`.
+- Code diff HTML in `codeDiff.legacy` / `codeDiff.modern` — assign to `.innerHTML`, never `.textContent`.
 - **Badge law**: `.badge-estimated` must never look like `.badge-measured`. Measured = cyan filled; estimated = amber outline only, transparent background. Never swap or unify these classes.
 
 ## UX / UI Design System
@@ -105,3 +118,5 @@ Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat re
 - `Normalizer.java` rounds floating-point values to 9 significant digits (`MathContext(9)`) before equality comparison — the tolerance is 1e-9, not byte equality.
 - `merge-report.mjs` always emits `"source": "estimated"` when an input file is missing — it never fabricates a number, it uses `0` as the value.
 - `bob_sessions/` is unused by the current page (evidence section was removed in redesign).
+- `src/demo-data.ts` is distinct from `src/data.ts` — inner pipeline pages import from `demo-data`, not from `data`. Never merge them.
+- New inner pages require: a new HTML file, a new `src/<page>.ts`, a matching entry in `vite.config.ts`'s `rollupOptions.input`, and appropriate `<link>` tags for the CSS cascade.
