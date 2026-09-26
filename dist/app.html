@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OptiScale · Optimize Pipeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/app-BN8Bxo_X.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/styles-CKumfIL_.js">
+    <link rel="stylesheet" crossorigin href="/assets/styles-BVQ0P9Es.css">
+    <link rel="stylesheet" crossorigin href="/assets/app-DtQ4WbVP.css">
+    <link rel="stylesheet" crossorigin href="/assets/upload-Bi21sa1j.css">
+    <link rel="stylesheet" crossorigin href="/assets/pages-B4mhaf3W.css">
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           STICKY HEADER
+      ══════════════════════════════════════════════════════════════════ -->
+      <header class="topbar spa-topbar">
+        <div class="logo-wrap">
+          <a href="./index.html" style="display:flex;align-items:center;gap:8px;">
+            <span class="logo-diamond">◇</span>
+            <span class="logo-name">OptiScale</span>
+          </a>
+        </div>
+        <div class="upload-breadcrumb">
+          <span class="breadcrumb-seg muted">sample-fastapi-project</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-seg active" id="spa-breadcrumb">UPLOAD</span>
+        </div>
+        <div class="pipeline-status">
+          <span class="status-dot"></span>
+          <span id="spa-status">system ready</span>
+        </div>
+      </header>
+
+      <!-- ── Sticky workflow bar ──────────────────────────────────────── -->
+      <div class="workflow-bar spa-workflow-bar">
+        <div class="workflow-steps">
+          <span class="wf-step active" id="wf-1"><span class="wf-num">01</span> UPLOAD</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-2"><span class="wf-num">02</span> ANALYZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-3"><span class="wf-num">03</span> OPTIMIZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-4"><span class="wf-num">04</span> BENCHMARK</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-5"><span class="wf-num">05</span> PROVE</span>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           SECTION 1: UPLOAD
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section" id="sec-upload">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">01 — UPLOAD</span>
+        </div>
+
+        <section class="upload-hero">
+          <p class="section-label">step 01 of 05</p>
+          <h1 class="upload-headline">UPLOAD YOUR PROJECT</h1>
+          <p class="upload-sub">Upload your application and let OptiScale find where performance is being lost.</p>
+        </section>
+
+        <section class="section upload-section">
+          <div class="upload-panel" id="upload-panel" tabindex="0" role="button" aria-label="Upload project ZIP file">
+
+            <!-- STATE: empty -->
+            <div class="up-state" id="state-empty">
+              <div class="up-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <rect x="8" y="14" width="22" height="28" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                  <polyline points="8,14 20,14 30,14 30,4 20,4 8,4 8,14" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.4"/>
+                  <line x1="30" y1="4" x2="36" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                  <line x1="30" y1="4" x2="30" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                  <line x1="30" y1="10" x2="36" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                  <line x1="34" y1="40" x2="34" y2="28" stroke="currentColor" stroke-width="2"/>
+                  <polyline points="29,33 34,28 39,33" stroke="currentColor" stroke-width="2" fill="none"/>
+                  <line x1="28" y1="44" x2="40" y2="44" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="up-label">DROP YOUR PROJECT HERE</div>
+              <div class="up-hint">Drag &amp; drop your .ZIP archive or click to select</div>
+              <div class="up-actions">
+                <button class="up-btn-primary" id="select-file-btn">SELECT FILE</button>
+                <button class="up-btn-demo" id="demo-btn">TRY DEMO PROJECT</button>
+              </div>
+              <div class="up-meta-row">
+                <span class="up-meta-item">Supported format: .ZIP</span>
+                <span class="up-meta-sep">·</span>
+                <span class="up-meta-item">
+                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:inline;vertical-align:middle;margin-right:3px;opacity:.6">
+                    <rect x="1" y="4.5" width="9" height="6" rx="0.5" stroke="currentColor" stroke-width="1"/>
+                    <path d="M3 4.5V3a2.5 2.5 0 0 1 5 0v1.5" stroke="currentColor" stroke-width="1" fill="none"/>
+                  </svg>
+                  Projects prepared for isolated execution before benchmarking
+                </span>
+              </div>
+            </div>
+
+            <!-- STATE: dragging -->
+            <div class="up-state hidden" id="state-dragging">
+              <div class="up-icon drag-pulse">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <line x1="24" y1="38" x2="24" y2="18" stroke="currentColor" stroke-width="2.5"/>
+                  <polyline points="16,25 24,17 32,25" stroke="currentColor" stroke-width="2.5" fill="none"/>
+                </svg>
+              </div>
+              <div class="up-label" style="color:var(--cyan)">DROP TO UPLOAD</div>
+            </div>
+
+            <!-- STATE: uploading -->
+            <div class="up-state hidden" id="state-uploading">
+              <div class="up-label muted">UPLOADING PROJECT</div>
+              <div class="up-filename" id="upload-filename">—</div>
+              <div class="up-progress-wrap">
+                <div class="up-progress-track">
+                  <div class="up-progress-fill" id="upload-progress-fill"></div>
+                </div>
+                <div class="up-progress-meta">
+                  <span id="upload-progress-pct">0%</span>
+                  <span id="upload-progress-size"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- STATE: success -->
+            <div class="up-state hidden" id="state-success">
+              <div class="up-success-icon">✓</div>
+              <div class="up-label" style="color:var(--green)">PROJECT UPLOADED</div>
+              <div class="up-filename" id="success-filename">project.zip</div>
+              <div class="up-filesize" id="success-filesize">—</div>
+              <div class="up-validation" id="validation-checks"></div>
+              <div class="up-actions" style="margin-top:8px;">
+                <button class="up-btn-continue" id="continue-to-analyze-btn">CONTINUE TO ANALYSIS →</button>
+              </div>
+            </div>
+
+            <!-- STATE: error -->
+            <div class="up-state hidden" id="state-error">
+              <div class="up-error-icon">✕</div>
+              <div class="up-label" id="error-title" style="color:var(--red)">INVALID FILE</div>
+              <div class="up-hint" id="error-msg">Please upload a .ZIP project archive.</div>
+              <div class="up-actions" style="margin-top:8px;">
+                <button class="up-btn-primary" id="retry-btn">TRY AGAIN</button>
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="file-input" accept=".zip" style="display:none" />
+
+          <div class="mvp-row">
+            <span class="mvp-label">MVP SUPPORT</span>
+            <span class="mvp-pill">Python</span>
+            <span class="mvp-pill">FastAPI</span>
+            <span class="mvp-pill">PostgreSQL</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           SECTION 2: ANALYZE (locked until upload complete)
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-analyze">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">02 — ANALYZE</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-analyze">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Complete the upload step to unlock</span>
+        </div>
+
+        <section class="page-hero">
+          <div class="page-hero-left">
+            <p class="section-label">step 02 of 05</p>
+            <h1 class="page-headline">BOB PERFORMANCE ANALYSIS</h1>
+            <p class="page-sub">Find where your application is losing performance.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="project-badge">
+              <span class="project-badge-label">project</span>
+              <span class="project-badge-name">sample-fastapi-project</span>
+            </div>
+            <div class="status-pill status-complete">ANALYSIS COMPLETE</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">analysis summary</p>
+          <div class="stat-grid-4">
+            <div class="stat-mini-card"><span class="stat-mini-num">126</span><span class="stat-mini-label">FILES ANALYZED</span></div>
+            <div class="stat-mini-card"><span class="stat-mini-num">47</span><span class="stat-mini-label">DEPENDENCIES</span></div>
+            <div class="stat-mini-card"><span class="stat-mini-num">8</span><span class="stat-mini-label">PERFORMANCE PATTERNS</span></div>
+            <div class="stat-mini-card critical"><span class="stat-mini-num red">1</span><span class="stat-mini-label">CRITICAL BOTTLENECKS</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">critical finding</p>
+
+          <div class="bottleneck-panel">
+            <div class="bottleneck-header">
+              <div class="bottleneck-header-left">
+                <span class="severity-badge severity-critical">CRITICAL</span>
+                <span class="bottleneck-pattern">N+1 query pattern</span>
+              </div>
+              <span class="impact-tag">IMPACT: HIGH</span>
+            </div>
+            <h2 class="bottleneck-title">N+1 DATABASE QUERY</h2>
+            <div class="bottleneck-location">
+              <span class="location-file">app/database.py</span>
+              <span class="location-sep">·</span>
+              <span class="location-line">Line 42</span>
+            </div>
+            <p class="bottleneck-desc">
+              The application performs an additional database query for every user in the result set.
+              As user count grows, database load scales linearly — increasing response time and reducing overall capacity.
+            </p>
+            <div class="bottleneck-body">
+              <div class="bottleneck-code-wrap">
+                <div class="code-panel-header amber-header">before — app/database.py:42</div>
+                <pre class="code-panel-body"><span class="cm"># Retrieve all users</span>
+users = get_users()
+
+<span class="cm"># ⚠ N+1: one extra query per user</span>
+<span class="highlight-line">for user in users:</span>
+<span class="highlight-line">    user.orders = get_orders(user.id)</span></pre>
+              </div>
+              <div class="impact-ladder">
+                <div class="ladder-title">QUERY SCALING</div>
+                <div class="ladder-row"><span class="ladder-users">1 user</span><span class="ladder-arrow">→</span><span class="ladder-queries">1 query</span></div>
+                <div class="ladder-row"><span class="ladder-users">100 users</span><span class="ladder-arrow">→</span><span class="ladder-queries warn">100 queries</span></div>
+                <div class="ladder-row"><span class="ladder-users">1,000 users</span><span class="ladder-arrow">→</span><span class="ladder-queries bad">1,000 queries</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="why-panel">
+            <div class="why-header">WHY THIS MATTERS</div>
+            <div class="why-chain">
+              <span class="why-node">More users</span><span class="why-arrow">↓</span>
+              <span class="why-node">More database queries</span><span class="why-arrow">↓</span>
+              <span class="why-node">Higher database load</span><span class="why-arrow">↓</span>
+              <span class="why-node warn">Higher response time</span><span class="why-arrow">↓</span>
+              <span class="why-node bad">Lower application capacity</span>
+            </div>
+          </div>
+
+          <div class="bob-panel">
+            <div class="bob-panel-header">
+              <span class="logo-diamond" style="color:var(--cyan);font-size:0.8rem;">◇</span>
+              BOB ANALYSIS
+            </div>
+            <div class="bob-rows">
+              <div class="bob-row"><span class="bob-row-label">Potential cause</span><span class="bob-row-value">Repeated database access inside a loop.</span></div>
+              <div class="bob-row"><span class="bob-row-label">Performance pattern</span><span class="bob-row-value">N+1 query pattern.</span></div>
+              <div class="bob-row"><span class="bob-row-label">Expected effect</span><span class="bob-row-value">Increased database operations as user count grows.</span></div>
+              <div class="bob-row"><span class="bob-row-label">BOB confidence</span><span class="bob-row-value" style="color:var(--amber);">BOB identifies this as a potential performance bottleneck.</span></div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn-primary" id="to-optimize-btn">REVIEW OPTIMIZATION →</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           SECTION 3: OPTIMIZE (locked)
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-optimize">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">03 — OPTIMIZE</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-optimize">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Complete the analysis step to unlock</span>
+        </div>
+
+        <section class="page-hero">
+          <div class="page-hero-left">
+            <p class="section-label">step 03 of 05</p>
+            <h1 class="page-headline">OPTIMIZATION PROPOSAL</h1>
+            <p class="page-sub">BOB found a potential performance bottleneck. Here is the proposed fix.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="project-badge"><span class="project-badge-label">project</span><span class="project-badge-name">sample-fastapi-project</span></div>
+            <div class="status-pill status-ready">OPTIMIZATION READY</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">before / after — app/database.py</p>
+          <div class="diff-panel">
+            <div class="diff-col">
+              <div class="diff-col-header legacy-header">BEFORE</div>
+              <pre class="diff-code"><span class="cm"># Retrieve all users</span>
+<span class="ty">users</span> <span class="op">=</span> <span class="fn">get_users</span>()
+
+<span class="cm"># ⚠ N+1: one extra query per user</span>
+<span class="kw">for</span> user <span class="kw">in</span> users<span class="op">:</span>
+<span class="diff-del">    user.orders <span class="op">=</span> <span class="fn">get_orders</span>(user.id)</span></pre>
+            </div>
+            <div class="diff-col">
+              <div class="diff-col-header modern-header">AFTER</div>
+              <pre class="diff-code"><span class="cm"># Single batch query — orders joined</span>
+<span class="diff-add"><span class="ty">users</span> <span class="op">=</span> <span class="fn">get_users_with_orders</span>()</span>
+
+<span class="cm"># No loop required</span>
+<span class="cm"># N queries → 1 batch query</span></pre>
+            </div>
+          </div>
+          <p class="diff-parity-line">✓ N+1 pattern eliminated — batch retrieval applied</p>
+        </section>
+
+        <section class="section">
+          <div class="two-col-panels">
+            <div class="info-panel">
+              <div class="info-panel-header">OPTIMIZATION</div>
+              <div class="info-panel-title">Batch data retrieval</div>
+              <p class="info-panel-desc">Retrieve related orders in a single database operation instead of issuing one query per user.</p>
+              <div class="query-comparison">
+                <div class="query-row"><span class="query-label">Before</span><span class="query-val bad">N queries</span></div>
+                <div class="query-row"><span class="query-label">After</span><span class="query-val good">1 batch query</span></div>
+              </div>
+              <p class="info-panel-note">This is an optimization proposal. Performance improvement will be validated in the benchmark step.</p>
+            </div>
+            <div class="info-panel">
+              <div class="info-panel-header">AI-ESTIMATED IMPACT <span class="estimate-tag">AI ESTIMATE</span></div>
+              <div class="info-panel-title" style="color:var(--amber);">HIGH</div>
+              <div class="benefit-list">
+                <div class="benefit-row"><span class="benefit-arrow">↓</span> Database queries</div>
+                <div class="benefit-row"><span class="benefit-arrow">↓</span> Database load</div>
+                <div class="benefit-row"><span class="benefit-arrow">↓</span> Response time</div>
+                <div class="benefit-row"><span class="benefit-arrow green">↑</span> Throughput</div>
+              </div>
+              <p class="info-panel-note">Predicted impact — not yet benchmarked. Will be verified in the next step.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">change summary</p>
+          <div class="change-grid">
+            <div class="change-row"><span class="change-key">FILE CHANGED</span><span class="change-val cyan">app/database.py</span></div>
+            <div class="change-row"><span class="change-key">LINES AFFECTED</span><span class="change-val">42–44</span></div>
+            <div class="change-row"><span class="change-key">OPTIMIZATION TYPE</span><span class="change-val">Database query optimization</span></div>
+            <div class="change-row"><span class="change-key">RISK</span><span class="change-val good">Low</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div id="opt-idle">
+            <div class="action-row">
+              <button class="btn-primary" id="apply-btn">APPLY OPTIMIZATION →</button>
+              <button class="btn-ghost" id="diff-btn">REVIEW DIFF</button>
+            </div>
+          </div>
+          <div id="opt-applying" class="hidden">
+            <p class="section-label">applying optimization</p>
+            <div class="apply-steps" id="apply-steps"></div>
+          </div>
+          <div id="opt-done" class="hidden">
+            <div class="done-banner"><span class="done-check">✓</span><span class="done-text">OPTIMIZATION APPLIED</span></div>
+            <div class="action-row" style="margin-top:20px;">
+              <button class="btn-primary" id="to-benchmark-btn">RUN BENCHMARK →</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           SECTION 4: BENCHMARK (locked)
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-benchmark">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">04 — BENCHMARK</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-benchmark">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Apply the optimization to unlock</span>
+        </div>
+
+        <section class="page-hero">
+          <div class="page-hero-left">
+            <p class="section-label">step 04 of 05</p>
+            <h1 class="page-headline">FAIR PERFORMANCE BENCHMARK</h1>
+            <p class="page-sub">Compare the original and optimized applications under the same conditions.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="fairness-badges">
+              <span class="fairness-badge">SAME ENVIRONMENT</span>
+              <span class="fairness-badge">SAME WORKLOAD</span>
+              <span class="fairness-badge">SAME DURATION</span>
+              <span class="fairness-badge">SAME ENDPOINT</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">test configuration</p>
+          <div class="config-grid">
+            <div class="config-row"><span class="config-key">CONCURRENT USERS</span><span class="config-val">1,000</span></div>
+            <div class="config-row"><span class="config-key">DURATION</span><span class="config-val">60 seconds</span></div>
+            <div class="config-row"><span class="config-key">TARGET</span><span class="config-val cyan">GET /api/products</span></div>
+            <div class="config-row"><span class="config-key">ENVIRONMENT</span><span class="config-val">Docker sandbox</span></div>
+            <div class="config-row"><span class="config-key">DATABASE</span><span class="config-val">PostgreSQL</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">versions under test</p>
+          <div class="version-cards">
+            <div class="version-card">
+              <div class="version-card-header amber-header">ORIGINAL</div>
+              <div class="version-card-body">
+                <div class="version-row"><span class="version-key">Version</span><span class="version-val">Baseline</span></div>
+                <div class="version-row"><span class="version-key">Status</span><span class="version-val good">READY</span></div>
+              </div>
+            </div>
+            <div class="version-vs">VS</div>
+            <div class="version-card">
+              <div class="version-card-header modern-header">OPTIMIZED</div>
+              <div class="version-card-body">
+                <div class="version-row"><span class="version-key">Version</span><span class="version-val">BOB Optimization</span></div>
+                <div class="version-row"><span class="version-key">Status</span><span class="version-val good">READY</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div id="bench-idle" class="section">
+          <div class="action-row">
+            <button class="btn-primary" id="start-bench-btn">START BENCHMARK</button>
+          </div>
+        </div>
+
+        <div id="bench-running" class="section hidden">
+          <p class="section-label">running performance test</p>
+          <div class="bench-run-grid">
+            <div class="bench-run-card">
+              <div class="bench-run-label amber-text">ORIGINAL VERSION</div>
+              <div class="up-progress-track" style="margin:10px 0 6px;">
+                <div class="up-progress-fill amber-fill" id="prog-orig" style="width:0%"></div>
+              </div>
+              <span class="bench-run-pct" id="pct-orig">0%</span>
+            </div>
+            <div class="bench-run-card">
+              <div class="bench-run-label" style="color:var(--cyan)">OPTIMIZED VERSION</div>
+              <div class="up-progress-track" style="margin:10px 0 6px;">
+                <div class="up-progress-fill" id="prog-opt" style="width:0%"></div>
+              </div>
+              <span class="bench-run-pct" id="pct-opt">0%</span>
+            </div>
+          </div>
+          <div class="bench-log" id="bench-log"></div>
+        </div>
+
+        <div id="bench-complete" class="section hidden">
+          <div class="done-banner"><span class="done-check">✓</span><span class="done-text">BENCHMARK COMPLETE</span></div>
+          <div class="bench-complete-checks">
+            <div class="val-row"><span class="val-icon">✓</span> Original test complete</div>
+            <div class="val-row"><span class="val-icon">✓</span> Optimized test complete</div>
+            <div class="val-row"><span class="val-icon">✓</span> Metrics collected</div>
+            <div class="val-row"><span class="val-icon">✓</span> Comparison generated</div>
+          </div>
+          <div class="action-row" style="margin-top:20px;">
+            <button class="btn-primary" id="to-prove-btn">VIEW RESULTS →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           SECTION 5: PROVE (locked)
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-prove">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">05 — PROVE</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-prove">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Run the benchmark to unlock results</span>
+        </div>
+
+        <section class="page-hero prove-hero">
+          <div class="page-hero-left">
+            <p class="section-label">step 05 of 05 · <span class="demo-data-tag">DEMO BENCHMARK RESULTS</span></p>
+            <h1 class="page-headline prove-headline">PERFORMANCE PROVEN</h1>
+            <p class="page-sub">Measured improvement under the same workload.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="multiplier-block">
+              <span class="multiplier-num">2.57×</span>
+              <span class="multiplier-label">PERFORMANCE IMPROVEMENT</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">throughput comparison</p>
+          <div class="throughput-comparison">
+            <div class="throughput-bar-wrap">
+              <div class="throughput-label amber-text">ORIGINAL</div>
+              <div class="throughput-track">
+                <div class="throughput-fill amber-fill" style="width:0%" id="bar-orig">
+                  <span class="throughput-val">420 req/s</span>
+                </div>
+              </div>
+            </div>
+            <div class="throughput-bar-wrap">
+              <div class="throughput-label" style="color:var(--green)">OPTIMIZED</div>
+              <div class="throughput-track">
+                <div class="throughput-fill green-fill" style="width:0%" id="bar-opt">
+                  <span class="throughput-val">1,081 req/s</span>
+                </div>
+              </div>
+            </div>
+            <div class="throughput-delta">
+              <span class="delta-badge">+157%</span>
+              throughput increase
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">key metrics — demo benchmark results</p>
+          <div class="metric-cards">
+            <div class="metric-card"><div class="metric-label">THROUGHPUT</div><div class="metric-before">420 req/s</div><div class="metric-arrow">→</div><div class="metric-after">1,081 req/s</div><div class="metric-delta good">+157%</div></div>
+            <div class="metric-card"><div class="metric-label">LATENCY</div><div class="metric-before">238 ms</div><div class="metric-arrow">→</div><div class="metric-after">91 ms</div><div class="metric-delta good">−62%</div></div>
+            <div class="metric-card"><div class="metric-label">CPU</div><div class="metric-before">91%</div><div class="metric-arrow">→</div><div class="metric-after">63%</div><div class="metric-delta good">−31%</div></div>
+            <div class="metric-card"><div class="metric-label">MEMORY</div><div class="metric-before">1.8 GB</div><div class="metric-arrow">→</div><div class="metric-after">1.3 GB</div><div class="metric-delta good">−28%</div></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">full comparison table</p>
+          <table class="perf-table">
+            <thead><tr><th>Metric</th><th>Original</th><th>Optimized</th><th>Change</th></tr></thead>
+            <tbody>
+              <tr><td class="perf-name">Throughput</td><td class="perf-val">420 <span class="perf-unit">req/s</span></td><td class="perf-val">1,081 <span class="perf-unit">req/s</span></td><td><span class="perf-delta delta-good">+157%</span></td></tr>
+              <tr><td class="perf-name">Latency (p95)</td><td class="perf-val">238 <span class="perf-unit">ms</span></td><td class="perf-val">91 <span class="perf-unit">ms</span></td><td><span class="perf-delta delta-good">−62%</span></td></tr>
+              <tr><td class="perf-name">CPU Usage</td><td class="perf-val">91 <span class="perf-unit">%</span></td><td class="perf-val">63 <span class="perf-unit">%</span></td><td><span class="perf-delta delta-good">−31%</span></td></tr>
+              <tr><td class="perf-name">Memory</td><td class="perf-val">1.8 <span class="perf-unit">GB</span></td><td class="perf-val">1.3 <span class="perf-unit">GB</span></td><td><span class="perf-delta delta-good">−28%</span></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <p class="section-label">prediction vs reality</p>
+          <div class="prediction-flow">
+            <div class="pred-block">
+              <div class="pred-header"><span class="logo-diamond" style="color:var(--cyan);font-size:0.8rem;">◇</span> BOB PREDICTION</div>
+              <div class="pred-body">AI-estimated impact: <span style="color:var(--amber);font-weight:700;">HIGH</span></div>
+            </div>
+            <div class="pred-arrow">↓</div>
+            <div class="pred-block">
+              <div class="pred-header">BENCHMARK</div>
+              <div class="pred-body">Actual measured result: <span style="color:var(--green);font-weight:700;">+157% throughput</span></div>
+            </div>
+            <div class="pred-arrow">↓</div>
+            <div class="pred-block proven">
+              <div class="pred-header">PROVEN</div>
+              <div class="pred-body">The optimization was validated under the same workload.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-label">infrastructure insight</p>
+          <div class="infra-panel">
+            <div class="infra-headline">MORE CAPACITY. SAME INFRASTRUCTURE.</div>
+            <p class="infra-desc">The optimized application handled more requests under the same benchmark environment.</p>
+            <div class="infra-illustrative">
+              <span class="infra-note-tag">ILLUSTRATIVE SCENARIO — not a measured result</span>
+              <div class="infra-scenario">
+                <span class="infra-instance">4 instances</span>
+                <span class="infra-narrow">→</span>
+                <span class="infra-instance green">2 instances</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section prove-final">
+          <div class="final-message">
+            <div class="final-headline">OPTIMIZE FIRST.<br>SCALE SECOND.</div>
+            <p class="final-sub">Before buying more infrastructure, find out whether your application can use the infrastructure you already have more efficiently.</p>
+            <div class="action-row" style="margin-top:28px;justify-content:center;">
+              <a href="./app.html" class="btn-primary">ANALYZE ANOTHER PROJECT →</a>
+              <a href="./index.html" class="btn-ghost">← HOME</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div><!-- /page-shell -->
+
+  </body>
+</html>
