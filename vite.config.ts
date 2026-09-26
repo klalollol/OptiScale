@@ -12,14 +12,15 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main:      new URL('index.html',     import.meta.url).pathname,
-        terms:     new URL('terms.html',     import.meta.url).pathname,
-        app:       new URL('app.html',       import.meta.url).pathname,
-        upload:    new URL('upload.html',    import.meta.url).pathname,
-        analyze:   new URL('analyze.html',   import.meta.url).pathname,
-        optimize:  new URL('optimize.html',  import.meta.url).pathname,
-        benchmark: new URL('benchmark.html', import.meta.url).pathname,
-        prove:     new URL('prove.html',     import.meta.url).pathname,
+        root:      new URL('index.html',                        import.meta.url).pathname,
+        main:      new URL('src/pages/home/index.html',         import.meta.url).pathname,
+        terms:     new URL('src/pages/terms/index.html',        import.meta.url).pathname,
+        app:       new URL('src/pages/app/index.html',          import.meta.url).pathname,
+        upload:    new URL('src/pages/upload/index.html',       import.meta.url).pathname,
+        analyze:   new URL('src/pages/analyze/index.html',      import.meta.url).pathname,
+        optimize:  new URL('src/pages/optimize/index.html',     import.meta.url).pathname,
+        benchmark: new URL('src/pages/benchmark/index.html',    import.meta.url).pathname,
+        prove:     new URL('src/pages/prove/index.html',        import.meta.url).pathname,
       },
     },
   },

@@ -22,7 +22,7 @@ reviewable and lets you re-create the archive after editing a file.
 ## How to Use
 
 1. Place the `.zip` file of the project you want to test in this folder.
-2. Open `app.html`.
+2. Run `npm run dev` and open `http://localhost:5173/src/pages/app/`.
 3. Drag the ZIP file into the upload box, or click **SELECT FILE**.
 4. Select the file from this folder.
 

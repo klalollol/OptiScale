@@ -24,15 +24,17 @@ npm run preview  # preview built output on port 4173
 
 ## Architecture
 
-- `index.html` — DOM skeleton; CSS loaded here via `<link>` (not imported in TS)
-- `src/data.ts` — **all content data lives here**; `src/main.ts` only renders
-- `src/main.ts` — queries container IDs and injects HTML strings; imports only from `./data`
+- `src/pages/<page>/index.html` — page DOM skeletons; CSS loaded via `<link>` from `src/css/`
+- `src/data.ts` — **all content data lives here**; `src/pages/home/main.ts` only renders
+- `src/pages/home/main.ts` — home page renderer; imports shared data from `../../data`
+- `src/pages/<page>/` — each page's HTML and TypeScript entry point
+- `src/css/` — shared and page-specific stylesheets
 - `src/lib/preflight/` — pure TS library (browser-safe; no Node APIs); compiled by Vite
 - `src/services/` — Node-only service (`harnessService.ts`); **excluded from tsconfig** (DOM types would conflict)
 - `src/types/review.ts` — shared types for `merge-report.mjs`; referenced via JSDoc only
 - `templates/modernization/` — harness templates copied verbatim (with `@PLACEHOLDER@` substitution) into `<project>/.modernization/`
 
-### Container IDs rendered by `src/main.ts`
+### Container IDs rendered by `src/pages/home/main.ts`
 
 | ID | Data source |
 |---|---|
@@ -48,7 +50,7 @@ npm run preview  # preview built output on port 4173
 
 - TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**
 - `moduleResolution: "Bundler"` — no `.js` extensions on local imports
-- All content data in `src/data.ts`; all DOM mutation in `src/main.ts` — keep this separation
+- All content data in `src/data.ts`; page DOM mutation stays in its `src/pages/<page>/` script
 - CSS uses `--bg`, `--border`, `--border-bright`, `--cyan`, `--cyan-soft`, `--green`, `--amber`, `--muted`, `--red`, `--mono` — use these vars, never hard-coded values
 - `SubagentCard.status` values (`running`/`verifying`/`queued`) map directly to CSS class names on `.sa-status`
 - `sa-progress-fill` colour modifier: `running` = no extra class (cyan default), `verifying` = `amber`, `queued` = `muted`
@@ -59,7 +61,7 @@ npm run preview  # preview built output on port 4173
 
 Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat rectangular panels, 1px dividers, monospace everywhere.
 
-### Colour Tokens (`:root` in `src/styles.css`)
+### Colour Tokens (`:root` in `src/css/styles.css`)
 
 | Token | Hex | Usage |
 |---|---|---|
@@ -90,11 +92,11 @@ Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat re
 - **Preflight checks**: icon + severity are driven by `status`+`severity` combo; `skip` rows use `–` icon and muted colour, `blocker` rows use `✕` and `--red`, `warning` uses `⚠` and `--amber`, `pass` uses `✓` and `--green`.
 - **Tier pill** (`.preflight-tier`): `.tier-measured` = cyan, `.tier-estimated` = amber, `.tier-unavailable` = red.
 - **Perf delta**: `.delta-good` (green) for latency improvement (negative %) or throughput gain (positive %); `.delta-bad` (red) otherwise; `.delta-neutral` for zero.
-- **SVG diagram**: inline in `index.html`, `viewBox="0 0 320 200"` — do not replace with `<canvas>` or `<img>`.
+- **SVG diagram**: inline in `src/pages/home/index.html`, `viewBox="0 0 320 200"` — do not replace with `<canvas>` or `<img>`.
 
 ## Non-obvious
 
-- `index.html` loads `./src/styles.css` via `<link>` — do **not** import CSS in any `.ts` file (breaks the build silently).
+- Page HTML under `src/pages/` loads stylesheets from `src/css/` via `<link>` — do **not** import CSS in any `.ts` file (breaks the build silently).
 - `src/services/harnessService.ts` and all `*.test.ts` files are excluded from `tsconfig.json` — they use Node APIs and must not be compiled by Vite.
 - `src/types/review.ts` is included by `tsconfig.json`; used by `merge-report.mjs` via JSDoc `@type`.
 - Harness injection contract: everything goes under `<project>/.modernization/`; the ONLY pre-existing file that may be modified is the root aggregator (`pom.xml` / `settings.gradle[.kts]`), backed up as `*.optiscale.bak` first, append-only.
