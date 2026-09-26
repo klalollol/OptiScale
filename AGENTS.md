@@ -74,7 +74,7 @@ Each inner-page HTML stacks CSS in this exact order:
 
 Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat rectangular panels, 1px dividers, monospace everywhere.
 
-### Colour Tokens (`:root` in `src/styles.css`)
+### Colour Tokens (`:root` in `src/css/styles.css`)
 
 | Token | Hex | Usage |
 |---|---|---|
@@ -105,13 +105,13 @@ Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat re
 - **Preflight checks**: icon + severity are driven by `status`+`severity` combo; `skip` rows use `–` icon and muted colour, `blocker` rows use `✕` and `--red`, `warning` uses `⚠` and `--amber`, `pass` uses `✓` and `--green`.
 - **Tier pill** (`.preflight-tier`): `.tier-measured` = cyan, `.tier-estimated` = amber, `.tier-unavailable` = red.
 - **Perf delta**: `.delta-good` (green) for latency improvement (negative %) or throughput gain (positive %); `.delta-bad` (red) otherwise; `.delta-neutral` for zero.
-- **SVG diagram**: inline in `index.html`, `viewBox="0 0 320 200"` — do not replace with `<canvas>` or `<img>`.
+- **SVG diagram**: inline in `src/pages/home/index.html`, `viewBox="0 0 320 200"` — do not replace with `<canvas>` or `<img>`.
 
 ## Non-obvious
 
-- `index.html` loads `./src/styles.css` via `<link>` — do **not** import CSS in any `.ts` file (breaks the build silently).
+- Page HTML under `src/pages/` loads stylesheets from `src/css/` via `<link>` — do **not** import CSS in any `.ts` file (breaks the build silently).
 - `src/services/harnessService.ts` and all `*.test.ts` files are excluded from `tsconfig.json` — they use Node APIs and must not be compiled by Vite.
-- `types/review.ts` is outside `tsconfig.json`'s `include`; used only via JSDoc `@type` in `merge-report.mjs`.
+- `src/types/review.ts` is included by `tsconfig.json`; used by `merge-report.mjs` via JSDoc `@type`.
 - Harness injection contract: everything goes under `<project>/.modernization/`; the ONLY pre-existing file that may be modified is the root aggregator (`pom.xml` / `settings.gradle[.kts]`), backed up as `*.optiscale.bak` first, append-only.
 - `revert()` in `harnessService.ts` verifies the post-revert SHA-256 tree hash against the value recorded before injection — throws if they differ.
 - `FixtureReplay.java` returns a `VOID_SENTINEL` object (never `null`) so JMH Blackhole always has a non-null value.

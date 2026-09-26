@@ -7,8 +7,8 @@
 - `codeDiff.legacy` / `codeDiff.modern` strings contain raw HTML with `<span class="kw">` etc. — assign to `.innerHTML`, never `.textContent`. The span classes (`.kw`, `.ty`, `.fn`, `.cm`, `.st`, `.nu`, `.op`) must be defined in `src/styles.css`.
 - TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` are all on — any unused symbol is a compile error. Run `npm run build` to validate before finishing changes. Use `void expr;` to silence intentional future-wiring imports (pattern used in `analyze.ts`, `prove.ts`).
 - `src/services/harnessService.ts` uses Node APIs — it is excluded from `tsconfig.json` and must never be imported from browser-side code. Same for `*.test.ts` files.
-- `types/review.ts` is outside `tsconfig.json`'s `include` — reference it from Node scripts via JSDoc `@type {import('...')}`, never via `import`.
-- New container IDs added to `index.html` require a matching `document.querySelector('#id')` block in `src/main.ts` and sample data in `src/data.ts`.
+- `src/types/review.ts` is included by `tsconfig.json` — reference it from Node scripts via JSDoc `@type {import('...')}`, never via runtime `import`.
+- New container IDs added to `src/pages/home/index.html` require a matching `document.querySelector('#id')` block in `src/pages/home/main.ts` and sample data in `src/data.ts`.
 - `.badge-estimated` (amber outline, transparent bg) must never share styles with `.badge-measured` (cyan filled). This is a non-negotiable UI contract.
 - Preflight tier pill classes: `.tier-measured`, `.tier-estimated`, `.tier-unavailable` — all must be defined in CSS before use.
 - Harness injection: `injectHarness()` must record tree SHA-256 BEFORE writing any file. `revert()` verifies this hash after restoring — mismatch throws.

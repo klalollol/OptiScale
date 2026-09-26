@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OptiScale · Optimize Pipeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/app-4s3iFqmr.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/styles-CKumfIL_.js">
+    <link rel="stylesheet" crossorigin href="/assets/styles-BVQ0P9Es.css">
+    <link rel="stylesheet" crossorigin href="/assets/app-CeBvplbH.css">
+    <link rel="stylesheet" crossorigin href="/assets/upload-aZfWiZOH.css">
+    <link rel="stylesheet" crossorigin href="/assets/pages-B4mhaf3W.css">
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <!-- ── Sticky header ───────────────────────────────────────────────── -->
+      <header class="topbar spa-topbar">
+        <div class="logo-wrap">
+          <a href="../home/" style="display:flex;align-items:center;gap:8px;">
+            <span class="logo-diamond">◇</span>
+            <span class="logo-name">OptiScale</span>
+          </a>
+        </div>
+        <div class="upload-breadcrumb">
+          <span class="breadcrumb-seg muted">sample-fastapi-project</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-seg active" id="spa-breadcrumb">UPLOAD</span>
+        </div>
+        <div class="pipeline-status">
+          <span class="status-dot"></span>
+          <span id="spa-status">system ready</span>
+        </div>
+      </header>
+
+      <!-- ── Sticky workflow bar ─────────────────────────────────────────── -->
+      <div class="workflow-bar spa-workflow-bar">
+        <div class="workflow-steps">
+          <span class="wf-step active" id="wf-1"><span class="wf-num">01</span> UPLOAD</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-2"><span class="wf-num">02</span> ANALYZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-3"><span class="wf-num">03</span> OPTIMIZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-4"><span class="wf-num">04</span> BENCHMARK</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step" id="wf-5"><span class="wf-num">05</span> PROVE</span>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           §1  UPLOAD
+           Layout: hero left | upload panel right
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section" id="sec-upload">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">01 — UPLOAD</span>
+        </div>
+
+        <!-- Two-column: heading left, upload zone right -->
+        <div class="spa-body-grid">
+          <div class="spa-body-main">
+            <section class="upload-hero upload-hero--compact">
+              <p class="section-label">step 01 of 05</p>
+              <h1 class="upload-headline">UPLOAD YOUR PROJECT</h1>
+              <p class="upload-sub">Upload your application and let OptiScale find where performance is being lost.</p>
+            </section>
+            <div class="mvp-row" style="margin-top:20px;">
+              <span class="mvp-label">MVP SUPPORT</span>
+              <span class="mvp-pill">Python</span>
+              <span class="mvp-pill">FastAPI</span>
+              <span class="mvp-pill">PostgreSQL</span>
+            </div>
+          </div>
+
+          <div class="spa-body-side">
+            <div class="upload-panel upload-panel--compact" id="upload-panel" tabindex="0" role="button" aria-label="Upload project ZIP file">
+
+              <!-- empty -->
+              <div class="up-state" id="state-empty">
+                <div class="up-icon">
+                  <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+                    <rect x="8" y="14" width="22" height="28" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <polyline points="8,14 20,14 30,14 30,4 20,4 8,4 8,14" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.4"/>
+                    <line x1="30" y1="4" x2="36" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="30" y1="4" x2="30" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="30" y1="10" x2="36" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="34" y1="40" x2="34" y2="28" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="29,33 34,28 39,33" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="28" y1="44" x2="40" y2="44" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                </div>
+                <div class="up-label">DROP YOUR PROJECT HERE</div>
+                <div class="up-hint">Drag &amp; drop your .ZIP or click to select</div>
+                <div class="up-actions">
+                  <button class="up-btn-primary" id="select-file-btn">SELECT FILE</button>
+                  <button class="up-btn-demo" id="demo-btn">▾ DEMO PROJECT</button>
+                </div>
+
+                <!-- Demo project picker (shown on demo-btn click) -->
+                <div class="demo-picker hidden" id="demo-picker">
+                  <div class="demo-picker-label">SELECT DEMO PROJECT</div>
+                  <button class="demo-pick-row" data-demo="ecommerce">
+                    <span class="demo-pick-name">sample-fastapi-ecommerce</span>
+                    <span class="demo-pick-meta">Python · FastAPI · PostgreSQL · E-Commerce API</span>
+                  </button>
+                  <button class="demo-pick-row" data-demo="inventory">
+                    <span class="demo-pick-name">sample-fastapi-inventory</span>
+                    <span class="demo-pick-meta">Python · FastAPI · PostgreSQL · Inventory API</span>
+                  </button>
+                  <button class="demo-pick-row" data-demo="analytics">
+                    <span class="demo-pick-name">sample-fastapi-analytics</span>
+                    <span class="demo-pick-meta">Python · FastAPI · PostgreSQL · Analytics API</span>
+                  </button>
+                </div>
+                <div class="up-meta-row">
+                  <span class="up-meta-item">Format: .ZIP</span>
+                  <span class="up-meta-sep">·</span>
+                  <span class="up-meta-item">
+                    <svg width="10" height="10" viewBox="0 0 11 11" fill="none" style="display:inline;vertical-align:middle;margin-right:2px;opacity:.6">
+                      <rect x="1" y="4.5" width="9" height="6" rx="0.5" stroke="currentColor" stroke-width="1"/>
+                      <path d="M3 4.5V3a2.5 2.5 0 0 1 5 0v1.5" stroke="currentColor" stroke-width="1" fill="none"/>
+                    </svg>
+                    Isolated execution
+                  </span>
+                </div>
+              </div>
+
+              <!-- dragging -->
+              <div class="up-state hidden" id="state-dragging">
+                <div class="up-icon drag-pulse">
+                  <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+                    <line x1="24" y1="38" x2="24" y2="18" stroke="currentColor" stroke-width="2.5"/>
+                    <polyline points="16,25 24,17 32,25" stroke="currentColor" stroke-width="2.5" fill="none"/>
+                  </svg>
+                </div>
+                <div class="up-label" style="color:var(--cyan)">DROP TO UPLOAD</div>
+              </div>
+
+              <!-- uploading -->
+              <div class="up-state hidden" id="state-uploading">
+                <div class="up-label muted">UPLOADING PROJECT</div>
+                <div class="up-filename" id="upload-filename">—</div>
+                <div class="up-progress-wrap">
+                  <div class="up-progress-track">
+                    <div class="up-progress-fill" id="upload-progress-fill"></div>
+                  </div>
+                  <div class="up-progress-meta">
+                    <span id="upload-progress-pct">0%</span>
+                    <span id="upload-progress-size"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- success -->
+              <div class="up-state hidden" id="state-success">
+                <div class="up-success-icon">✓</div>
+                <div class="up-label" style="color:var(--green)">PROJECT UPLOADED</div>
+                <div class="up-filename" id="success-filename">project.zip</div>
+                <div class="up-filesize" id="success-filesize">—</div>
+                <div class="up-validation" id="validation-checks"></div>
+              </div>
+
+              <!-- error -->
+              <div class="up-state hidden" id="state-error">
+                <div class="up-error-icon">✕</div>
+                <div class="up-label" id="error-title" style="color:var(--red)">INVALID FILE</div>
+                <div class="up-hint" id="error-msg">Please upload a .ZIP project archive.</div>
+                <div class="up-actions" style="margin-top:8px;">
+                  <button class="up-btn-primary" id="retry-btn">TRY AGAIN</button>
+                </div>
+              </div>
+            </div>
+            <input type="file" id="file-input" accept=".zip" style="display:none" />
+          </div>
+        </div>
+
+        <!-- CTA bar §1 -->
+        <div class="spa-cta-bar" id="cta-upload">
+          <button class="btn-primary" id="continue-to-analyze-btn" style="display:none">CONTINUE TO ANALYSIS →</button>
+          <span class="spa-cta-hint" id="cta-upload-hint">Upload or select a demo project to continue</span>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           §2  ANALYZE
+           Layout: hero + stats row | bottleneck left, why+bob right
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-analyze">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">02 — ANALYZE</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-analyze">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Complete the upload step to unlock</span>
+        </div>
+
+        <!-- Hero row -->
+        <section class="page-hero page-hero--compact">
+          <div class="page-hero-left">
+            <p class="section-label">step 02 of 05</p>
+            <h1 class="page-headline">BOB PERFORMANCE ANALYSIS</h1>
+            <p class="page-sub">Find where your application is losing performance.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="project-badge">
+              <span class="project-badge-label">project</span>
+              <span class="project-badge-name" id="an-project-name">—</span>
+            </div>
+            <div class="status-pill status-complete">ANALYSIS COMPLETE</div>
+          </div>
+        </section>
+
+        <!-- Stats strip -->
+        <div class="spa-stats-strip">
+          <div class="stat-mini-card"><span class="stat-mini-num" id="an-files">—</span><span class="stat-mini-label">FILES ANALYZED</span></div>
+          <div class="stat-mini-card"><span class="stat-mini-num" id="an-deps">—</span><span class="stat-mini-label">DEPENDENCIES</span></div>
+          <div class="stat-mini-card"><span class="stat-mini-num" id="an-patterns">—</span><span class="stat-mini-label">PERF PATTERNS</span></div>
+          <div class="stat-mini-card critical"><span class="stat-mini-num red" id="an-critical">—</span><span class="stat-mini-label">CRITICAL</span></div>
+        </div>
+
+        <!-- Two-column: bottleneck left | why+bob right -->
+        <div class="spa-body-grid spa-body-grid--analyze">
+          <!-- Left: bottleneck -->
+          <div class="spa-body-main">
+            <div class="bottleneck-panel bottleneck-panel--compact">
+              <div class="bottleneck-header">
+                <div class="bottleneck-header-left">
+                  <span class="severity-badge" id="an-severity-badge">—</span>
+                  <span class="bottleneck-pattern" id="an-pattern-name">—</span>
+                </div>
+                <span class="impact-tag" id="an-impact-tag">IMPACT: —</span>
+              </div>
+              <h2 class="bottleneck-title" id="an-bottleneck-title">—</h2>
+              <div class="bottleneck-location">
+                <span class="location-file" id="an-location-file">—</span>
+                <span class="location-sep">·</span>
+                <span class="location-line" id="an-location-line">—</span>
+              </div>
+              <p class="bottleneck-desc" id="an-bottleneck-desc">—</p>
+              <div class="code-panel-header amber-header" style="margin-top:12px;" id="an-code-header">before — …</div>
+              <pre class="code-panel-body" id="an-code-before">—</pre>
+            </div>
+          </div>
+
+          <!-- Right: ladder + why + bob -->
+          <div class="spa-body-side">
+            <div class="impact-ladder" style="margin-bottom:12px;">
+              <div class="ladder-title">QUERY SCALING</div>
+              <div id="an-ladder-rows">
+                <div class="ladder-row"><span class="ladder-users">—</span><span class="ladder-arrow">→</span><span class="ladder-queries">—</span></div>
+              </div>
+            </div>
+
+            <div class="why-panel why-panel--compact">
+              <div class="why-header">WHY THIS MATTERS</div>
+              <div class="why-chain why-chain--vertical" id="an-why-chain">
+                <span class="why-node">—</span>
+              </div>
+            </div>
+
+            <div class="bob-panel bob-panel--compact" style="margin-top:12px;">
+              <div class="bob-panel-header">
+                <span class="logo-diamond" style="color:var(--cyan);font-size:0.8rem;">◇</span>
+                BOB ANALYSIS
+              </div>
+              <div class="bob-rows">
+                <div class="bob-row"><span class="bob-row-label">Pattern</span><span class="bob-row-value" id="an-bob-pattern">—</span></div>
+                <div class="bob-row"><span class="bob-row-label">Effect</span><span class="bob-row-value" id="an-bob-effect">—</span></div>
+                <div class="bob-row bob-row--highlight"><span class="bob-row-label">Confidence</span><span class="bob-row-value" id="an-bob-confidence">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA bar §2 -->
+        <div class="spa-cta-bar">
+          <button class="btn-primary" id="to-optimize-btn">REVIEW OPTIMIZATION →</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           §3  OPTIMIZE
+           Layout: hero | diff left, info+summary right | apply/done inline
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-optimize">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">03 — OPTIMIZE</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-optimize">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Complete the analysis step to unlock</span>
+        </div>
+
+        <section class="page-hero page-hero--compact">
+          <div class="page-hero-left">
+            <p class="section-label">step 03 of 05</p>
+            <h1 class="page-headline">OPTIMIZATION PROPOSAL</h1>
+            <p class="page-sub" id="opt-sub-text">BOB found a potential performance bottleneck. Here is the proposed fix.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="project-badge"><span class="project-badge-label">project</span><span class="project-badge-name" id="opt-project-name">—</span></div>
+            <div class="status-pill status-ready" id="opt-status-pill">OPTIMIZATION READY</div>
+          </div>
+        </section>
+
+        <!-- Two-column: diff left | meta right -->
+        <div class="spa-body-grid">
+          <!-- Left: code diff -->
+          <div class="spa-body-main">
+            <p class="section-label" style="margin-bottom:10px;" id="opt-diff-label">before / after — …</p>
+            <div class="diff-panel">
+              <div class="diff-col">
+                <div class="diff-col-header legacy-header">BEFORE</div>
+                <pre class="diff-code" id="opt-code-before">—</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-col-header modern-header">AFTER</div>
+                <pre class="diff-code" id="opt-code-after">—</pre>
+              </div>
+            </div>
+            <p class="diff-parity-line" id="opt-parity-line">—</p>
+
+            <!-- applying / done (shown inline under diff) -->
+            <div id="opt-applying-section" style="display:none;margin-top:16px;">
+              <p class="section-label">applying optimization</p>
+              <div class="apply-steps" id="apply-steps"></div>
+            </div>
+            <div id="opt-done-section" style="display:none;margin-top:16px;">
+              <div class="done-banner"><span class="done-check">✓</span><span class="done-text">OPTIMIZATION APPLIED</span></div>
+            </div>
+          </div>
+
+          <!-- Right: info + change summary -->
+          <div class="spa-body-side">
+            <div class="info-panel info-panel--compact" style="margin-bottom:1px;">
+              <div class="info-panel-header">OPTIMIZATION</div>
+              <div class="info-panel-title" id="opt-type-title">—</div>
+              <div class="query-comparison" style="margin-top:8px;">
+                <div class="query-row"><span class="query-label">Before</span><span class="query-val bad" id="opt-query-before">—</span></div>
+                <div class="query-row"><span class="query-label">After</span><span class="query-val good" id="opt-query-after">—</span></div>
+              </div>
+            </div>
+            <div class="info-panel info-panel--compact" style="margin-bottom:12px;">
+              <div class="info-panel-header">AI-ESTIMATED IMPACT <span class="estimate-tag">AI ESTIMATE</span></div>
+              <div class="info-panel-title" id="opt-impact-title" style="color:var(--amber);">—</div>
+              <div class="benefit-list">
+                <div class="benefit-row"><span class="benefit-arrow">↓</span> DB queries · load · latency</div>
+                <div class="benefit-row"><span class="benefit-arrow green">↑</span> Throughput</div>
+              </div>
+            </div>
+            <div class="change-grid change-grid--compact">
+              <div class="change-row"><span class="change-key">FILE</span><span class="change-val cyan" id="opt-change-file">—</span></div>
+              <div class="change-row"><span class="change-key">LINES</span><span class="change-val" id="opt-change-lines">—</span></div>
+              <div class="change-row"><span class="change-key">TYPE</span><span class="change-val" id="opt-change-type">—</span></div>
+              <div class="change-row"><span class="change-key">RISK</span><span class="change-val good" id="opt-change-risk">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA bar §3 -->
+        <div class="spa-cta-bar">
+          <button class="btn-primary" id="apply-btn">APPLY OPTIMIZATION →</button>
+          <button class="btn-ghost" id="diff-btn">REVIEW DIFF</button>
+          <button class="btn-primary" id="to-benchmark-btn" style="display:none">RUN BENCHMARK →</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           §4  BENCHMARK
+           Layout: hero | config left, versions right | running/complete inline
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-benchmark">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">04 — BENCHMARK</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-benchmark">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Apply the optimization to unlock</span>
+        </div>
+
+        <section class="page-hero page-hero--compact">
+          <div class="page-hero-left">
+            <p class="section-label">step 04 of 05</p>
+            <h1 class="page-headline">FAIR PERFORMANCE BENCHMARK</h1>
+            <p class="page-sub">Same conditions. Same workload. Objective comparison.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="fairness-badges">
+              <span class="fairness-badge">SAME ENVIRONMENT</span>
+              <span class="fairness-badge">SAME WORKLOAD</span>
+              <span class="fairness-badge">SAME DURATION</span>
+              <span class="fairness-badge">SAME ENDPOINT</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Two-column: config left | versions right -->
+        <div class="spa-body-grid">
+          <div class="spa-body-main">
+            <p class="section-label" style="margin-bottom:10px;">test configuration</p>
+            <div class="config-grid">
+              <div class="config-row"><span class="config-key">CONCURRENT USERS</span><span class="config-val">1,000</span></div>
+              <div class="config-row"><span class="config-key">DURATION</span><span class="config-val">60 seconds</span></div>
+              <div class="config-row"><span class="config-key">TARGET</span><span class="config-val cyan" id="bench-endpoint">—</span></div>
+              <div class="config-row"><span class="config-key">ENVIRONMENT</span><span class="config-val">Docker sandbox</span></div>
+              <div class="config-row"><span class="config-key">DATABASE</span><span class="config-val" id="bench-db">PostgreSQL</span></div>
+            </div>
+          </div>
+          <div class="spa-body-side">
+            <p class="section-label" style="margin-bottom:10px;">versions under test</p>
+            <div class="version-cards" style="flex-direction:column;">
+              <div class="version-card">
+                <div class="version-card-header amber-header">ORIGINAL</div>
+                <div class="version-card-body">
+                  <div class="version-row"><span class="version-key">Version</span><span class="version-val">Baseline</span></div>
+                  <div class="version-row"><span class="version-key">Status</span><span class="version-val good">READY</span></div>
+                </div>
+              </div>
+              <div class="version-card" style="border-top:none;">
+                <div class="version-card-header modern-header">OPTIMIZED</div>
+                <div class="version-card-body">
+                  <div class="version-row"><span class="version-key">Version</span><span class="version-val">BOB Optimization</span></div>
+                  <div class="version-row"><span class="version-key">Status</span><span class="version-val good">READY</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Running progress inline in side column -->
+            <div id="bench-running" style="display:none;margin-top:16px;">
+              <p class="section-label" style="margin-bottom:8px;">running performance test</p>
+              <div class="bench-run-grid" style="grid-template-columns:1fr;">
+                <div class="bench-run-card">
+                  <div class="bench-run-label amber-text">ORIGINAL</div>
+                  <div class="up-progress-track" style="margin:6px 0 4px;">
+                    <div class="up-progress-fill amber-fill" id="prog-orig" style="width:0%"></div>
+                  </div>
+                  <span class="bench-run-pct" id="pct-orig">0%</span>
+                </div>
+                <div class="bench-run-card" style="margin-top:8px;">
+                  <div class="bench-run-label" style="color:var(--cyan)">OPTIMIZED</div>
+                  <div class="up-progress-track" style="margin:6px 0 4px;">
+                    <div class="up-progress-fill" id="prog-opt" style="width:0%"></div>
+                  </div>
+                  <span class="bench-run-pct" id="pct-opt">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Complete summary inline -->
+            <div id="bench-complete" style="display:none;margin-top:16px;">
+              <div class="done-banner"><span class="done-check">✓</span><span class="done-text">BENCHMARK COMPLETE</span></div>
+              <div class="bench-complete-checks" style="margin-top:8px;">
+                <div class="val-row"><span class="val-icon">✓</span> Original test complete</div>
+                <div class="val-row"><span class="val-icon">✓</span> Optimized test complete</div>
+                <div class="val-row"><span class="val-icon">✓</span> Metrics collected</div>
+                <div class="val-row"><span class="val-icon">✓</span> Comparison generated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bench log (full width, only during run) -->
+        <div id="bench-log-wrap" style="display:none;">
+          <div class="bench-log" id="bench-log"></div>
+        </div>
+
+        <!-- CTA bar §4 -->
+        <div class="spa-cta-bar">
+          <button class="btn-primary" id="start-bench-btn">START BENCHMARK</button>
+          <button class="btn-primary" id="to-prove-btn" style="display:none">VIEW RESULTS →</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           §5  PROVE
+           Layout: hero (with 2.57× right) | bars+metrics left, table+prediction right
+                   infra + final in compact strip
+      ══════════════════════════════════════════════════════════════════ -->
+      <div class="spa-section spa-locked" id="sec-prove">
+        <div class="spa-section-divider">
+          <span class="spa-section-tag">05 — PROVE</span>
+        </div>
+        <div class="spa-lock-overlay" id="lock-prove">
+          <span class="spa-lock-icon">◇</span>
+          <span class="spa-lock-text">Run the benchmark to unlock results</span>
+        </div>
+
+        <!-- Hero -->
+        <section class="page-hero prove-hero page-hero--compact">
+          <div class="page-hero-left">
+            <p class="section-label">step 05 of 05 · <span class="demo-data-tag">DEMO BENCHMARK RESULTS</span></p>
+            <h1 class="page-headline prove-headline">PERFORMANCE PROVEN</h1>
+            <p class="page-sub">Measured improvement under the same workload.</p>
+          </div>
+          <div class="page-hero-right">
+            <div class="multiplier-block">
+              <span class="multiplier-num" id="prove-multiplier">—×</span>
+              <span class="multiplier-label">PERFORMANCE IMPROVEMENT</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Two-column: bars+metrics left | table+prediction right -->
+        <div class="spa-body-grid">
+          <!-- Left -->
+          <div class="spa-body-main">
+            <!-- Throughput bars -->
+            <p class="section-label" style="margin-bottom:10px;">throughput comparison</p>
+            <div class="throughput-comparison throughput-comparison--compact">
+              <div class="throughput-bar-wrap">
+                <div class="throughput-label amber-text">ORIGINAL</div>
+                <div class="throughput-track">
+                  <div class="throughput-fill amber-fill" style="width:0%;transition:width 1.2s cubic-bezier(0.22,1,0.36,1)" id="bar-orig">
+                    <span class="throughput-val" id="prove-tp-before">— req/s</span>
+                  </div>
+                </div>
+              </div>
+              <div class="throughput-bar-wrap">
+                <div class="throughput-label" style="color:var(--green)">OPTIMIZED</div>
+                <div class="throughput-track">
+                  <div class="throughput-fill green-fill" style="width:0%;transition:width 1.4s cubic-bezier(0.22,1,0.36,1)" id="bar-opt">
+                    <span class="throughput-val" id="prove-tp-after">— req/s</span>
+                  </div>
+                </div>
+              </div>
+              <div class="throughput-delta">
+                <span class="delta-badge" id="prove-tp-delta">—</span>
+                throughput increase
+              </div>
+            </div>
+
+            <!-- 4 metric cards -->
+            <div class="metric-cards metric-cards--2col" style="margin-top:16px;">
+              <div class="metric-card"><div class="metric-label">THROUGHPUT</div><div class="metric-before" id="mc-tp-b">—</div><div class="metric-arrow">→</div><div class="metric-after" id="mc-tp-a">—</div><div class="metric-delta good" id="mc-tp-d">—</div></div>
+              <div class="metric-card"><div class="metric-label">LATENCY</div><div class="metric-before" id="mc-lat-b">—</div><div class="metric-arrow">→</div><div class="metric-after" id="mc-lat-a">—</div><div class="metric-delta good" id="mc-lat-d">—</div></div>
+              <div class="metric-card"><div class="metric-label">CPU</div><div class="metric-before" id="mc-cpu-b">—</div><div class="metric-arrow">→</div><div class="metric-after" id="mc-cpu-a">—</div><div class="metric-delta good" id="mc-cpu-d">—</div></div>
+              <div class="metric-card"><div class="metric-label">MEMORY</div><div class="metric-before" id="mc-mem-b">—</div><div class="metric-arrow">→</div><div class="metric-after" id="mc-mem-a">—</div><div class="metric-delta good" id="mc-mem-d">—</div></div>
+            </div>
+          </div>
+
+          <!-- Right: table + prediction -->
+          <div class="spa-body-side">
+            <p class="section-label" style="margin-bottom:10px;">full comparison</p>
+            <table class="perf-table">
+              <thead><tr><th>Metric</th><th>Orig</th><th>Opt</th><th>Δ</th></tr></thead>
+              <tbody>
+                <tr><td class="perf-name">Throughput</td><td class="perf-val" id="tbl-tp-b">—</td><td class="perf-val" id="tbl-tp-a">—</td><td><span class="perf-delta" id="tbl-tp-d">—</span></td></tr>
+                <tr><td class="perf-name">Latency p95</td><td class="perf-val" id="tbl-lat-b">—</td><td class="perf-val" id="tbl-lat-a">—</td><td><span class="perf-delta" id="tbl-lat-d">—</span></td></tr>
+                <tr><td class="perf-name">CPU</td><td class="perf-val" id="tbl-cpu-b">—</td><td class="perf-val" id="tbl-cpu-a">—</td><td><span class="perf-delta" id="tbl-cpu-d">—</span></td></tr>
+                <tr><td class="perf-name">Memory</td><td class="perf-val" id="tbl-mem-b">—</td><td class="perf-val" id="tbl-mem-a">—</td><td><span class="perf-delta" id="tbl-mem-d">—</span></td></tr>
+              </tbody>
+            </table>
+
+            <div class="prediction-flow prediction-flow--horiz" style="margin-top:16px;">
+              <div class="pred-block">
+                <div class="pred-header"><span class="logo-diamond" style="color:var(--cyan);font-size:0.75rem;">◇</span> BOB PREDICTION</div>
+                <div class="pred-body">Estimated: <span id="prove-prediction" style="font-weight:700;">—</span></div>
+              </div>
+              <div class="pred-arrow pred-arrow--h">→</div>
+              <div class="pred-block">
+                <div class="pred-header">BENCHMARK</div>
+                <div class="pred-body">Measured: <span style="color:var(--green);font-weight:700;" id="prove-measured">—</span></div>
+              </div>
+              <div class="pred-arrow pred-arrow--h">→</div>
+              <div class="pred-block proven">
+                <div class="pred-header">PROVEN</div>
+                <div class="pred-body">Validated under same workload.</div>
+              </div>
+            </div>
+
+            <!-- Infra insight -->
+            <div class="infra-panel infra-panel--compact" style="margin-top:16px;">
+              <div class="infra-headline">MORE CAPACITY. SAME INFRA.</div>
+              <div class="infra-illustrative" style="margin-top:8px;">
+                <span class="infra-note-tag">ILLUSTRATIVE — not a measured result</span>
+                <div class="infra-scenario" style="margin-top:6px;">
+                  <span class="infra-instance">4 instances</span>
+                  <span class="infra-narrow">→</span>
+                  <span class="infra-instance green">2 instances</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Final message -->
+        <div class="spa-final-strip">
+          <div class="final-headline final-headline--inline">OPTIMIZE FIRST. SCALE SECOND.</div>
+          <p class="final-sub final-sub--inline">Before buying more infrastructure, find out whether your application can use what it already has more efficiently.</p>
+        </div>
+
+        <!-- CTA bar §5 -->
+        <div class="spa-cta-bar">
+          <a href="./" class="btn-primary">ANALYZE ANOTHER PROJECT →</a>
+          <a href="../home/" class="btn-ghost">← HOME</a>
+        </div>
+      </div>
+
+    </div><!-- /page-shell -->
+  </body>
+</html>

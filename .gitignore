@@ -1,0 +1,5 @@
+﻿/bob_sessions/
+
+# Test case projects (add your own ZIPs here -- not tracked by git)
+/test-cases/*
+!/test-cases/README.md

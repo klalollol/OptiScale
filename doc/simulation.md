@@ -248,7 +248,7 @@ After the pipeline completes, **Page 3** shows:
 | source | `measured` (cyan filled) or `estimated` (amber outline — never styled the same) |
 
 The `estimated` badge is always visually distinct from `measured` — this is a
-non-negotiable design contract enforced in `src/styles.css`.
+non-negotiable design contract enforced in `src/css/styles.css`.
 
 ---
 
@@ -336,7 +336,7 @@ actual uploaded file. They are shown verbatim in the UI using `escapeHtml()`
 
 ## 10. Suggestions Panel (UI — Page 3)
 
-Rendered by `renderSuggestionsPanel()` in `src/main.ts` from
+Rendered by `renderSuggestionsPanel()` in `src/pages/home/main.ts` from
 `sampleSuggestions` in `src/data.ts`.
 
 ### Layout of each suggestion card
