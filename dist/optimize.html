@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OptiScale · Optimize</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/optimize-gLxdOrGq.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/styles-CKumfIL_.js">
+    <link rel="stylesheet" crossorigin href="/assets/styles-BVQ0P9Es.css">
+    <link rel="stylesheet" crossorigin href="/assets/upload-Bi21sa1j.css">
+    <link rel="stylesheet" crossorigin href="/assets/pages-B4mhaf3W.css">
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <!-- ── Top bar ─────────────────────────────────────────────────────── -->
+      <header class="topbar">
+        <div class="logo-wrap">
+          <a href="./index.html" style="display:flex;align-items:center;gap:8px;">
+            <span class="logo-diamond">◇</span>
+            <span class="logo-name">OptiScale</span>
+          </a>
+        </div>
+        <div class="upload-breadcrumb">
+          <span class="breadcrumb-seg muted">sample-fastapi-project</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-seg active">OPTIMIZE</span>
+        </div>
+        <div class="pipeline-status">
+          <span class="status-dot"></span>
+          <span>optimization ready</span>
+        </div>
+      </header>
+
+      <!-- ── Workflow indicator ──────────────────────────────────────────── -->
+      <div class="workflow-bar">
+        <div class="workflow-steps">
+          <a href="./upload.html"  class="wf-step done"><span class="wf-num">01</span> UPLOAD</a>
+          <span class="wf-arrow">→</span>
+          <a href="./analyze.html" class="wf-step done"><span class="wf-num">02</span> ANALYZE</a>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step active"><span class="wf-num">03</span> OPTIMIZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">04</span> BENCHMARK</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">05</span> PROVE</span>
+        </div>
+      </div>
+
+      <!-- ── Hero ───────────────────────────────────────────────────────── -->
+      <section class="page-hero">
+        <div class="page-hero-left">
+          <p class="section-label">step 03 of 05</p>
+          <h1 class="page-headline">OPTIMIZATION PROPOSAL</h1>
+          <p class="page-sub">BOB found a potential performance bottleneck. Here is the proposed fix.</p>
+        </div>
+        <div class="page-hero-right">
+          <div class="project-badge">
+            <span class="project-badge-label">project</span>
+            <span class="project-badge-name">sample-fastapi-project</span>
+          </div>
+          <div class="status-pill status-ready">OPTIMIZATION READY</div>
+        </div>
+      </section>
+
+      <!-- ── Code diff ─────────────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">before / after — app/database.py</p>
+        <div class="diff-panel">
+          <div class="diff-col">
+            <div class="diff-col-header legacy-header">BEFORE</div>
+            <pre class="diff-code"><span class="cm"># Retrieve all users</span>
+<span class="ty">users</span> <span class="op">=</span> <span class="fn">get_users</span>()
+
+<span class="cm"># ⚠ N+1: one extra query per user</span>
+<span class="kw">for</span> user <span class="kw">in</span> users<span class="op">:</span>
+<span class="diff-del">    user.orders <span class="op">=</span> <span class="fn">get_orders</span>(user.id)</span></pre>
+          </div>
+          <div class="diff-col">
+            <div class="diff-col-header modern-header">AFTER</div>
+            <pre class="diff-code"><span class="cm"># Single batch query — orders joined</span>
+<span class="diff-add"><span class="ty">users</span> <span class="op">=</span> <span class="fn">get_users_with_orders</span>()</span>
+
+<span class="cm"># No loop required</span>
+<span class="cm"># N queries → 1 batch query</span></pre>
+          </div>
+        </div>
+        <p class="diff-parity-line">✓ N+1 pattern eliminated — batch retrieval applied</p>
+      </section>
+
+      <!-- ── Optimization explanation ──────────────────────────────────── -->
+      <section class="section">
+        <div class="two-col-panels">
+
+          <div class="info-panel">
+            <div class="info-panel-header">OPTIMIZATION</div>
+            <div class="info-panel-title">Batch data retrieval</div>
+            <p class="info-panel-desc">
+              Retrieve related orders in a single database operation instead of issuing one query per user.
+            </p>
+            <div class="query-comparison">
+              <div class="query-row">
+                <span class="query-label">Before</span>
+                <span class="query-val bad">N queries</span>
+              </div>
+              <div class="query-row">
+                <span class="query-label">After</span>
+                <span class="query-val good">1 batch query</span>
+              </div>
+            </div>
+            <p class="info-panel-note">
+              This is an optimization proposal. Performance improvement will be validated in the benchmark step.
+            </p>
+          </div>
+
+          <div class="info-panel">
+            <div class="info-panel-header">AI-ESTIMATED IMPACT <span class="estimate-tag">AI ESTIMATE</span></div>
+            <div class="info-panel-title" style="color:var(--amber);">HIGH</div>
+            <div class="benefit-list">
+              <div class="benefit-row"><span class="benefit-arrow">↓</span> Database queries</div>
+              <div class="benefit-row"><span class="benefit-arrow">↓</span> Database load</div>
+              <div class="benefit-row"><span class="benefit-arrow">↓</span> Response time</div>
+              <div class="benefit-row"><span class="benefit-arrow green">↑</span> Throughput</div>
+            </div>
+            <p class="info-panel-note">Predicted impact — not yet benchmarked. Will be verified in the next step.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── Change summary ─────────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">change summary</p>
+        <div class="change-grid">
+          <div class="change-row">
+            <span class="change-key">FILE CHANGED</span>
+            <span class="change-val cyan">app/database.py</span>
+          </div>
+          <div class="change-row">
+            <span class="change-key">LINES AFFECTED</span>
+            <span class="change-val">42–44</span>
+          </div>
+          <div class="change-row">
+            <span class="change-key">OPTIMIZATION TYPE</span>
+            <span class="change-val">Database query optimization</span>
+          </div>
+          <div class="change-row">
+            <span class="change-key">RISK</span>
+            <span class="change-val good">Low</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Apply state ────────────────────────────────────────────────── -->
+      <section class="section">
+
+        <!-- idle -->
+        <div id="opt-idle">
+          <div class="action-row">
+            <button class="btn-primary" id="apply-btn">APPLY OPTIMIZATION →</button>
+            <button class="btn-ghost" id="diff-btn">REVIEW DIFF</button>
+            <a href="./analyze.html" class="btn-ghost" style="margin-left:auto;">← BACK</a>
+          </div>
+        </div>
+
+        <!-- applying -->
+        <div id="opt-applying" class="hidden">
+          <p class="section-label">applying optimization</p>
+          <div class="apply-steps" id="apply-steps"></div>
+        </div>
+
+        <!-- done -->
+        <div id="opt-done" class="hidden">
+          <div class="done-banner">
+            <span class="done-check">✓</span>
+            <span class="done-text">OPTIMIZATION APPLIED</span>
+          </div>
+          <div class="action-row" style="margin-top:20px;">
+            <a href="./benchmark.html" class="btn-primary">RUN BENCHMARK →</a>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </body>
+</html>

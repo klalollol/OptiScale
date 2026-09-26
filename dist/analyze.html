@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OptiScale · Analyze</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/styles-CKumfIL_.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/styles-BVQ0P9Es.css">
+    <link rel="stylesheet" crossorigin href="/assets/upload-Bi21sa1j.css">
+    <link rel="stylesheet" crossorigin href="/assets/pages-B4mhaf3W.css">
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <!-- ── Top bar ─────────────────────────────────────────────────────── -->
+      <header class="topbar">
+        <div class="logo-wrap">
+          <a href="./index.html" style="display:flex;align-items:center;gap:8px;">
+            <span class="logo-diamond">◇</span>
+            <span class="logo-name">OptiScale</span>
+          </a>
+        </div>
+        <div class="upload-breadcrumb">
+          <span class="breadcrumb-seg muted">sample-fastapi-project</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-seg active">ANALYZE</span>
+        </div>
+        <div class="pipeline-status">
+          <span class="status-dot"></span>
+          <span>analysis complete</span>
+        </div>
+      </header>
+
+      <!-- ── Workflow indicator ──────────────────────────────────────────── -->
+      <div class="workflow-bar">
+        <div class="workflow-steps">
+          <a href="./upload.html" class="wf-step done"><span class="wf-num">01</span> UPLOAD</a>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step active"><span class="wf-num">02</span> ANALYZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">03</span> OPTIMIZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">04</span> BENCHMARK</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">05</span> PROVE</span>
+        </div>
+      </div>
+
+      <!-- ── Hero ───────────────────────────────────────────────────────── -->
+      <section class="page-hero">
+        <div class="page-hero-left">
+          <p class="section-label">step 02 of 05</p>
+          <h1 class="page-headline">BOB PERFORMANCE ANALYSIS</h1>
+          <p class="page-sub">Find where your application is losing performance.</p>
+        </div>
+        <div class="page-hero-right">
+          <div class="project-badge">
+            <span class="project-badge-label">project</span>
+            <span class="project-badge-name">sample-fastapi-project</span>
+          </div>
+          <div class="status-pill status-complete">ANALYSIS COMPLETE</div>
+        </div>
+      </section>
+
+      <!-- ── Analysis stats ─────────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">analysis summary</p>
+        <div class="stat-grid-4">
+          <div class="stat-mini-card">
+            <span class="stat-mini-num">126</span>
+            <span class="stat-mini-label">FILES ANALYZED</span>
+          </div>
+          <div class="stat-mini-card">
+            <span class="stat-mini-num">47</span>
+            <span class="stat-mini-label">DEPENDENCIES</span>
+          </div>
+          <div class="stat-mini-card">
+            <span class="stat-mini-num">8</span>
+            <span class="stat-mini-label">PERFORMANCE PATTERNS</span>
+          </div>
+          <div class="stat-mini-card critical">
+            <span class="stat-mini-num red">1</span>
+            <span class="stat-mini-label">CRITICAL BOTTLENECKS</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Critical bottleneck ────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">critical finding</p>
+
+        <div class="bottleneck-panel">
+          <div class="bottleneck-header">
+            <div class="bottleneck-header-left">
+              <span class="severity-badge severity-critical">CRITICAL</span>
+              <span class="bottleneck-pattern">N+1 query pattern</span>
+            </div>
+            <span class="impact-tag">IMPACT: HIGH</span>
+          </div>
+
+          <h2 class="bottleneck-title">N+1 DATABASE QUERY</h2>
+
+          <div class="bottleneck-location">
+            <span class="location-file">app/database.py</span>
+            <span class="location-sep">·</span>
+            <span class="location-line">Line 42</span>
+          </div>
+
+          <p class="bottleneck-desc">
+            The application performs an additional database query for every user in the result set.
+            As user count grows, database load scales linearly — increasing response time and reducing overall capacity.
+          </p>
+
+          <div class="bottleneck-body">
+            <!-- Code block -->
+            <div class="bottleneck-code-wrap">
+              <div class="code-panel-header amber-header">before — app/database.py:42</div>
+              <pre class="code-panel-body"><span class="cm"># Retrieve all users</span>
+users = get_users()
+
+<span class="cm"># ⚠ N+1: one extra query per user</span>
+<span class="highlight-line">for user in users:</span>
+<span class="highlight-line">    user.orders = get_orders(user.id)</span></pre>
+            </div>
+
+            <!-- Visual impact ladder -->
+            <div class="impact-ladder">
+              <div class="ladder-title">QUERY SCALING</div>
+              <div class="ladder-row">
+                <span class="ladder-users">1 user</span>
+                <span class="ladder-arrow">→</span>
+                <span class="ladder-queries">1 query</span>
+              </div>
+              <div class="ladder-row">
+                <span class="ladder-users">100 users</span>
+                <span class="ladder-arrow">→</span>
+                <span class="ladder-queries warn">100 queries</span>
+              </div>
+              <div class="ladder-row">
+                <span class="ladder-users">1,000 users</span>
+                <span class="ladder-arrow">→</span>
+                <span class="ladder-queries bad">1,000 queries</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why it matters -->
+        <div class="why-panel">
+          <div class="why-header">WHY THIS MATTERS</div>
+          <div class="why-chain">
+            <span class="why-node">More users</span>
+            <span class="why-arrow">↓</span>
+            <span class="why-node">More database queries</span>
+            <span class="why-arrow">↓</span>
+            <span class="why-node">Higher database load</span>
+            <span class="why-arrow">↓</span>
+            <span class="why-node warn">Higher response time</span>
+            <span class="why-arrow">↓</span>
+            <span class="why-node bad">Lower application capacity</span>
+          </div>
+        </div>
+
+        <!-- BOB analysis -->
+        <div class="bob-panel">
+          <div class="bob-panel-header">
+            <span class="logo-diamond" style="color:var(--cyan);font-size:0.8rem;">◇</span>
+            BOB ANALYSIS
+          </div>
+          <div class="bob-rows">
+            <div class="bob-row">
+              <span class="bob-row-label">Potential cause</span>
+              <span class="bob-row-value">Repeated database access inside a loop.</span>
+            </div>
+            <div class="bob-row">
+              <span class="bob-row-label">Performance pattern</span>
+              <span class="bob-row-value">N+1 query pattern.</span>
+            </div>
+            <div class="bob-row">
+              <span class="bob-row-label">Expected effect</span>
+              <span class="bob-row-value">Increased database operations as user count grows.</span>
+            </div>
+            <div class="bob-row">
+              <span class="bob-row-label">BOB confidence</span>
+              <span class="bob-row-value" style="color:var(--amber);">BOB identifies this as a potential performance bottleneck.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-row">
+          <a href="./optimize.html" class="btn-primary">REVIEW OPTIMIZATION →</a>
+          <a href="./upload.html" class="btn-ghost">← VIEW PROJECT</a>
+        </div>
+      </section>
+
+    </div>
+  </body>
+</html>
