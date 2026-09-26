@@ -96,6 +96,33 @@
         <p class="diff-parity-line" id="diff-parity"></p>
       </section>
 
+      <!-- ── Page 2: File upload + preflight checklist ────────────────── -->
+      <section class="section">
+        <p class="section-label">upload project archive</p>
+        <label class="upload-zone" for="archive-input">
+          drop a .zip or click to select — preflight runs automatically
+          <input type="file" id="archive-input" accept=".zip" style="display:none" />
+        </label>
+        <div id="preflight-checks"></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+          <button id="review-btn" class="review-btn" disabled>review modernization →</button>
+        </div>
+      </section>
+
+      <!-- ── Page 3: Requirements panel + performance table ────────────── -->
+      <section class="section">
+        <p class="section-label">verification requirements</p>
+        <div id="requirements-panel" class="requirements-panel"></div>
+        <p class="section-label" style="margin-top:32px;">performance comparison</p>
+        <div id="perf-table"></div>
+      </section>
+
+      <!-- ── Page 3: Code suggestions ─────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">anti-pattern findings &amp; fix hints</p>
+        <div id="suggestions-panel"></div>
+      </section>
+
       <!-- ── Stats footer ───────────────────────────────────────────────── -->
       <section id="stats-footer" class="stats-footer"></section>
 

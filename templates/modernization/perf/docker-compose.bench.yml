@@ -1,0 +1,65 @@
+name: optiscale-bench
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB:       benchdb
+      POSTGRES_USER:     bench
+      POSTGRES_PASSWORD: bench
+    volumes:
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bench"]
+      interval: 3s
+      retries: 20
+    networks: [bench]
+
+  legacy:
+    image: optiscale/legacy:bench
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:p6spy:postgresql://db:5432/benchdb
+      JAVA_TOOL_OPTIONS: "-Xmx512m"
+    volumes:
+      - ../agents/spy.properties:/app/spy.properties:ro
+      - ../../out/sql:/app/logs
+    ports: ["18080:8080"]
+    # untrusted code — locked down
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 256
+    deploy:
+      resources:
+        limits: { cpus: "2.0", memory: 1G }
+    networks: [bench]
+
+  modern:
+    image: optiscale/modern:bench
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:p6spy:postgresql://db:5432/benchdb
+      JAVA_TOOL_OPTIONS: "-Xmx512m"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,metrics,prometheus
+    volumes:
+      - ../agents/spy.properties:/app/spy.properties:ro
+      - ../../out/sql:/app/logs
+    ports: ["18081:8080"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 256
+    deploy:
+      resources:
+        limits: { cpus: "2.0", memory: 1G }
+    networks: [bench]
+
+networks:
+  bench:
+    driver: bridge
+    internal: true   # no egress from untrusted containers
