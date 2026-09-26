@@ -342,6 +342,7 @@ const startBenchBtn    = document.getElementById('start-bench-btn')!;
 const toProveBtn       = document.getElementById('to-prove-btn')!;
 const benchRunning     = document.getElementById('bench-running')!;
 const benchComplete    = document.getElementById('bench-complete')!;
+const benchLogWrap     = document.getElementById('bench-log-wrap')!;
 const benchLogEl       = document.getElementById('bench-log')!;
 const progOrig         = document.getElementById('prog-orig') as HTMLElement;
 const progOpt          = document.getElementById('prog-opt')  as HTMLElement;
@@ -352,6 +353,7 @@ function setBenchState(s: 'idle' | 'running' | 'complete'): void {
   startBenchBtn.style.display  = s === 'idle'     ? '' : 'none';
   toProveBtn.style.display     = s === 'complete' ? '' : 'none';
   benchRunning.style.display   = s === 'running'  ? '' : 'none';
+  benchLogWrap.style.display   = s === 'running'  ? '' : 'none';
   benchComplete.style.display  = s === 'complete' ? '' : 'none';
 }
 
