@@ -1,0 +1,26 @@
+# OptiScale modern benchmark image — Java 17
+# eclipse-temurin:17-jre-alpine, non-root, read-only rootfs compatible.
+FROM eclipse-temurin:17-jre-alpine
+
+# Create a non-root user/group
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Application directory
+WORKDIR /app
+
+# Copy the modern JAR (built with -Pmodern classifier)
+# The caller is expected to have run: mvnw -Pmodern -DskipTests package
+COPY --chown=appuser:appgroup target/*-modern.jar app.jar
+
+# p6spy config is bind-mounted at runtime as /app/spy.properties (see docker-compose.bench.yml)
+# Actuator metrics endpoint enabled via MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE env var.
+# tmpfs is mounted at /tmp by docker-compose — no writes needed elsewhere.
+
+USER appuser
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", \
+  "-Djava.security.egd=file:/dev/./urandom", \
+  "--add-opens", "java.base/java.lang=ALL-UNNAMED", \
+  "-jar", "/app/app.jar"]

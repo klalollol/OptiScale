@@ -1,8 +1,11 @@
-# Project Documentation Context (Non-Obvious Only)
+# Project Documentation Rules (Non-Obvious Only)
 
-- This is a **hackathon concept demo** — intentionally no backend, router, state management, or test suite.
-- Zero runtime dependencies; only `typescript` and `vite` as devDependencies.
-- The project was fully redesigned: the old multi-section layout (hero stats, pipeline cards, impact metrics, migration map, parity reports, deploy artifacts) was replaced by a single-page blueprint/grid design with three sections: subagent status cards, a code diff panel, and a footer stats row.
-- `bob_sessions/` still exists but is no longer referenced anywhere in `index.html` after the redesign — it is vestigial.
-- The inline SVG pipeline diagram (hexagons showing monolith → refactor/parity/ci-cd → cloud) is hardcoded in `index.html`, not generated from `src/data.ts`.
-- There is no linter (no ESLint/Prettier). TypeScript compiler strictness is the only quality gate.
+- `src/lib/preflight/` is browser-safe TS — no Node APIs. It is compiled by Vite as part of the main bundle.
+- `src/services/` contains Node-only code excluded from the Vite bundle. Documentation about it does not apply to the browser page.
+- `types/review.ts` is a type-only file outside `tsconfig.json`'s `include`. It defines the contract between `merge-report.mjs` and the UI — it is not importable from browser code.
+- `templates/modernization/` files are **templates**, not source. They contain `@PLACEHOLDER@` tokens that get substituted at injection time. Reading them directly gives you the template, not the final output.
+- The `src/lib/preflight/*.test.ts` files are plain assertion scripts (no test framework). Run them with `node --loader ts-node/esm <file>`. They are excluded from `tsconfig.json`.
+- `merge-report.test.mjs` does NOT require a loader — it is plain ESM JavaScript.
+- `bob_sessions/` folder is a dead artefact from a previous design; its SVGs are not referenced anywhere in the current page.
+- The page has conceptual "pages" (upload/review, requirements/perf) but it is a single HTML file — there is no routing.
+- Pipeline order: preflight blockers stop everything → static analysis always runs → `measured` tier requires Docker.

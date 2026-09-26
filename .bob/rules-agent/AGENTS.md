@@ -7,3 +7,11 @@
 - `codeDiff.legacy` / `codeDiff.modern` strings contain raw HTML with `<span class="kw">` etc. — assign to `.innerHTML`, never `.textContent`. The span classes (`.kw`, `.ty`, `.fn`, `.cm`, `.st`, `.nu`, `.op`) must be defined in `src/styles.css`.
 - TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` are all on — any unused symbol is a compile error. Run `npm run build` to validate before finishing changes.
 - No test runner exists; `npm run dev` + browser is the only way to validate rendering changes.
+- `src/services/harnessService.ts` uses Node APIs — it is excluded from `tsconfig.json` and must never be imported from browser-side code. Same for `*.test.ts` files.
+- `types/review.ts` is outside `tsconfig.json`'s `include` — reference it from Node scripts via JSDoc `@type {import('...')}`, never via `import`.
+- New container IDs added to `index.html` require a matching `document.querySelector('#id')` block in `src/main.ts` and sample data in `src/data.ts`.
+- `.badge-estimated` (amber outline, transparent bg) must never share styles with `.badge-measured` (cyan filled). This is a non-negotiable UI contract.
+- Preflight tier pill classes: `.tier-measured`, `.tier-estimated`, `.tier-unavailable` — all must be defined in CSS before use.
+- Harness injection: `injectHarness()` must record tree SHA-256 BEFORE writing any file. `revert()` verifies this hash after restoring — mismatch throws.
+- Template placeholders use `@UPPER_SNAKE_CASE@` syntax — `fillPlaceholders()` in `harnessService.ts` replaces them via regex `/@([A-Z_]+)@/g`.
+- `run-bench.sh` exits `2` (not `1`) on build failure — callers check for exit code `2` specifically to fall back to `tier="estimated"`.
