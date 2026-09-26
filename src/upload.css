@@ -193,6 +193,7 @@
   gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
+  position: relative;
 }
 
 .up-btn-primary {
@@ -229,6 +230,66 @@
 .up-btn-demo:hover {
   color: var(--text);
   border-color: rgba(90, 122, 153, 0.7);
+}
+
+/* ─── Demo project picker ────────────────────────────────────────────────── */
+.demo-picker {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  background: #0d1f35;
+  border: 1px solid var(--border-bright);
+  border-radius: 3px;
+  z-index: 100;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.demo-picker.hidden { display: none; }
+
+.demo-picker-label {
+  padding: 8px 14px 6px;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-family: var(--mono);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+}
+
+.demo-pick-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.demo-pick-row:last-child { border-bottom: none; }
+
+.demo-pick-row:hover { background: rgba(0,188,212,0.07); }
+
+.demo-pick-name {
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+}
+
+.demo-pick-meta {
+  font-size: 0.64rem;
+  font-family: var(--mono);
+  color: var(--muted);
+  letter-spacing: 0.04em;
 }
 
 .up-btn-continue {

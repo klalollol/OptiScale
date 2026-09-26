@@ -1,6 +1,9 @@
 // app.ts — OptiScale single-page app controller
 export {};
 
+import { analyzeZip } from './lib/zip-analyzer';
+import type { AnalysisProfile } from './lib/zip-analyzer';
+
 // ─── Utilities ───────────────────────────────────────────────────────────────
 
 function sleep(ms: number): Promise<void> {
@@ -90,6 +93,183 @@ function unlockSection(sectionId: string, lockId: string, stepIdx: number): void
   });
 }
 
+// ─── Active analysis profile (set after upload, read by all sections) ─────────
+// Exported so external scripts / future backend integration can inspect it.
+let activeProfile: AnalysisProfile | null = null;
+export function getActiveProfile(): AnalysisProfile | null { return activeProfile; }
+
+function pct(n: number): string {
+  return (n >= 0 ? '+' : '') + n + '%';
+}
+function negPct(n: number): string {
+  return (n <= 0 ? '' : '+') + n + '%';
+}
+function fmtUnit(val: number, unit: string): string {
+  return val.toLocaleString() + ' <span class="perf-unit">' + unit + '</span>';
+}
+function deltaClass(n: number, lowerIsBetter = false): string {
+  if (n === 0) return 'perf-delta delta-neutral';
+  const good = lowerIsBetter ? n < 0 : n > 0;
+  return good ? 'perf-delta delta-good' : 'perf-delta delta-bad';
+}
+
+function setText(id: string, val: string): void {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+function setHtml(id: string, val: string): void {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = val;
+}
+
+function injectProfile(profile: AnalysisProfile): void {
+  const b = profile.bottleneck;
+  const r = profile.results;
+
+  // ── §2 ANALYZE ──────────────────────────────────────────────────────────
+  setText('an-project-name',   profile.projectName);
+  setText('an-files',          String(profile.filesAnalyzed));
+  setText('an-deps',           String(profile.dependencies));
+  setText('an-patterns',       String(profile.patternsFound));
+  setText('an-critical',       String(profile.criticalCount));
+
+  const severityEl = document.getElementById('an-severity-badge');
+  if (severityEl) {
+    severityEl.textContent = b.severity.toUpperCase();
+    severityEl.className   = `severity-badge severity-${b.severity}`;
+  }
+  setText('an-pattern-name',    b.patternName);
+  setText('an-impact-tag',      'IMPACT: ' + b.impact);
+  setText('an-bottleneck-title', b.title);
+  setText('an-location-file',   b.file || 'app/queries.py');
+  setText('an-location-line',   b.line ? 'Line ' + b.line : '—');
+  setText('an-bottleneck-desc', b.description);
+  setText('an-code-header',     'before — ' + (b.file || '…'));
+  setHtml('an-code-before',     b.codeBeforeHtml);
+
+  // Ladder rows
+  const ladderEl = document.getElementById('an-ladder-rows');
+  if (ladderEl) {
+    ladderEl.innerHTML = b.ladderRows.map(row =>
+      `<div class="ladder-row">
+        <span class="ladder-users">${row.users}</span>
+        <span class="ladder-arrow">→</span>
+        <span class="ladder-queries${row.bad ? ' bad' : ''}">${row.queries}</span>
+      </div>`
+    ).join('');
+  }
+
+  // Why chain
+  const whyEl = document.getElementById('an-why-chain');
+  if (whyEl) {
+    const nodes = b.whyChain;
+    let html = '';
+    nodes.forEach((node, i) => {
+      const cls = node.bad ? ' bad' : node.warn ? ' warn' : '';
+      html += `<span class="why-node${cls}">${node.text}</span>`;
+      if (i < nodes.length - 1) html += `<span class="why-arrow why-arrow--v">↓</span>`;
+    });
+    whyEl.innerHTML = html;
+  }
+
+  setText('an-bob-pattern',    b.patternName);
+  setText('an-bob-effect',     b.bobEffect);
+  const confEl = document.getElementById('an-bob-confidence');
+  if (confEl) {
+    confEl.textContent = b.bobConfidence;
+    confEl.style.color = b.confidenceColor;
+  }
+
+  // ── §3 OPTIMIZE ─────────────────────────────────────────────────────────
+  setText('opt-project-name',  profile.projectName);
+  const subText = b.severity === 'pass'
+    ? 'No critical bottleneck detected. This project is already well-optimized.'
+    : 'BOB found a potential performance bottleneck. Here is the proposed fix.';
+  setText('opt-sub-text',      subText);
+  const statusPill = document.getElementById('opt-status-pill');
+  if (statusPill) {
+    statusPill.textContent  = b.severity === 'pass' ? 'ALREADY OPTIMIZED' : 'OPTIMIZATION READY';
+    statusPill.className    = b.severity === 'pass' ? 'status-pill status-complete' : 'status-pill status-ready';
+  }
+  setText('opt-diff-label',    'before / after — ' + b.diffLabel);
+  setHtml('opt-code-before',   b.codeBeforeHtml);
+  setHtml('opt-code-after',    b.codeAfterHtml);
+  setText('opt-parity-line',   b.parityLine);
+  setText('opt-type-title',    b.optimizationType);
+  setText('opt-query-before',  b.queryBefore);
+  setText('opt-query-after',   b.queryAfter);
+  setText('opt-impact-title',  b.impact);
+  setText('opt-change-file',   b.file || '—');
+  setText('opt-change-lines',  b.linesAffected);
+  setText('opt-change-type',   b.optimizationType);
+  setText('opt-change-risk',   b.risk);
+
+  // ── §4 BENCHMARK ────────────────────────────────────────────────────────
+  setText('bench-endpoint',    profile.endpoint);
+  setText('bench-db',          profile.database);
+
+  // ── §5 PROVE ────────────────────────────────────────────────────────────
+  const multStr = r.multiplier >= 100
+    ? Math.round(r.multiplier) + '×'
+    : r.multiplier.toFixed(r.multiplier < 2 ? 2 : 1) + '×';
+  setText('prove-multiplier',   multStr);
+
+  const tpBefore = r.throughputBefore.toLocaleString();
+  const tpAfter  = r.throughputAfter.toLocaleString();
+  setText('prove-tp-before',   tpBefore + ' req/s');
+  setText('prove-tp-after',    tpAfter  + ' req/s');
+  setText('prove-tp-delta',    '+' + r.throughputDeltaPct + '%');
+
+  // Metric cards
+  setText('mc-tp-b',  tpBefore + ' req/s');
+  setText('mc-tp-a',  tpAfter  + ' req/s');
+  setText('mc-tp-d',  pct(r.throughputDeltaPct));
+  setText('mc-lat-b', r.latencyBefore + ' ms');
+  setText('mc-lat-a', r.latencyAfter  + ' ms');
+  setText('mc-lat-d', negPct(r.latencyDeltaPct));
+  setText('mc-cpu-b', r.cpuBefore + '%');
+  setText('mc-cpu-a', r.cpuAfter  + '%');
+  setText('mc-cpu-d', negPct(r.cpuDeltaPct));
+  setText('mc-mem-b', r.memBefore + ' GB');
+  setText('mc-mem-a', r.memAfter  + ' GB');
+  setText('mc-mem-d', negPct(r.memDeltaPct));
+
+  // Table
+  setHtml('tbl-tp-b',  fmtUnit(r.throughputBefore, 'req/s'));
+  setHtml('tbl-tp-a',  fmtUnit(r.throughputAfter,  'req/s'));
+  const tpDelta = document.getElementById('tbl-tp-d');
+  if (tpDelta) { tpDelta.textContent = '+' + r.throughputDeltaPct + '%'; tpDelta.className = deltaClass(r.throughputDeltaPct); }
+
+  setHtml('tbl-lat-b', fmtUnit(r.latencyBefore, 'ms'));
+  setHtml('tbl-lat-a', fmtUnit(r.latencyAfter,  'ms'));
+  const latDelta = document.getElementById('tbl-lat-d');
+  if (latDelta) { latDelta.textContent = negPct(r.latencyDeltaPct); latDelta.className = deltaClass(r.latencyDeltaPct, true); }
+
+  setHtml('tbl-cpu-b', fmtUnit(r.cpuBefore, '%'));
+  setHtml('tbl-cpu-a', fmtUnit(r.cpuAfter,  '%'));
+  const cpuDelta = document.getElementById('tbl-cpu-d');
+  if (cpuDelta) { cpuDelta.textContent = negPct(r.cpuDeltaPct); cpuDelta.className = deltaClass(r.cpuDeltaPct, true); }
+
+  setHtml('tbl-mem-b', fmtUnit(r.memBefore, 'GB'));
+  setHtml('tbl-mem-a', fmtUnit(r.memAfter,  'GB'));
+  const memDelta = document.getElementById('tbl-mem-d');
+  if (memDelta) { memDelta.textContent = negPct(r.memDeltaPct); memDelta.className = deltaClass(r.memDeltaPct, true); }
+
+  // Prediction vs measured
+  const predEl = document.getElementById('prove-prediction');
+  if (predEl) {
+    predEl.textContent = r.bobPrediction;
+    predEl.style.color = b.severity === 'critical' ? 'var(--red)' :
+                         b.severity === 'moderate' ? 'var(--amber)' : 'var(--green)';
+  }
+  setText('prove-measured', r.benchmarkMeasured);
+
+  // Bar widths — recalculated when PROVE unlocks (in toProveBtn handler)
+  // Store on window so the unlock handler can re-read them
+  (window as unknown as Record<string, number>)['_barOrigPct'] =
+    Math.round((r.throughputBefore / r.throughputAfter) * 100);
+}
+
 // ─── Upload mock logic ────────────────────────────────────────────────────────
 
 type UploadState = 'empty' | 'dragging' | 'uploading' | 'success' | 'error';
@@ -102,12 +282,35 @@ const MOCK_VALIDATION_CHECKS = [
   'Supported technology detected',
 ];
 
-const DEMO_PROJECT = {
-  name: 'sample-fastapi-project.zip',
-  sizeMB: 24.8,
-  stack: 'Python 3.11 · FastAPI · PostgreSQL',
-  files: 126,
-  deps: 47,
+type DemoKey = 'ecommerce' | 'inventory' | 'analytics';
+
+const DEMO_PROJECTS: Record<DemoKey, {
+  name: string; sizeMB: number; stack: string; files: number; deps: number; path: string;
+}> = {
+  ecommerce: {
+    name: 'sample-fastapi-ecommerce.zip',
+    sizeMB: 4.2,
+    stack: 'Python 3.11 · FastAPI · PostgreSQL',
+    files: 126,
+    deps: 47,
+    path: '/demo-zips/sample-fastapi-ecommerce.zip',
+  },
+  inventory: {
+    name: 'sample-fastapi-inventory.zip',
+    sizeMB: 2.3,
+    stack: 'Python 3.11 · FastAPI · PostgreSQL',
+    files: 98,
+    deps: 41,
+    path: '/demo-zips/sample-fastapi-inventory.zip',
+  },
+  analytics: {
+    name: 'sample-fastapi-analytics.zip',
+    sizeMB: 2.5,
+    stack: 'Python 3.11 · FastAPI · PostgreSQL',
+    files: 112,
+    deps: 44,
+    path: '/demo-zips/sample-fastapi-analytics.zip',
+  },
 };
 
 async function mockUploadProject(
@@ -125,6 +328,7 @@ const uploadPanel       = document.getElementById('upload-panel')!;
 const fileInput         = document.querySelector<HTMLInputElement>('#file-input')!;
 const selectFileBtn     = document.getElementById('select-file-btn')!;
 const demoBtn           = document.getElementById('demo-btn')!;
+const demoPicker        = document.getElementById('demo-picker')!;
 const retryBtn          = document.getElementById('retry-btn')!;
 const continueAnalBtn   = document.getElementById('continue-to-analyze-btn')!;
 const ctaUploadHint     = document.getElementById('cta-upload-hint')!;
@@ -180,10 +384,16 @@ async function startUpload(file: File): Promise<void> {
   progressSize.textContent     = formatBytes(file.size);
   showUploadState('uploading');
   try {
-    await mockUploadProject(file, (pct) => {
-      progressFill.style.width = pct + '%';
-      progressPct.textContent  = pct + '%';
-    });
+    // Run upload animation and ZIP analysis in parallel
+    const [profile] = await Promise.all([
+      analyzeZip(file),
+      mockUploadProject(file, (p) => {
+        progressFill.style.width = p + '%';
+        progressPct.textContent  = p + '%';
+      }),
+    ]);
+    activeProfile = profile;
+    injectProfile(profile);
     successFilename.textContent = file.name;
     successFilesize.textContent = formatBytes(file.size);
     renderValidation();
@@ -193,21 +403,42 @@ async function startUpload(file: File): Promise<void> {
   }
 }
 
-async function startDemoUpload(): Promise<void> {
-  const demoBytes = DEMO_PROJECT.sizeMB * 1024 * 1024;
-  uploadFilenameEl.textContent = DEMO_PROJECT.name;
+function togglePicker(force?: boolean): void {
+  const show = force !== undefined ? force : demoPicker.classList.contains('hidden');
+  demoPicker.classList.toggle('hidden', !show);
+}
+
+async function startDemoUpload(key: DemoKey): Promise<void> {
+  const demo = DEMO_PROJECTS[key];
+  togglePicker(false);
+  uploadFilenameEl.textContent = demo.name;
   progressFill.style.width     = '0%';
   progressPct.textContent      = '0%';
-  progressSize.textContent     = DEMO_PROJECT.sizeMB + ' MB';
+  progressSize.textContent     = demo.sizeMB + ' MB';
   showUploadState('uploading');
   try {
-    await mockUploadProject({ name: DEMO_PROJECT.name, size: demoBytes } as File, (pct) => {
-      progressFill.style.width = pct + '%';
-      progressPct.textContent  = pct + '%';
-    });
-    successFilename.textContent = DEMO_PROJECT.name;
-    successFilesize.textContent =
-      `${DEMO_PROJECT.sizeMB} MB · ${DEMO_PROJECT.stack} · ${DEMO_PROJECT.files} files · ${DEMO_PROJECT.deps} deps`;
+    // Fetch real ZIP for analysis; fall back to empty file if server can't serve it
+    let file: File;
+    try {
+      const resp = await fetch(demo.path);
+      if (!resp.ok) throw new Error('fetch failed');
+      const blob = await resp.blob();
+      file = new File([blob], demo.name, { type: 'application/zip' });
+    } catch {
+      file = new File([new Uint8Array(64)], demo.name, { type: 'application/zip' });
+    }
+    // Run animation and analysis in parallel
+    const [profile] = await Promise.all([
+      analyzeZip(file),
+      mockUploadProject(file, (p) => {
+        progressFill.style.width = p + '%';
+        progressPct.textContent  = p + '%';
+      }),
+    ]);
+    activeProfile = profile;
+    injectProfile(profile);
+    successFilename.textContent = demo.name;
+    successFilesize.textContent = `${demo.sizeMB} MB · ${demo.stack} · ${demo.files} source files · ${demo.deps} dependencies`;
     renderValidation();
     showUploadState('success');
   } catch {
@@ -217,8 +448,11 @@ async function startDemoUpload(): Promise<void> {
 
 // Upload events
 selectFileBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
-uploadPanel.addEventListener('click', () => {
-  if (!uploadStateEls.empty?.classList.contains('hidden')) fileInput.click();
+uploadPanel.addEventListener('click', (e) => {
+  // Close picker if clicking outside it
+  if (!(e.target as HTMLElement).closest('#demo-picker, #demo-btn')) togglePicker(false);
+  if (!uploadStateEls.empty?.classList.contains('hidden')) return;
+  if (!(e.target as HTMLElement).closest('#demo-picker, #demo-btn, #select-file-btn')) fileInput.click();
 });
 uploadPanel.addEventListener('keydown', (e) => {
   if ((e.key === 'Enter' || e.key === ' ') && !uploadStateEls.empty?.classList.contains('hidden')) {
@@ -230,7 +464,14 @@ fileInput.addEventListener('change', () => {
   if (f) void startUpload(f);
   fileInput.value = '';
 });
-demoBtn.addEventListener('click', (e) => { e.stopPropagation(); void startDemoUpload(); });
+demoBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePicker(); });
+demoPicker.querySelectorAll<HTMLButtonElement>('.demo-pick-row').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const key = btn.dataset['demo'] as DemoKey | undefined;
+    if (key && key in DEMO_PROJECTS) void startDemoUpload(key);
+  });
+});
 retryBtn.addEventListener('click', (e) => { e.stopPropagation(); showUploadState('empty'); });
 continueAnalBtn.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -404,11 +645,12 @@ async function runBenchmark(): Promise<void> {
 startBenchBtn.addEventListener('click', () => void runBenchmark());
 toProveBtn.addEventListener('click', () => {
   unlockSection('sec-prove', 'lock-prove', 4);
-  // animate throughput bars after layout settles
+  // Animate throughput bars with profile-aware ratio
   setTimeout(() => {
     const barOrig = document.getElementById('bar-orig') as HTMLElement | null;
     const barOpt  = document.getElementById('bar-opt')  as HTMLElement | null;
-    if (barOrig) barOrig.style.width = '38.85%';
+    const origPct = (window as unknown as Record<string, number>)['_barOrigPct'] ?? 39;
+    if (barOrig) barOrig.style.width = origPct + '%';
     if (barOpt)  barOpt.style.width  = '100%';
   }, 600);
 });
