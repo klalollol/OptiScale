@@ -6,13 +6,13 @@
     <title>OptiScale · Optimize Pipeline</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/app-BmyFhY5N.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/styles-DPFQ96LC.js">
-    <link rel="stylesheet" crossorigin href="/assets/styles-t5SuAHyH.css">
-    <link rel="stylesheet" crossorigin href="/assets/app-GlEQW56P.css">
-    <link rel="stylesheet" crossorigin href="/assets/upload-9tZevA9G.css">
-    <link rel="stylesheet" crossorigin href="/assets/pages-Yf_j9kOF.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/app-sVGvc-DB.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/styles-CKumfIL_.js">
+    <link rel="stylesheet" crossorigin href="/assets/styles-BVQ0P9Es.css">
+    <link rel="stylesheet" crossorigin href="/assets/app-CeBvplbH.css">
+    <link rel="stylesheet" crossorigin href="/assets/upload-Dc-R3qj0.css">
+    <link rel="stylesheet" crossorigin href="/assets/pages-B4mhaf3W.css">
   </head>
   <body>
     <div class="page-shell">
@@ -97,25 +97,25 @@
                 <div class="up-hint">Drag &amp; drop your .ZIP or click to select</div>
                 <div class="up-actions">
                   <button class="up-btn-primary" id="select-file-btn">SELECT FILE</button>
-                  <button class="up-btn-demo" id="demo-btn">▾ DEMO PROJECT</button>
+                  <button class="up-btn-demo" id="demo-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="demo-picker">▾ DEMO PROJECT</button>
                 </div>
+              <!-- Demo project picker — rendered as fixed popup, positioned via JS -->
+              <div class="demo-picker" id="demo-picker" role="listbox" aria-label="Select demo project" tabindex="-1">
+                <div class="demo-picker-label">SELECT TEST CASE</div>
+                <button class="demo-pick-row" role="option" data-demo="tc-severe-n-plus-one" tabindex="0">
+                  <span class="demo-pick-name">tc-severe-n-plus-one</span>
+                  <span class="demo-pick-meta">Severe N+1 query pattern · FastAPI · PostgreSQL</span>
+                </button>
+                <button class="demo-pick-row" role="option" data-demo="tc-missing-index" tabindex="0">
+                  <span class="demo-pick-name">tc-missing-index</span>
+                  <span class="demo-pick-meta">Missing DB index bottleneck · FastAPI · PostgreSQL</span>
+                </button>
+                <button class="demo-pick-row" role="option" data-demo="tc-no-bottleneck" tabindex="0">
+                  <span class="demo-pick-name">tc-no-bottleneck</span>
+                  <span class="demo-pick-meta">Well-optimised baseline · FastAPI · PostgreSQL</span>
+                </button>
+              </div>
 
-                <!-- Demo project picker (shown on demo-btn click) -->
-                <div class="demo-picker hidden" id="demo-picker">
-                  <div class="demo-picker-label">SELECT DEMO PROJECT</div>
-                  <button class="demo-pick-row" data-demo="ecommerce">
-                    <span class="demo-pick-name">sample-fastapi-ecommerce</span>
-                    <span class="demo-pick-meta">Python · FastAPI · PostgreSQL · E-Commerce API</span>
-                  </button>
-                  <button class="demo-pick-row" data-demo="inventory">
-                    <span class="demo-pick-name">sample-fastapi-inventory</span>
-                    <span class="demo-pick-meta">Python · FastAPI · PostgreSQL · Inventory API</span>
-                  </button>
-                  <button class="demo-pick-row" data-demo="analytics">
-                    <span class="demo-pick-name">sample-fastapi-analytics</span>
-                    <span class="demo-pick-meta">Python · FastAPI · PostgreSQL · Analytics API</span>
-                  </button>
-                </div>
                 <div class="up-meta-row">
                   <span class="up-meta-item">Format: .ZIP</span>
                   <span class="up-meta-sep">·</span>
@@ -600,6 +600,6 @@
         </div>
       </div>
 
-    </div><!-- /page-shell -->
+    </div><!-- /page-shell -->
   </body>
 </html>

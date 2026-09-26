@@ -5,9 +5,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  animation: fade-in var(--t-base) 0.1s both;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
 }
 
 .breadcrumb-seg.muted  { color: var(--muted); }
@@ -19,39 +18,36 @@
   border-bottom: 1px solid var(--border);
   padding: 14px 0;
   overflow-x: auto;
-  animation: fade-in var(--t-base) 0.15s both;
 }
 
 .workflow-steps {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   white-space: nowrap;
 }
 
 .wf-step {
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
   color: var(--muted);
-  padding: 5px 11px;
+  padding: 4px 10px;
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  border-radius: 3px;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
 }
 
 .wf-step.active {
   color: var(--cyan);
   border-color: var(--border-bright);
   background: var(--cyan-soft);
-  box-shadow: 0 0 12px rgba(0,188,212,0.1);
 }
 
 .wf-num {
   opacity: 0.6;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
 }
 
 .wf-step.active .wf-num {
@@ -62,7 +58,7 @@
 .wf-arrow {
   color: var(--muted);
   font-size: 0.72rem;
-  opacity: 0.4;
+  opacity: 0.5;
   flex-shrink: 0;
 }
 
@@ -75,19 +71,17 @@
 .upload-headline {
   font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 700;
-  color: var(--text-bright);
-  letter-spacing: -0.025em;
+  color: #ffffff;
+  letter-spacing: -0.02em;
   line-height: 1.08;
   margin-bottom: 14px;
-  animation: fade-up var(--t-spring) 0.1s both;
 }
 
 .upload-sub {
-  font-size: 0.875rem;
+  font-size: 0.84rem;
   color: var(--muted);
   max-width: 560px;
-  line-height: 1.8;
-  animation: fade-up var(--t-spring) 0.18s both;
+  line-height: 1.75;
 }
 
 /* ─── Upload section ────────────────────────────────────────────────────── */
@@ -98,29 +92,23 @@
 /* ─── Upload panel (the big drop zone) ──────────────────────────────────── */
 .upload-panel {
   border: 1px solid var(--border-bright);
-  background: var(--bg-card);
+  background: var(--bg);
   padding: 52px 40px;
   text-align: center;
   cursor: pointer;
   outline: none;
   position: relative;
-  transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
-  border-radius: var(--r-md);
-  animation: scale-in var(--t-spring) 0.2s both;
+  transition: border-color 0.2s, background 0.2s;
   /* subtle corner marks */
   box-shadow:
-    inset 4px 4px 0 rgba(0,188,212,0.05),
-    inset -4px -4px 0 rgba(0,188,212,0.05);
+    inset 4px 4px 0 rgba(0,188,212,0.06),
+    inset -4px -4px 0 rgba(0,188,212,0.06);
 }
 
 .upload-panel:hover,
 .upload-panel:focus-visible {
   border-color: var(--cyan);
-  background: rgba(0, 188, 212, 0.05);
-  box-shadow:
-    inset 4px 4px 0 rgba(0,188,212,0.08),
-    inset -4px -4px 0 rgba(0,188,212,0.08),
-    0 0 20px rgba(0,188,212,0.06);
+  background: rgba(0, 188, 212, 0.04);
 }
 
 .upload-panel.drag-over {
@@ -128,8 +116,7 @@
   background: rgba(0, 188, 212, 0.08);
   box-shadow:
     inset 4px 4px 0 rgba(0,188,212,0.12),
-    inset -4px -4px 0 rgba(0,188,212,0.12),
-    0 0 30px rgba(0,188,212,0.12);
+    inset -4px -4px 0 rgba(0,188,212,0.12);
 }
 
 /* ─── State visibility ───────────────────────────────────────────────────── */
@@ -139,44 +126,44 @@
 /* ─── Upload icon ────────────────────────────────────────────────────────── */
 .up-icon {
   color: var(--cyan);
-  opacity: 0.85;
+  opacity: 0.8;
   margin-bottom: 4px;
-  transition: opacity var(--t-fast), transform var(--t-base);
+  transition: opacity 0.2s, transform 0.2s;
 }
 
 .upload-panel:hover .up-icon,
-.upload-panel.drag-over .up-icon { opacity: 1; transform: translateY(-4px); }
+.upload-panel.drag-over .up-icon { opacity: 1; transform: translateY(-3px); }
 
 @keyframes drag-bob {
   0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
+  50%       { transform: translateY(-6px); }
 }
 
-.drag-pulse { animation: drag-bob 0.85s ease-in-out infinite; }
+.drag-pulse { animation: drag-bob 0.9s ease-in-out infinite; }
 
 /* ─── Labels & hints ─────────────────────────────────────────────────────── */
 .up-label {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-bright);
-  letter-spacing: 0.05em;
+  color: #ffffff;
+  letter-spacing: 0.06em;
 }
 
 .up-hint {
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   color: var(--muted);
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
 .up-filename {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   color: var(--cyan);
   letter-spacing: 0.04em;
   font-weight: 600;
 }
 
 .up-filesize {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--muted);
   letter-spacing: 0.04em;
 }
@@ -191,10 +178,10 @@
 }
 
 .up-meta-item {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--muted);
   letter-spacing: 0.04em;
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 .up-meta-sep { color: var(--muted); opacity: 0.35; }
@@ -210,69 +197,81 @@
 }
 
 .up-btn-primary {
-  padding: 10px 28px;
-  font-size: 0.8rem;
+  padding: 9px 28px;
+  font-size: 0.76rem;
   font-family: var(--mono);
-  letter-spacing: 0.09em;
+  letter-spacing: 0.1em;
   color: var(--cyan);
   background: var(--cyan-soft);
   border: 1px solid var(--border-bright);
-  border-radius: var(--r-sm);
+  border-radius: 3px;
   cursor: pointer;
-  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .up-btn-primary:hover {
-  background: var(--cyan-glow);
+  background: rgba(0, 188, 212, 0.2);
   border-color: var(--cyan);
-  transform: translateY(-1px);
 }
 
 .up-btn-demo {
-  padding: 10px 22px;
-  font-size: 0.75rem;
+  padding: 9px 22px;
+  font-size: 0.72rem;
   font-family: var(--mono);
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   color: var(--muted);
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  border-radius: 3px;
   cursor: pointer;
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .up-btn-demo:hover {
   color: var(--text);
-  border-color: rgba(122, 154, 184, 0.6);
-  background: rgba(122, 154, 184, 0.06);
+  border-color: rgba(90, 122, 153, 0.7);
 }
 
 /* ─── Demo project picker ────────────────────────────────────────────────── */
 .demo-picker {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 340px;
-  background: var(--bg-raised);
+  position: fixed;
+  width: 300px;
+  background: #0d1f35;
   border: 1px solid var(--border-bright);
-  border-radius: var(--r-md);
-  z-index: 100;
+  border-radius: 3px;
+  z-index: 9999;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,188,212,0.05);
-  animation: scale-in var(--t-spring) both;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,188,212,0.08);
+  /* hidden by default — JS adds .is-open to show */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.15s ease, transform 0.18s cubic-bezier(0.22,1,0.36,1);
 }
 
-.demo-picker.hidden { display: none; }
+.demo-picker.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-picker { transition: none; }
+}
 
 .demo-picker-label {
   padding: 8px 14px 6px;
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
   color: var(--muted);
   font-family: var(--mono);
   border-bottom: 1px solid var(--border);
   text-transform: uppercase;
+}
+
+.demo-picker-label--section {
+  border-top: 1px solid var(--border);
+  margin-top: 0;
 }
 
 .demo-pick-row {
@@ -287,46 +286,48 @@
   border-bottom: 1px solid var(--border);
   cursor: pointer;
   text-align: left;
-  transition: background var(--t-fast);
+  transition: background 0.15s;
+  color: inherit;
 }
 
 .demo-pick-row:last-child { border-bottom: none; }
-.demo-pick-row:hover { background: var(--cyan-glow); }
+
+.demo-pick-row:hover,
+.demo-pick-row:focus-visible { background: rgba(0,188,212,0.09); outline: none; }
+
+.demo-pick-row:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--cyan);
+}
 
 .demo-pick-name {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-family: var(--mono);
   color: var(--cyan);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .demo-pick-meta {
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-family: var(--mono);
   color: var(--muted);
   letter-spacing: 0.04em;
 }
 
 .up-btn-continue {
-  padding: 12px 32px;
-  font-size: 0.8rem;
+  padding: 11px 32px;
+  font-size: 0.78rem;
   font-family: var(--mono);
-  letter-spacing: 0.09em;
-  color: #080f1c;
+  letter-spacing: 0.1em;
+  color: #0b1929;
   background: var(--cyan);
   border: 1px solid var(--cyan);
-  border-radius: var(--r-sm);
+  border-radius: 3px;
   cursor: pointer;
   font-weight: 700;
-  transition: opacity var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
-  animation: scale-in var(--t-spring) 0.1s both;
+  transition: opacity 0.2s;
 }
 
-.up-btn-continue:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0,188,212,0.3);
-}
+.up-btn-continue:hover { opacity: 0.88; }
 
 /* ─── Progress bar ───────────────────────────────────────────────────────── */
 .up-progress-wrap {
@@ -348,13 +349,12 @@
   border-radius: 2px;
   width: 0%;
   transition: width 0.15s linear;
-  box-shadow: 0 0 8px rgba(0,188,212,0.5);
 }
 
 .up-progress-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--muted);
 }
 
@@ -363,15 +363,12 @@
   font-size: 2rem;
   color: var(--green);
   line-height: 1;
-  animation: scale-in var(--t-spring) both;
-  text-shadow: 0 0 16px rgba(74,222,128,0.5);
 }
 
 .up-error-icon {
   font-size: 2rem;
   color: var(--red);
   line-height: 1;
-  animation: scale-in var(--t-spring) both;
 }
 
 /* ─── Validation checks (post-upload) ───────────────────────────────────── */
@@ -385,23 +382,17 @@
   max-width: 400px;
   text-align: left;
   margin-top: 4px;
-  border-radius: var(--r-sm);
-  overflow: hidden;
 }
 
 .val-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
-  background: var(--bg-card);
-  font-size: 0.75rem;
+  padding: 7px 14px;
+  background: var(--bg);
+  font-size: 0.72rem;
   color: var(--text);
-  animation: slide-right var(--t-spring) both;
-  transition: background var(--t-fast);
 }
-
-.val-row:hover { background: var(--bg-raised); }
 
 .val-icon { color: var(--green); flex-shrink: 0; font-size: 0.78rem; }
 
@@ -415,9 +406,9 @@
 }
 
 .mvp-label {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--muted);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   padding-right: 4px;
   border-right: 1px solid var(--border);
@@ -425,18 +416,12 @@
 }
 
 .mvp-pill {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  border-radius: 3px;
   padding: 3px 10px;
   letter-spacing: 0.06em;
-  transition: color var(--t-fast), border-color var(--t-fast);
-}
-
-.mvp-pill:hover {
-  color: var(--cyan);
-  border-color: var(--border-bright);
 }
 
 /* ─── What happens next ──────────────────────────────────────────────────── */
@@ -457,19 +442,8 @@
   border: 1px solid var(--border);
   flex: 1;
   min-width: 180px;
-  background: var(--bg-card);
-  transition: background var(--t-fast), border-color var(--t-fast);
-  animation: fade-up var(--t-spring) both;
+  background: var(--bg);
 }
-
-.next-step:hover {
-  background: var(--bg-raised);
-  border-color: rgba(122,154,184,0.4);
-}
-
-.next-step:nth-child(1) { animation-delay: 0.05s; }
-.next-step:nth-child(3) { animation-delay: 0.10s; }
-.next-step:nth-child(5) { animation-delay: 0.15s; }
 
 /* Remove double-borders between adjacent steps */
 .next-step + .next-step-arrow + .next-step { border-left: none; }
@@ -484,11 +458,15 @@
   opacity: 0.45;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  background: var(--bg-card);
+  background: var(--bg);
   flex-shrink: 0;
 }
 
 .next-step-num {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--border-bright);
+  line-height: 1;
   flex-shrink: 0;
   border: 1px solid var(--border);
   width: 36px;
@@ -499,43 +477,35 @@
   font-size: 0.72rem;
   color: var(--muted);
   letter-spacing: 0.06em;
-  border-radius: var(--r-sm);
-  background: var(--bg-raised);
 }
 
 .next-step-title {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   margin-bottom: 4px;
 }
 
 .next-step-desc {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--muted);
-  line-height: 1.65;
-}
-
-/* ─── Focus visible ──────────────────────────────────────────────────────── */
-.upload-panel:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 3px;
+  line-height: 1.6;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
-  .workflow-steps   { gap: 6px; }
-  .wf-step          { font-size: 0.65rem; padding: 4px 8px; }
-  .upload-panel     { padding: 36px 20px; }
-  .next-steps       { flex-direction: column; }
-  .next-step        { border-left: 1px solid var(--border) !important; }
-  .next-step-arrow  { display: none; }
+  .workflow-steps { gap: 6px; }
+  .wf-step { font-size: 0.62rem; padding: 3px 8px; }
+  .upload-panel { padding: 36px 20px; }
+
+  .next-steps { flex-direction: column; }
+  .next-step { border-left: 1px solid var(--border) !important; }
+  .next-step-arrow { display: none; }
 }
 
 @media (max-width: 500px) {
-  .upload-breadcrumb  { display: none; }
-  .up-actions         { flex-direction: column; width: 100%; }
+  .upload-breadcrumb { display: none; }
+  .up-actions { flex-direction: column; width: 100%; }
   .up-btn-primary, .up-btn-demo { width: 100%; }
-  .upload-panel       { padding: 28px 16px; border-radius: var(--r-sm); }
 }

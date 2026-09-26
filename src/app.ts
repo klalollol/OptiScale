@@ -3,7 +3,6 @@ export {};
 
 import { analyzeZip } from './lib/zip-analyzer';
 import type { AnalysisProfile } from './lib/zip-analyzer';
-import { initSwipeNext } from './swipe';
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
 
@@ -17,22 +16,26 @@ function formatBytes(bytes: number): string {
   return (bytes / 1024).toFixed(1) + ' KB';
 }
 
-/** Smooth eased scroll — starts immediately, no delay. */
-function smoothScrollTo(targetY: number, duration = 600): void {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    window.scrollTo({ top: Math.max(0, targetY), behavior: 'instant' as ScrollBehavior });
-    return;
-  }
+/** Eased scroll — lands at the section divider, accounts for sticky header height. */
+function smoothScrollTo(targetY: number, duration = 750): void {
   const startY = window.scrollY;
-  const delta  = Math.max(0, targetY) - startY;
-  if (Math.abs(delta) < 2) return;
+  const diff   = targetY - startY;
+  if (Math.abs(diff) < 2) return;
+
   let startTime: number | null = null;
+
+  function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
   function step(now: number): void {
     if (startTime === null) startTime = now;
-    const p = Math.min((now - startTime) / duration, 1);
-    window.scrollTo(0, startY + delta * (1 - Math.pow(1 - p, 3)));
-    if (p < 1) requestAnimationFrame(step);
+    const elapsed  = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    window.scrollTo(0, startY + diff * easeInOutCubic(progress));
+    if (progress < 1) requestAnimationFrame(step);
   }
+
   requestAnimationFrame(step);
 }
 
@@ -74,20 +77,20 @@ function unlockSection(sectionId: string, lockId: string, stepIdx: number): void
   const lock = document.getElementById(lockId);
   if (!sec || !lock) return;
 
-  // Read position BEFORE changing classes so getBoundingClientRect() is accurate
-  // and we can start scrolling immediately without waiting for a layout frame.
-  const rect   = sec.getBoundingClientRect();
-  const absTop = rect.top + window.scrollY;
-  const target = Math.max(0, absTop - stickyHeight());
-
-  // Unlock visually
+  // 1. Hide overlay, remove locked class, add unlocked class
   lock.classList.add('hidden');
   sec.classList.remove('spa-locked');
   sec.classList.add('spa-unlocked');
   setActiveStep(stepIdx);
 
-  // Scroll starts on the very next animation frame — no extra delay
-  smoothScrollTo(target, 600);
+  // 2. Wait one frame for the layout to settle after class changes,
+  //    then eased-scroll so the section divider sits just below the sticky bars.
+  requestAnimationFrame(() => {
+    const rect    = sec.getBoundingClientRect();
+    const absTop  = rect.top + window.scrollY;
+    const target  = Math.max(0, absTop - stickyHeight());
+    smoothScrollTo(target, 750);
+  });
 }
 
 // ─── Active analysis profile (set after upload, read by all sections) ─────────
@@ -279,34 +282,37 @@ const MOCK_VALIDATION_CHECKS = [
   'Supported technology detected',
 ];
 
-type DemoKey = 'ecommerce' | 'inventory' | 'analytics';
+type DemoKey =
+  | 'tc-severe-n-plus-one'
+  | 'tc-missing-index'
+  | 'tc-no-bottleneck';
 
 const DEMO_PROJECTS: Record<DemoKey, {
   name: string; sizeMB: number; stack: string; files: number; deps: number; path: string;
 }> = {
-  ecommerce: {
-    name: 'sample-fastapi-ecommerce.zip',
-    sizeMB: 4.2,
+  'tc-severe-n-plus-one': {
+    name: 'tc-severe-n-plus-one.zip',
+    sizeMB: 5.5,
     stack: 'Python 3.11 · FastAPI · PostgreSQL',
-    files: 126,
-    deps: 47,
-    path: '/demo-zips/sample-fastapi-ecommerce.zip',
+    files: 134,
+    deps: 49,
+    path: '/demo-zips/tc-severe-n-plus-one.zip',
   },
-  inventory: {
-    name: 'sample-fastapi-inventory.zip',
-    sizeMB: 2.3,
+  'tc-missing-index': {
+    name: 'tc-missing-index.zip',
+    sizeMB: 5.7,
     stack: 'Python 3.11 · FastAPI · PostgreSQL',
-    files: 98,
-    deps: 41,
-    path: '/demo-zips/sample-fastapi-inventory.zip',
+    files: 118,
+    deps: 45,
+    path: '/demo-zips/tc-missing-index.zip',
   },
-  analytics: {
-    name: 'sample-fastapi-analytics.zip',
-    sizeMB: 2.5,
+  'tc-no-bottleneck': {
+    name: 'tc-no-bottleneck.zip',
+    sizeMB: 5.6,
     stack: 'Python 3.11 · FastAPI · PostgreSQL',
-    files: 112,
-    deps: 44,
-    path: '/demo-zips/sample-fastapi-analytics.zip',
+    files: 121,
+    deps: 46,
+    path: '/demo-zips/tc-no-bottleneck.zip',
   },
 };
 
@@ -400,10 +406,54 @@ async function startUpload(file: File): Promise<void> {
   }
 }
 
-function togglePicker(force?: boolean): void {
-  const show = force !== undefined ? force : demoPicker.classList.contains('hidden');
-  demoPicker.classList.toggle('hidden', !show);
+// ─── Demo picker open/close ───────────────────────────────────────────────────
+
+let pickerOpen = false;
+
+function positionPicker(): void {
+  const rect    = demoBtn.getBoundingClientRect();
+  const w       = 300;
+  let   left    = rect.left + rect.width / 2 - w / 2;
+  left          = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+  demoPicker.style.top  = (rect.bottom + 6) + 'px';
+  demoPicker.style.left = left + 'px';
 }
+
+function closePicker(): void {
+  if (!pickerOpen) return;
+  pickerOpen = false;
+  demoPicker.classList.remove('is-open');
+  demoBtn.setAttribute('aria-expanded', 'false');
+  demoBtn.focus();
+}
+
+function openPicker(): void {
+  positionPicker();
+  pickerOpen = true;
+  demoPicker.classList.add('is-open');
+  demoBtn.setAttribute('aria-expanded', 'true');
+  // Focus first option
+  const first = demoPicker.querySelector<HTMLElement>('.demo-pick-row');
+  first?.focus();
+}
+
+function togglePicker(force?: boolean): void {
+  const shouldOpen = force !== undefined ? force : !pickerOpen;
+  shouldOpen ? openPicker() : closePicker();
+}
+
+// Close picker on Escape or click-outside
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && pickerOpen) { e.stopPropagation(); closePicker(); }
+});
+document.addEventListener('pointerdown', (e) => {
+  if (pickerOpen && !(e.target as HTMLElement).closest('#demo-picker, #demo-btn')) {
+    closePicker();
+  }
+}, { capture: true });
+// Reposition on scroll/resize while open
+window.addEventListener('scroll', () => { if (pickerOpen) positionPicker(); }, { passive: true });
+window.addEventListener('resize', () => { if (pickerOpen) positionPicker(); }, { passive: true });
 
 async function startDemoUpload(key: DemoKey): Promise<void> {
   const demo = DEMO_PROJECTS[key];
@@ -446,10 +496,8 @@ async function startDemoUpload(key: DemoKey): Promise<void> {
 // Upload events
 selectFileBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 uploadPanel.addEventListener('click', (e) => {
-  // Close picker if clicking outside it
-  if (!(e.target as HTMLElement).closest('#demo-picker, #demo-btn')) togglePicker(false);
   if (!uploadStateEls.empty?.classList.contains('hidden')) return;
-  if (!(e.target as HTMLElement).closest('#demo-picker, #demo-btn, #select-file-btn')) fileInput.click();
+  if (!(e.target as HTMLElement).closest('#demo-btn, #select-file-btn')) fileInput.click();
 });
 uploadPanel.addEventListener('keydown', (e) => {
   if ((e.key === 'Enter' || e.key === ' ') && !uploadStateEls.empty?.classList.contains('hidden')) {
@@ -468,6 +516,13 @@ demoPicker.querySelectorAll<HTMLButtonElement>('.demo-pick-row').forEach((btn) =
     const key = btn.dataset['demo'] as DemoKey | undefined;
     if (key && key in DEMO_PROJECTS) void startDemoUpload(key);
   });
+});
+// Arrow-key navigation inside picker
+demoPicker.addEventListener('keydown', (e) => {
+  const rows = Array.from(demoPicker.querySelectorAll<HTMLElement>('.demo-pick-row'));
+  const idx  = rows.indexOf(document.activeElement as HTMLElement);
+  if (e.key === 'ArrowDown') { e.preventDefault(); rows[(idx + 1) % rows.length]?.focus(); }
+  if (e.key === 'ArrowUp')   { e.preventDefault(); rows[(idx - 1 + rows.length) % rows.length]?.focus(); }
 });
 retryBtn.addEventListener('click', (e) => { e.stopPropagation(); showUploadState('empty'); });
 continueAnalBtn.addEventListener('click', (e) => {
@@ -655,43 +710,6 @@ toProveBtn.addEventListener('click', () => {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 showUploadState('empty');
-
-// ─── Dynamic breadcrumb via IntersectionObserver ──────────────────────────────
-
-const SECTION_STEP_MAP: Array<{ id: string; idx: number }> = [
-  { id: 'sec-upload',    idx: 0 },
-  { id: 'sec-analyze',   idx: 1 },
-  { id: 'sec-optimize',  idx: 2 },
-  { id: 'sec-benchmark', idx: 3 },
-  { id: 'sec-prove',     idx: 4 },
-];
-
-(function initBreadcrumbObserver(): void {
-  // Use a top-biased root margin so a section triggers when it crosses ~25% from the top
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const match = SECTION_STEP_MAP.find((s) => s.id === entry.target.id);
-        if (match == null) return;
-        const bc = document.getElementById('spa-breadcrumb');
-        if (bc) bc.textContent = STEP_LABELS[match.idx] ?? '';
-      });
-    },
-    {
-      root: null,
-      // Top threshold: fire when the section top edge enters the top 30% of the viewport
-      rootMargin: '-5% 0px -65% 0px',
-      threshold: 0,
-    },
-  );
-
-  SECTION_STEP_MAP.forEach(({ id }) => {
-    const el = document.getElementById(id);
-    if (el) observer.observe(el);
-  });
-})();
 setOptState('idle');
 setBenchState('idle');
 setActiveStep(0);
-initSwipeNext();
