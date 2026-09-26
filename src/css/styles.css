@@ -93,6 +93,34 @@ button { font: inherit; cursor: pointer; border: none; }
   50%       { opacity: 0.4; }
 }
 
+.swipe-hint-pill {
+  position: fixed;
+  z-index: 10;
+  left: 50%;
+  bottom: 24px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-bright);
+  background: var(--bg);
+  color: var(--cyan);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.swipe-hint-pill.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .status-dot { animation: none; }
+  .swipe-hint-pill { transition: none; }
+}
+
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
 .hero-section {
   display: grid;

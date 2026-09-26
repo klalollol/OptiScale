@@ -1,293 +1,183 @@
-import {
-  subagentCards,
-  codeDiff,
-  footerStats,
-  samplePreflightPanel,
-  samplePerfMetrics,
-  sampleSuggestions,
-  type PreflightCheckDisplay,
-  type PreflightPanelData,
-  type PerfMetricRow,
-  type SuggestionRow,
-  type SuggestionPanelData,
-} from '../../data';
+import { homeHighlights, homeSteps } from '../../data';
 
-// ─── Subagent cards ───────────────────────────────────────────────────────────
-
-const subagentRoot = document.querySelector('#subagent-cards');
-if (subagentRoot) {
-  subagentRoot.innerHTML = subagentCards
-    .map((card) => {
-      const pct = Math.round((card.progressDone / card.progressTotal) * 100);
-      const fillClass =
-        card.status === 'running' ? '' : card.status === 'verifying' ? 'amber' : 'muted';
-      return `
-        <div class="subagent-card">
-          <div class="sa-header">
-            <span class="sa-id">${card.id}</span>
-            <span class="sa-status ${card.status}">${card.status}</span>
-          </div>
-          <div class="sa-title">${card.title}</div>
-          <div class="sa-desc">${card.description}</div>
-          <div class="sa-progress-wrap">
-            <div class="sa-progress-meta">
-              <span>${card.progressDone.toLocaleString()} / ${card.progressTotal.toLocaleString()} ${card.progressUnit}</span>
-              <span class="sa-progress-pct">${pct}%</span>
-            </div>
-            <div class="sa-progress-track">
-              <div class="sa-progress-fill ${fillClass}" style="width:${pct}%"></div>
-            </div>
-          </div>
-        </div>
-      `;
-    })
-    .join('');
-}
-
-// ─── Code diff ────────────────────────────────────────────────────────────────
-
-const diffLabel = document.querySelector('#diff-label');
-if (diffLabel) diffLabel.textContent = codeDiff.label;
-
-const diffLegacy = document.querySelector('#diff-legacy');
-if (diffLegacy) diffLegacy.innerHTML = codeDiff.legacy;
-
-const diffModern = document.querySelector('#diff-modern');
-if (diffModern) diffModern.innerHTML = codeDiff.modern;
-
-const diffParity = document.querySelector('#diff-parity');
-if (diffParity) diffParity.textContent = codeDiff.parityLine;
-
-// ─── Footer stats ─────────────────────────────────────────────────────────────
-
-const statsFooter = document.querySelector('#stats-footer');
-if (statsFooter) {
-  statsFooter.innerHTML = footerStats
+const stepsRoot = document.getElementById('home-steps');
+if (stepsRoot) {
+  stepsRoot.innerHTML = homeSteps
     .map(
-      (stat) => `
-        <div class="stat-block">
-          <span class="stat-num">${stat.value}</span>
-          <span class="stat-desc">${stat.label}</span>
-        </div>
+      (step) => `
+        <li class="home-step-card">
+          <span class="home-step-number">${step.number}</span>
+          <h3 class="home-card-title">${step.title}</h3>
+          <p class="home-card-copy">${step.description}</p>
+        </li>
       `,
     )
     .join('');
 }
 
-// ─── Preflight checklist (Page 2) ────────────────────────────────────────────
-
-function statusIcon(c: PreflightCheckDisplay): string {
-  if (c.status === 'pass') return '✓';
-  if (c.status === 'skip') return '–';
-  // fail
-  return c.severity === 'blocker' ? '✕' : '⚠';
-}
-
-function severityClass(c: PreflightCheckDisplay): string {
-  if (c.status === 'pass') return 'pass';
-  if (c.status === 'skip') return 'skip';
-  return c.severity === 'blocker' ? 'blocker' : 'warning';
-}
-
-function renderPreflightChecks(panel: PreflightPanelData): string {
-  const hasBlockers = panel.checks.some(
-    (c) => c.severity === 'blocker' && c.status === 'fail',
-  );
-  const tierClass =
-    panel.tier === 'measured'
-      ? 'tier-measured'
-      : panel.tier === 'estimated'
-        ? 'tier-estimated'
-        : 'tier-unavailable';
-
-  return `
-    <div class="preflight-header">
-      <span class="preflight-score">score <span class="preflight-score-num">${panel.score}%</span></span>
-      <span class="preflight-tier ${tierClass}">${panel.tier}</span>
-    </div>
-    <div class="preflight-list">
-      ${panel.checks
-        .map((c) => {
-          const cls = severityClass(c);
-          const icon = statusIcon(c);
-          const rem = c.remediation
-            ? `<span class="pf-remediation">→ ${c.remediation}</span>`
-            : '';
-          return `
-          <div class="preflight-check ${cls}">
-            <span class="pf-icon">${icon}</span>
-            <div class="pf-body">
-              <span class="pf-label">${c.label}</span>
-              <span class="pf-detail">${c.detail}</span>
-              ${rem}
-            </div>
-          </div>`;
-        })
-        .join('')}
-    </div>
-    ${
-      hasBlockers
-        ? '<p class="preflight-blocked">⛔ review disabled — resolve all blockers to continue</p>'
-        : ''
-    }
-  `;
-}
-
-const preflightRoot = document.querySelector('#preflight-checks');
-if (preflightRoot) {
-  preflightRoot.innerHTML = renderPreflightChecks(samplePreflightPanel);
-}
-
-// Wire the Review button: disabled while any blocker is unresolved
-const reviewBtn = document.querySelector<HTMLButtonElement>('#review-btn');
-if (reviewBtn) {
-  const hasBlockers = samplePreflightPanel.checks.some(
-    (c) => c.severity === 'blocker' && c.status === 'fail',
-  );
-  reviewBtn.disabled = hasBlockers;
-}
-
-// ─── Requirements panel + Perf table (Page 3) ────────────────────────────────
-
-function renderRequirementsPanel(panel: PreflightPanelData): string {
-  return renderPreflightChecks(panel);
-}
-
-function deltaBadge(delta: number, unit: string): string {
-  // Latency: lower is better (negative delta = improvement)
-  // Throughput / JMH score interpretation is caller's responsibility;
-  // we simply colour negative = red, positive = green here for latency-centric view
-  const isLatency = unit === 'ms' || unit === 'ns';
-  const improved  = isLatency ? delta < 0 : delta > 0;
-  const cls = improved ? 'delta-good' : delta === 0 ? 'delta-neutral' : 'delta-bad';
-  const sign = delta > 0 ? '+' : '';
-  return `<span class="perf-delta ${cls}">${sign}${delta.toFixed(2)}%</span>`;
-}
-
-function sourceBadge(source: PerfMetricRow['source']): string {
-  return source === 'measured'
-    ? '<span class="badge-measured">measured</span>'
-    : '<span class="badge-estimated">estimated</span>';
-}
-
-function renderPerfTable(rows: PerfMetricRow[]): string {
-  return `
-    <table class="perf-table">
-      <thead>
-        <tr>
-          <th>metric</th>
-          <th>tool</th>
-          <th>legacy</th>
-          <th>modern</th>
-          <th>delta</th>
-          <th>source</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows
-          .map(
-            (r) => `
-          <tr>
-            <td class="perf-name">${r.name}</td>
-            <td class="perf-tool">${r.tool}</td>
-            <td class="perf-val">${r.legacyValue.toLocaleString()} <span class="perf-unit">${r.unit}</span></td>
-            <td class="perf-val">${r.modernValue.toLocaleString()} <span class="perf-unit">${r.unit}</span></td>
-            <td>${deltaBadge(r.deltaPercent, r.unit)}</td>
-            <td>${sourceBadge(r.source)}</td>
-          </tr>`,
-          )
-          .join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-const reqPanel = document.querySelector('#requirements-panel');
-if (reqPanel) {
-  reqPanel.innerHTML = renderRequirementsPanel(samplePreflightPanel);
-}
-
-const perfTable = document.querySelector('#perf-table');
-if (perfTable) {
-  perfTable.innerHTML = renderPerfTable(samplePerfMetrics);
-}
-
-// ─── Suggestions panel (Page 3) ──────────────────────────────────────────────
-
-function severityBadge(s: SuggestionRow['severity']): string {
-  const cls =
-    s === 'critical' ? 'sug-critical' : s === 'major' ? 'sug-major' : 'sug-minor';
-  return `<span class="sug-severity ${cls}">${s}</span>`;
-}
-
-function categoryBadge(c: string): string {
-  return `<span class="sug-category">${c}</span>`;
-}
-
-function boostBadge(row: SuggestionRow): string {
-  if (row.boostMin === 0 && row.boostMax === 0) {
-    return `<span class="sug-boost sug-boost-reliability">reliability fix</span>`;
-  }
-  return `<span class="sug-boost">↑ ${row.boostMin}–${row.boostMax}% ${row.boostMetric}</span>`;
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function renderSuggestionsPanel(panel: SuggestionPanelData): string {
-  const boostLine =
-    panel.compositeBoostMin > 0
-      ? `<div class="sug-composite">
-           projected composite improvement:
-           <span class="sug-composite-num">${panel.compositeBoostMin}–${panel.compositeBoostMax}%</span>
-           p95 latency if all performance patterns are fixed
-         </div>`
-      : '';
-
-  const cards = panel.rows
-    .map((row) => {
-      const steps = row.fixSteps
-        .map((s, i) => `<li><span class="sug-step-num">${i + 1}.</span> ${s}</li>`)
-        .join('');
-
-      return `
-      <div class="sug-card">
-        <div class="sug-card-header">
-          <div class="sug-card-meta">
-            ${severityBadge(row.severity)}
-            ${categoryBadge(row.category)}
-          </div>
-          <div class="sug-card-right">
-            ${boostBadge(row)}
-            <span class="sug-hits">${row.hitCount} file${row.hitCount !== 1 ? 's' : ''}</span>
-          </div>
-        </div>
-        <div class="sug-label">${row.label}</div>
-        <div class="sug-desc">${row.description}</div>
-        <div class="sug-file">⌂ ${row.exampleFile}</div>
-        <div class="sug-diff">
-          <div class="sug-diff-col">
-            <div class="sug-diff-header legacy-header">before</div>
-            <pre class="sug-code">${escapeHtml(row.beforeCode)}</pre>
-          </div>
-          <div class="sug-diff-col">
-            <div class="sug-diff-header modern-header">after</div>
-            <pre class="sug-code">${escapeHtml(row.afterCode)}</pre>
-          </div>
-        </div>
-        <ol class="sug-steps">${steps}</ol>
-      </div>`;
-    })
+const highlightsRoot = document.getElementById('home-highlights');
+if (highlightsRoot) {
+  highlightsRoot.innerHTML = homeHighlights
+    .map(
+      (item) => `
+        <article class="home-feature-card">
+          <span class="home-feature-label">${item.label}</span>
+          <h3 class="home-card-title">${item.title}</h3>
+          <p class="home-card-copy">${item.description}</p>
+        </article>
+      `,
+    )
     .join('');
-
-  return boostLine + `<div class="sug-list">${cards}</div>`;
 }
 
-const sugPanel = document.querySelector('#suggestions-panel');
-if (sugPanel) {
-  sugPanel.innerHTML = renderSuggestionsPanel(sampleSuggestions);
+// ─── Swipe to next section ───────────────────────────────────────────────────
+
+const SWIPE_THRESHOLD_Y = 55;
+const SWIPE_MAX_X = 45;
+const SCROLL_DURATION = 320;
+const SWIPE_COOLDOWN_MS = 600;
+const HINT_VISIBLE_MS = 900;
+const swipeSections = Array.from(
+  document.querySelectorAll<HTMLElement>('main > section'),
+);
+
+let touchStartY = 0;
+let touchStartX = 0;
+let touchSectionIndex = 0;
+let thresholdMet = false;
+let scrolling = false;
+let lastScrollAt = 0;
+let hintTimer: ReturnType<typeof setTimeout> | null = null;
+let hintElement: HTMLElement | null = null;
+
+function currentSwipeSectionIndex(): number {
+  let currentIndex = 0;
+  let closestTop = -Infinity;
+
+  swipeSections.forEach((section, index) => {
+    const top = section.getBoundingClientRect().top;
+    if (top <= 8 && top > closestTop) {
+      closestTop = top;
+      currentIndex = index;
+    }
+  });
+
+  return currentIndex;
 }
+
+function getSwipeHint(): HTMLElement {
+  if (!hintElement) {
+    hintElement = document.createElement('div');
+    hintElement.className = 'swipe-hint-pill';
+    hintElement.textContent = '↑ next section';
+    document.body.appendChild(hintElement);
+  }
+  return hintElement;
+}
+
+function showSwipeHint(): void {
+  const hint = getSwipeHint();
+  if (hintTimer) clearTimeout(hintTimer);
+  hint.classList.add('visible');
+  hintTimer = setTimeout(() => {
+    hint.classList.remove('visible');
+    hintTimer = null;
+  }, HINT_VISIBLE_MS);
+}
+
+function hideSwipeHint(): void {
+  if (hintTimer) clearTimeout(hintTimer);
+  hintTimer = null;
+  getSwipeHint().classList.remove('visible');
+}
+
+function scrollToSection(targetY: number, onDone: () => void): void {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, targetY);
+    onDone();
+    return;
+  }
+
+  const startY = window.scrollY;
+  const distance = targetY - startY;
+  if (Math.abs(distance) < 2) {
+    onDone();
+    return;
+  }
+
+  let startTime: number | null = null;
+
+  function step(now: number): void {
+    if (startTime === null) startTime = now;
+    const progress = Math.min((now - startTime) / SCROLL_DURATION, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    window.scrollTo(0, startY + distance * easedProgress);
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      onDone();
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+document.addEventListener(
+  'touchstart',
+  (event: TouchEvent) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    const target = event.target;
+    if (target instanceof Element && target.closest('a, button, input, select, textarea')) {
+      thresholdMet = false;
+      return;
+    }
+
+    touchStartY = touch.clientY;
+    touchStartX = touch.clientX;
+    touchSectionIndex = currentSwipeSectionIndex();
+    thresholdMet = false;
+  },
+  { passive: true },
+);
+
+document.addEventListener(
+  'touchmove',
+  (event: TouchEvent) => {
+    if (scrolling) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    const verticalDistance = touchStartY - touch.clientY;
+    const horizontalDistance = Math.abs(touch.clientX - touchStartX);
+    if (verticalDistance >= SWIPE_THRESHOLD_Y && horizontalDistance < SWIPE_MAX_X && !thresholdMet) {
+      thresholdMet = true;
+      showSwipeHint();
+    }
+  },
+  { passive: true },
+);
+
+document.addEventListener(
+  'touchend',
+  () => {
+    if (!thresholdMet) return;
+    thresholdMet = false;
+    hideSwipeHint();
+
+    const now = Date.now();
+    if (scrolling || now - lastScrollAt < SWIPE_COOLDOWN_MS) return;
+
+    const target = swipeSections[touchSectionIndex + 1];
+    if (!target) return;
+
+    scrolling = true;
+    const targetY = target.getBoundingClientRect().top + window.scrollY;
+    scrollToSection(targetY, () => {
+      scrolling = false;
+      lastScrollAt = Date.now();
+    });
+  },
+  { passive: true },
+);
