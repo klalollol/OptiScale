@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="OptiScale — Upload your project for performance analysis." />
+    <title>OptiScale · Upload Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/assets/upload-CN9fPzYq.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/styles-CKumfIL_.js">
+    <link rel="stylesheet" crossorigin href="/assets/styles-BVQ0P9Es.css">
+    <link rel="stylesheet" crossorigin href="/assets/upload-Bi21sa1j.css">
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <!-- ── Top bar ─────────────────────────────────────────────────────── -->
+      <header class="topbar">
+        <div class="logo-wrap">
+          <a href="./index.html" style="display:flex;align-items:center;gap:8px;">
+            <span class="logo-diamond">◇</span>
+            <span class="logo-name">OptiScale</span>
+          </a>
+        </div>
+        <div class="upload-breadcrumb">
+          <span class="breadcrumb-seg muted">PROJECT</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-seg active">UPLOAD</span>
+        </div>
+        <div class="pipeline-status">
+          <span class="status-dot"></span>
+          <span>system ready</span>
+        </div>
+      </header>
+
+      <!-- ── Workflow indicator ─────────────────────────────────────────── -->
+      <div class="workflow-bar">
+        <div class="workflow-steps">
+          <span class="wf-step active"><span class="wf-num">01</span> UPLOAD</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">02</span> ANALYZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">03</span> OPTIMIZE</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">04</span> BENCHMARK</span>
+          <span class="wf-arrow">→</span>
+          <span class="wf-step"><span class="wf-num">05</span> PROVE</span>
+        </div>
+      </div>
+
+      <!-- ── Page heading ───────────────────────────────────────────────── -->
+      <section class="upload-hero">
+        <p class="section-label">step 01 of 05</p>
+        <h1 class="upload-headline">UPLOAD YOUR PROJECT</h1>
+        <p class="upload-sub">Upload your application and let OptiScale find where performance is being lost.</p>
+      </section>
+
+      <!-- ── Upload area ────────────────────────────────────────────────── -->
+      <section class="section upload-section">
+
+        <div class="upload-panel" id="upload-panel" tabindex="0" role="button" aria-label="Upload project ZIP file">
+
+          <!-- STATE: empty -->
+          <div class="up-state" id="state-empty">
+            <div class="up-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="14" width="22" height="28" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <polyline points="8,14 20,14 30,14 30,4 20,4 8,4 8,14" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <line x1="30" y1="4" x2="36" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="30" y1="4" x2="30" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="30" y1="10" x2="36" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="8" y="4" width="28" height="38" rx="1" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0"/>
+                <!-- Upload arrow -->
+                <line x1="34" y1="40" x2="34" y2="28" stroke="currentColor" stroke-width="2"/>
+                <polyline points="29,33 34,28 39,33" stroke="currentColor" stroke-width="2" fill="none"/>
+                <line x1="28" y1="44" x2="40" y2="44" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="up-label">DROP YOUR PROJECT HERE</div>
+            <div class="up-hint">Drag &amp; drop your .ZIP archive or click to select</div>
+            <div class="up-actions">
+              <button class="up-btn-primary" id="select-file-btn">SELECT FILE</button>
+              <button class="up-btn-demo" id="demo-btn">TRY DEMO PROJECT</button>
+            </div>
+            <div class="up-meta-row">
+              <span class="up-meta-item">Supported format: .ZIP</span>
+              <span class="up-meta-sep">·</span>
+              <span class="up-meta-item">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:inline;vertical-align:middle;margin-right:3px;opacity:.6">
+                  <rect x="1" y="4.5" width="9" height="6" rx="0.5" stroke="currentColor" stroke-width="1"/>
+                  <path d="M3 4.5V3a2.5 2.5 0 0 1 5 0v1.5" stroke="currentColor" stroke-width="1" fill="none"/>
+                </svg>
+                Projects prepared for isolated execution before benchmarking
+              </span>
+            </div>
+          </div>
+
+          <!-- STATE: dragging -->
+          <div class="up-state hidden" id="state-dragging">
+            <div class="up-icon drag-pulse">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <line x1="24" y1="38" x2="24" y2="18" stroke="currentColor" stroke-width="2.5"/>
+                <polyline points="16,25 24,17 32,25" stroke="currentColor" stroke-width="2.5" fill="none"/>
+              </svg>
+            </div>
+            <div class="up-label" style="color:var(--cyan)">DROP TO UPLOAD</div>
+          </div>
+
+          <!-- STATE: uploading -->
+          <div class="up-state hidden" id="state-uploading">
+            <div class="up-label muted">UPLOADING PROJECT</div>
+            <div class="up-filename" id="upload-filename">—</div>
+            <div class="up-progress-wrap">
+              <div class="up-progress-track">
+                <div class="up-progress-fill" id="upload-progress-fill"></div>
+              </div>
+              <div class="up-progress-meta">
+                <span id="upload-progress-pct">0%</span>
+                <span id="upload-progress-size"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATE: success -->
+          <div class="up-state hidden" id="state-success">
+            <div class="up-success-icon">✓</div>
+            <div class="up-label" style="color:var(--green)">PROJECT UPLOADED</div>
+            <div class="up-filename" id="success-filename">project.zip</div>
+            <div class="up-filesize" id="success-filesize">—</div>
+            <div class="up-validation" id="validation-checks"></div>
+            <div class="up-actions" style="margin-top:8px;">
+              <button class="up-btn-continue" id="continue-btn">CONTINUE TO ANALYSIS →</button>
+            </div>
+          </div>
+
+          <!-- STATE: error -->
+          <div class="up-state hidden" id="state-error">
+            <div class="up-error-icon">✕</div>
+            <div class="up-label" id="error-title" style="color:var(--red)">INVALID FILE</div>
+            <div class="up-hint" id="error-msg">Please upload a .ZIP project archive.</div>
+            <div class="up-actions" style="margin-top:8px;">
+              <button class="up-btn-primary" id="retry-btn">TRY AGAIN</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hidden file input -->
+        <input type="file" id="file-input" accept=".zip" style="display:none" />
+
+        <!-- MVP tech support row -->
+        <div class="mvp-row">
+          <span class="mvp-label">MVP SUPPORT</span>
+          <span class="mvp-pill">Python</span>
+          <span class="mvp-pill">FastAPI</span>
+          <span class="mvp-pill">PostgreSQL</span>
+        </div>
+
+      </section>
+
+      <!-- ── What happens next ──────────────────────────────────────────── -->
+      <section class="section next-section">
+        <p class="section-label">what happens next?</p>
+        <div class="next-steps">
+          <div class="next-step">
+            <span class="next-step-num">01</span>
+            <div>
+              <div class="next-step-title">VALIDATE</div>
+              <div class="next-step-desc">Check project structure and dependencies.</div>
+            </div>
+          </div>
+          <div class="next-step-arrow">→</div>
+          <div class="next-step">
+            <span class="next-step-num">02</span>
+            <div>
+              <div class="next-step-title">ANALYZE</div>
+              <div class="next-step-desc">BOB searches the codebase for potential performance bottlenecks.</div>
+            </div>
+          </div>
+          <div class="next-step-arrow">→</div>
+          <div class="next-step">
+            <span class="next-step-num">03</span>
+            <div>
+              <div class="next-step-title">BENCHMARK</div>
+              <div class="next-step-desc">Original and optimized versions tested under the same workload.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </body>
+</html>
