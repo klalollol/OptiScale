@@ -15,9 +15,7 @@
   <body>
     <div class="page-shell">
 
-      <!-- ══════════════════════════════════════════════════════════════════
-           STICKY HEADER
-      ══════════════════════════════════════════════════════════════════ -->
+      <!-- ── Sticky header ───────────────────────────────────────────────── -->
       <header class="topbar spa-topbar">
         <div class="logo-wrap">
           <a href="./index.html" style="display:flex;align-items:center;gap:8px;">
@@ -36,7 +34,7 @@
         </div>
       </header>
 
-      <!-- ── Sticky workflow bar ──────────────────────────────────────── -->
+      <!-- ── Sticky workflow bar ─────────────────────────────────────────── -->
       <div class="workflow-bar spa-workflow-bar">
         <div class="workflow-steps">
           <span class="wf-step active" id="wf-1"><span class="wf-num">01</span> UPLOAD</span>
@@ -52,7 +50,7 @@
       </div>
 
       <!-- ══════════════════════════════════════════════════════════════════
-           SECTION 1: UPLOAD
+           §1  UPLOAD
       ══════════════════════════════════════════════════════════════════ -->
       <div class="spa-section" id="sec-upload">
         <div class="spa-section-divider">
@@ -68,7 +66,7 @@
         <section class="section upload-section">
           <div class="upload-panel" id="upload-panel" tabindex="0" role="button" aria-label="Upload project ZIP file">
 
-            <!-- STATE: empty -->
+            <!-- empty -->
             <div class="up-state" id="state-empty">
               <div class="up-icon">
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -101,7 +99,7 @@
               </div>
             </div>
 
-            <!-- STATE: dragging -->
+            <!-- dragging -->
             <div class="up-state hidden" id="state-dragging">
               <div class="up-icon drag-pulse">
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -112,7 +110,7 @@
               <div class="up-label" style="color:var(--cyan)">DROP TO UPLOAD</div>
             </div>
 
-            <!-- STATE: uploading -->
+            <!-- uploading -->
             <div class="up-state hidden" id="state-uploading">
               <div class="up-label muted">UPLOADING PROJECT</div>
               <div class="up-filename" id="upload-filename">—</div>
@@ -127,19 +125,16 @@
               </div>
             </div>
 
-            <!-- STATE: success -->
+            <!-- success -->
             <div class="up-state hidden" id="state-success">
               <div class="up-success-icon">✓</div>
               <div class="up-label" style="color:var(--green)">PROJECT UPLOADED</div>
               <div class="up-filename" id="success-filename">project.zip</div>
               <div class="up-filesize" id="success-filesize">—</div>
               <div class="up-validation" id="validation-checks"></div>
-              <div class="up-actions" style="margin-top:8px;">
-                <button class="up-btn-continue" id="continue-to-analyze-btn">CONTINUE TO ANALYSIS →</button>
-              </div>
             </div>
 
-            <!-- STATE: error -->
+            <!-- error -->
             <div class="up-state hidden" id="state-error">
               <div class="up-error-icon">✕</div>
               <div class="up-label" id="error-title" style="color:var(--red)">INVALID FILE</div>
@@ -159,10 +154,17 @@
             <span class="mvp-pill">PostgreSQL</span>
           </div>
         </section>
+
+        <!-- ── CTA bar §1 ──────────────────────────────────────────────── -->
+        <div class="spa-cta-bar" id="cta-upload">
+          <!-- shown only after success -->
+          <button class="btn-primary" id="continue-to-analyze-btn" style="display:none">CONTINUE TO ANALYSIS →</button>
+          <span class="spa-cta-hint" id="cta-upload-hint">Upload or select a demo project to continue</span>
+        </div>
       </div>
 
       <!-- ══════════════════════════════════════════════════════════════════
-           SECTION 2: ANALYZE (locked until upload complete)
+           §2  ANALYZE
       ══════════════════════════════════════════════════════════════════ -->
       <div class="spa-section spa-locked" id="sec-analyze">
         <div class="spa-section-divider">
@@ -200,7 +202,6 @@
 
         <section class="section">
           <p class="section-label">critical finding</p>
-
           <div class="bottleneck-panel">
             <div class="bottleneck-header">
               <div class="bottleneck-header-left">
@@ -261,15 +262,16 @@ users = get_users()
               <div class="bob-row"><span class="bob-row-label">BOB confidence</span><span class="bob-row-value" style="color:var(--amber);">BOB identifies this as a potential performance bottleneck.</span></div>
             </div>
           </div>
-
-          <div class="action-row">
-            <button class="btn-primary" id="to-optimize-btn">REVIEW OPTIMIZATION →</button>
-          </div>
         </section>
+
+        <!-- ── CTA bar §2 ──────────────────────────────────────────────── -->
+        <div class="spa-cta-bar">
+          <button class="btn-primary" id="to-optimize-btn">REVIEW OPTIMIZATION →</button>
+        </div>
       </div>
 
       <!-- ══════════════════════════════════════════════════════════════════
-           SECTION 3: OPTIMIZE (locked)
+           §3  OPTIMIZE
       ══════════════════════════════════════════════════════════════════ -->
       <div class="spa-section spa-locked" id="sec-optimize">
         <div class="spa-section-divider">
@@ -352,28 +354,28 @@ users = get_users()
           </div>
         </section>
 
-        <section class="section">
-          <div id="opt-idle">
-            <div class="action-row">
-              <button class="btn-primary" id="apply-btn">APPLY OPTIMIZATION →</button>
-              <button class="btn-ghost" id="diff-btn">REVIEW DIFF</button>
-            </div>
-          </div>
-          <div id="opt-applying" class="hidden">
-            <p class="section-label">applying optimization</p>
-            <div class="apply-steps" id="apply-steps"></div>
-          </div>
-          <div id="opt-done" class="hidden">
-            <div class="done-banner"><span class="done-check">✓</span><span class="done-text">OPTIMIZATION APPLIED</span></div>
-            <div class="action-row" style="margin-top:20px;">
-              <button class="btn-primary" id="to-benchmark-btn">RUN BENCHMARK →</button>
-            </div>
-          </div>
+        <!-- applying progress lives here, shown/hidden by JS -->
+        <section class="section" id="opt-applying-section" style="display:none">
+          <p class="section-label">applying optimization</p>
+          <div class="apply-steps" id="apply-steps"></div>
         </section>
+
+        <section class="section" id="opt-done-section" style="display:none">
+          <div class="done-banner"><span class="done-check">✓</span><span class="done-text">OPTIMIZATION APPLIED</span></div>
+        </section>
+
+        <!-- ── CTA bar §3 ──────────────────────────────────────────────── -->
+        <div class="spa-cta-bar">
+          <!-- idle -->
+          <button class="btn-primary" id="apply-btn">APPLY OPTIMIZATION →</button>
+          <button class="btn-ghost" id="diff-btn">REVIEW DIFF</button>
+          <!-- post-apply (hidden until done) -->
+          <button class="btn-primary" id="to-benchmark-btn" style="display:none">RUN BENCHMARK →</button>
+        </div>
       </div>
 
       <!-- ══════════════════════════════════════════════════════════════════
-           SECTION 4: BENCHMARK (locked)
+           §4  BENCHMARK
       ══════════════════════════════════════════════════════════════════ -->
       <div class="spa-section spa-locked" id="sec-benchmark">
         <div class="spa-section-divider">
@@ -432,13 +434,8 @@ users = get_users()
           </div>
         </section>
 
-        <div id="bench-idle" class="section">
-          <div class="action-row">
-            <button class="btn-primary" id="start-bench-btn">START BENCHMARK</button>
-          </div>
-        </div>
-
-        <div id="bench-running" class="section hidden">
+        <!-- running progress (shown during benchmark) -->
+        <section class="section" id="bench-running" style="display:none">
           <p class="section-label">running performance test</p>
           <div class="bench-run-grid">
             <div class="bench-run-card">
@@ -457,9 +454,10 @@ users = get_users()
             </div>
           </div>
           <div class="bench-log" id="bench-log"></div>
-        </div>
+        </section>
 
-        <div id="bench-complete" class="section hidden">
+        <!-- complete summary -->
+        <section class="section" id="bench-complete" style="display:none">
           <div class="done-banner"><span class="done-check">✓</span><span class="done-text">BENCHMARK COMPLETE</span></div>
           <div class="bench-complete-checks">
             <div class="val-row"><span class="val-icon">✓</span> Original test complete</div>
@@ -467,14 +465,17 @@ users = get_users()
             <div class="val-row"><span class="val-icon">✓</span> Metrics collected</div>
             <div class="val-row"><span class="val-icon">✓</span> Comparison generated</div>
           </div>
-          <div class="action-row" style="margin-top:20px;">
-            <button class="btn-primary" id="to-prove-btn">VIEW RESULTS →</button>
-          </div>
+        </section>
+
+        <!-- ── CTA bar §4 ──────────────────────────────────────────────── -->
+        <div class="spa-cta-bar">
+          <button class="btn-primary" id="start-bench-btn">START BENCHMARK</button>
+          <button class="btn-primary" id="to-prove-btn" style="display:none">VIEW RESULTS →</button>
         </div>
       </div>
 
       <!-- ══════════════════════════════════════════════════════════════════
-           SECTION 5: PROVE (locked)
+           §5  PROVE
       ══════════════════════════════════════════════════════════════════ -->
       <div class="spa-section spa-locked" id="sec-prove">
         <div class="spa-section-divider">
@@ -505,7 +506,7 @@ users = get_users()
             <div class="throughput-bar-wrap">
               <div class="throughput-label amber-text">ORIGINAL</div>
               <div class="throughput-track">
-                <div class="throughput-fill amber-fill" style="width:0%" id="bar-orig">
+                <div class="throughput-fill amber-fill" style="width:0%;transition:width 1.2s cubic-bezier(0.22,1,0.36,1)" id="bar-orig">
                   <span class="throughput-val">420 req/s</span>
                 </div>
               </div>
@@ -513,7 +514,7 @@ users = get_users()
             <div class="throughput-bar-wrap">
               <div class="throughput-label" style="color:var(--green)">OPTIMIZED</div>
               <div class="throughput-track">
-                <div class="throughput-fill green-fill" style="width:0%" id="bar-opt">
+                <div class="throughput-fill green-fill" style="width:0%;transition:width 1.4s cubic-bezier(0.22,1,0.36,1)" id="bar-opt">
                   <span class="throughput-val">1,081 req/s</span>
                 </div>
               </div>
@@ -588,16 +589,17 @@ users = get_users()
           <div class="final-message">
             <div class="final-headline">OPTIMIZE FIRST.<br>SCALE SECOND.</div>
             <p class="final-sub">Before buying more infrastructure, find out whether your application can use the infrastructure you already have more efficiently.</p>
-            <div class="action-row" style="margin-top:28px;justify-content:center;">
-              <a href="./app.html" class="btn-primary">ANALYZE ANOTHER PROJECT →</a>
-              <a href="./index.html" class="btn-ghost">← HOME</a>
-            </div>
           </div>
         </section>
+
+        <!-- ── CTA bar §5 ──────────────────────────────────────────────── -->
+        <div class="spa-cta-bar">
+          <a href="./app.html" class="btn-primary">ANALYZE ANOTHER PROJECT →</a>
+          <a href="./index.html" class="btn-ghost">← HOME</a>
+        </div>
       </div>
 
     </div><!-- /page-shell -->
-
     <script type="module" src="./src/app.ts"></script>
   </body>
 </html>

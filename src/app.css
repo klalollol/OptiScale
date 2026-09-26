@@ -6,7 +6,6 @@
   top: 0;
   z-index: 100;
   background: var(--bg);
-  /* re-apply the border; topbar normally has border-bottom already */
 }
 
 .spa-workflow-bar {
@@ -16,11 +15,12 @@
   background: var(--bg);
 }
 
-/* ─── Section dividers ───────────────────────────────────────────────────── */
+/* ─── Section wrapper ────────────────────────────────────────────────────── */
 .spa-section {
   position: relative;
 }
 
+/* ─── Section dividers ───────────────────────────────────────────────────── */
 .spa-section-divider {
   display: flex;
   align-items: center;
@@ -48,24 +48,43 @@
   flex-shrink: 0;
 }
 
+/* ─── Consistent CTA bar — always the last block of every section ────────── */
+/* Sits outside the inner <section> elements so its top edge is always at a   */
+/* predictable depth: content ends → CTA bar begins.                          */
+.spa-cta-bar {
+  padding: 28px 0 40px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Hide the bar itself when locked — the overlay blocks interaction anyway,
+   but this prevents the bar from contributing to section height estimates */
+.spa-locked .spa-cta-bar {
+  visibility: hidden;
+}
+
 /* ─── Locked state ───────────────────────────────────────────────────────── */
 .spa-locked {
   position: relative;
 }
 
-/* Dim the section content when locked */
+/* Dim locked section content */
 .spa-locked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
-  opacity: 0.18;
+  opacity: 0.15;
   pointer-events: none;
   user-select: none;
-  filter: blur(0.5px);
-  transition: opacity 0.4s ease, filter 0.4s ease;
+  filter: blur(0.6px);
+  transition: opacity 0.5s ease, filter 0.5s ease;
 }
 
-/* Overlay shown on locked sections */
+/* Overlay */
 .spa-lock-overlay {
   position: absolute;
-  top: 60px;      /* below the divider */
+  top: 60px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -78,9 +97,7 @@
   pointer-events: none;
 }
 
-.spa-lock-overlay.hidden {
-  display: none;
-}
+.spa-lock-overlay.hidden { display: none; }
 
 .spa-lock-icon {
   font-size: 1.8rem;
@@ -99,26 +116,28 @@
   background: var(--bg);
 }
 
-/* ─── Unlocked reveal animation ──────────────────────────────────────────── */
-.spa-section.spa-unlocking > *:not(.spa-section-divider):not(.spa-lock-overlay) {
-  opacity: 1 !important;
-  filter: none !important;
-  pointer-events: auto !important;
-}
-
+/* ─── Unlocked state ─────────────────────────────────────────────────────── */
 .spa-section.spa-unlocked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
   opacity: 1;
   filter: none;
   pointer-events: auto;
-  transition: opacity 0.5s ease, filter 0.5s ease;
+  visibility: visible;
 }
 
-/* ─── Section reveal keyframe ────────────────────────────────────────────── */
+/* ─── Section reveal animation (triggered once on unlock) ───────────────── */
 @keyframes spa-reveal {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .spa-section.spa-unlocked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
-  animation: spa-reveal 0.45s ease both;
+  animation: spa-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── CTA hint text (shown when action is not yet available) ─────────────── */
+.spa-cta-hint {
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  opacity: 0.7;
 }

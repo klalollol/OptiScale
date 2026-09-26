@@ -1,22 +1,99 @@
 // app.ts — OptiScale single-page app controller
-// All 5 pipeline sections live in one DOM; sections are revealed + autoscrolled.
 export {};
 
-// ─── Upload section logic (inlined from upload.ts) ───────────────────────────
+// ─── Utilities ───────────────────────────────────────────────────────────────
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function formatBytes(bytes: number): string {
+  const mb = bytes / (1024 * 1024);
+  if (mb >= 1) return mb.toFixed(1) + ' MB';
+  return (bytes / 1024).toFixed(1) + ' KB';
+}
+
+/** Eased scroll — lands at the section divider, accounts for sticky header height. */
+function smoothScrollTo(targetY: number, duration = 750): void {
+  const startY = window.scrollY;
+  const diff   = targetY - startY;
+  if (Math.abs(diff) < 2) return;
+
+  let startTime: number | null = null;
+
+  function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function step(now: number): void {
+    if (startTime === null) startTime = now;
+    const elapsed  = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    window.scrollTo(0, startY + diff * easeInOutCubic(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
+function stickyHeight(): number {
+  // topbar (~65px) + workflow bar (~48px) + a small breathing gap
+  return 65 + 48 + 8;
+}
+
+// ─── Workflow indicator ───────────────────────────────────────────────────────
+
+const STEP_IDS    = ['wf-1', 'wf-2', 'wf-3', 'wf-4', 'wf-5'] as const;
+const STEP_LABELS = ['UPLOAD', 'ANALYZE', 'OPTIMIZE', 'BENCHMARK', 'PROVE'];
+const STEP_STATUS = [
+  'system ready',
+  'analysis complete',
+  'optimization ready',
+  'benchmarking',
+  'results verified',
+];
+
+function setActiveStep(idx: number): void {
+  STEP_IDS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active', 'done');
+    if (i < idx)  el.classList.add('done');
+    if (i === idx) el.classList.add('active');
+  });
+  const bc = document.getElementById('spa-breadcrumb');
+  if (bc) bc.textContent = STEP_LABELS[idx] ?? '';
+  const st = document.getElementById('spa-status');
+  if (st) st.textContent = STEP_STATUS[idx] ?? '';
+}
+
+// ─── Section unlock + scroll ─────────────────────────────────────────────────
+
+function unlockSection(sectionId: string, lockId: string, stepIdx: number): void {
+  const sec  = document.getElementById(sectionId);
+  const lock = document.getElementById(lockId);
+  if (!sec || !lock) return;
+
+  // 1. Hide overlay, remove locked class, add unlocked class
+  lock.classList.add('hidden');
+  sec.classList.remove('spa-locked');
+  sec.classList.add('spa-unlocked');
+  setActiveStep(stepIdx);
+
+  // 2. Wait one frame for the layout to settle after class changes,
+  //    then eased-scroll so the section divider sits just below the sticky bars.
+  requestAnimationFrame(() => {
+    const rect    = sec.getBoundingClientRect();
+    const absTop  = rect.top + window.scrollY;
+    const target  = Math.max(0, absTop - stickyHeight());
+    smoothScrollTo(target, 750);
+  });
+}
+
+// ─── Upload mock logic ────────────────────────────────────────────────────────
 
 type UploadState = 'empty' | 'dragging' | 'uploading' | 'success' | 'error';
-
 interface UploadError { title: string; message: string; }
-
-async function mockUploadProject(
-  _file: File,
-  onProgress: (pct: number) => void,
-): Promise<void> {
-  for (let i = 1; i <= 20; i++) {
-    await sleep(60 + Math.random() * 40);
-    onProgress(Math.round((i / 20) * 100));
-  }
-}
 
 const MOCK_VALIDATION_CHECKS = [
   'ZIP archive detected',
@@ -33,64 +110,36 @@ const DEMO_PROJECT = {
   deps: 47,
 };
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
+async function mockUploadProject(
+  _file: File,
+  onProgress: (pct: number) => void,
+): Promise<void> {
+  for (let i = 1; i <= 20; i++) {
+    await sleep(60 + Math.random() * 40);
+    onProgress(Math.round((i / 20) * 100));
+  }
 }
 
-function formatBytes(bytes: number): string {
-  const mb = bytes / (1024 * 1024);
-  if (mb >= 1) return mb.toFixed(1) + ' MB';
-  return (bytes / 1024).toFixed(1) + ' KB';
-}
+// DOM refs — upload
+const uploadPanel       = document.getElementById('upload-panel')!;
+const fileInput         = document.querySelector<HTMLInputElement>('#file-input')!;
+const selectFileBtn     = document.getElementById('select-file-btn')!;
+const demoBtn           = document.getElementById('demo-btn')!;
+const retryBtn          = document.getElementById('retry-btn')!;
+const continueAnalBtn   = document.getElementById('continue-to-analyze-btn')!;
+const ctaUploadHint     = document.getElementById('cta-upload-hint')!;
 
-// ─── Workflow indicator + breadcrumb helpers ──────────────────────────────────
+const progressFill      = document.getElementById('upload-progress-fill')!;
+const progressPct       = document.getElementById('upload-progress-pct')!;
+const progressSize      = document.getElementById('upload-progress-size')!;
+const uploadFilenameEl  = document.getElementById('upload-filename')!;
+const successFilename   = document.getElementById('success-filename')!;
+const successFilesize   = document.getElementById('success-filesize')!;
+const validationChecks  = document.getElementById('validation-checks')!;
+const errorTitle        = document.getElementById('error-title')!;
+const errorMsg          = document.getElementById('error-msg')!;
 
-const STEPS = ['wf-1', 'wf-2', 'wf-3', 'wf-4', 'wf-5'] as const;
-const STEP_LABELS = ['UPLOAD', 'ANALYZE', 'OPTIMIZE', 'BENCHMARK', 'PROVE'];
-const STEP_STATUS = ['system ready', 'analysis complete', 'optimization ready', 'benchmarking', 'results verified'];
-
-function setActiveStep(idx: number): void {
-  STEPS.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('active', 'done');
-    if (i < idx)  el.classList.add('done');
-    if (i === idx) el.classList.add('active');
-  });
-  const bc = document.getElementById('spa-breadcrumb');
-  if (bc) bc.textContent = STEP_LABELS[idx] ?? '';
-  const st = document.getElementById('spa-status');
-  if (st) st.textContent = STEP_STATUS[idx] ?? '';
-}
-
-// ─── Section unlock + autoscroll ─────────────────────────────────────────────
-
-function unlockSection(id: string, lockId: string, stepIdx: number): void {
-  const sec  = document.getElementById(id);
-  const lock = document.getElementById(lockId);
-  if (!sec || !lock) return;
-
-  lock.classList.add('hidden');
-  sec.classList.remove('spa-locked');
-  sec.classList.add('spa-unlocked');
-  setActiveStep(stepIdx);
-
-  // scroll the section divider into view with a small delay so layout settles
-  setTimeout(() => {
-    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 80);
-}
-
-// ─── UPLOAD logic ─────────────────────────────────────────────────────────────
-
-const uploadPanel     = document.getElementById('upload-panel')!;
-const fileInput       = document.querySelector<HTMLInputElement>('#file-input')!;
-const selectFileBtn   = document.getElementById('select-file-btn')!;
-const demoBtn         = document.getElementById('demo-btn')!;
-const retryBtn        = document.getElementById('retry-btn')!;
-const continueAnalBtn = document.getElementById('continue-to-analyze-btn')!;
-
-const stateEls: Record<UploadState, HTMLElement | null> = {
+const uploadStateEls: Record<UploadState, HTMLElement | null> = {
   empty:     document.getElementById('state-empty'),
   dragging:  document.getElementById('state-dragging'),
   uploading: document.getElementById('state-uploading'),
@@ -98,20 +147,14 @@ const stateEls: Record<UploadState, HTMLElement | null> = {
   error:     document.getElementById('state-error'),
 };
 
-const progressFill     = document.getElementById('upload-progress-fill')!;
-const progressPct      = document.getElementById('upload-progress-pct')!;
-const progressSize     = document.getElementById('upload-progress-size')!;
-const uploadFilenameEl = document.getElementById('upload-filename')!;
-const successFilename  = document.getElementById('success-filename')!;
-const successFilesize  = document.getElementById('success-filesize')!;
-const validationChecks = document.getElementById('validation-checks')!;
-const errorTitle       = document.getElementById('error-title')!;
-const errorMsg         = document.getElementById('error-msg')!;
-
 function showUploadState(state: UploadState): void {
-  (Object.keys(stateEls) as UploadState[]).forEach((k) => {
-    stateEls[k]?.classList.toggle('hidden', k !== state);
+  (Object.keys(uploadStateEls) as UploadState[]).forEach((k) => {
+    uploadStateEls[k]?.classList.toggle('hidden', k !== state);
   });
+  // Show / hide CTA
+  const isSuccess = state === 'success';
+  continueAnalBtn.style.display = isSuccess ? '' : 'none';
+  ctaUploadHint.style.display   = isSuccess ? 'none' : '';
 }
 
 function renderValidation(): void {
@@ -120,7 +163,7 @@ function renderValidation(): void {
     .join('');
 }
 
-function showError(err: UploadError): void {
+function showUploadError(err: UploadError): void {
   errorTitle.textContent = err.title;
   errorMsg.textContent   = err.message;
   showUploadState('error');
@@ -128,15 +171,14 @@ function showError(err: UploadError): void {
 
 async function startUpload(file: File): Promise<void> {
   if (!file.name.toLowerCase().endsWith('.zip')) {
-    showError({ title: 'INVALID FILE', message: 'Please upload a .ZIP project archive.' });
+    showUploadError({ title: 'INVALID FILE', message: 'Please upload a .ZIP project archive.' });
     return;
   }
-  uploadFilenameEl.textContent  = file.name;
-  progressFill.style.width      = '0%';
-  progressPct.textContent       = '0%';
-  progressSize.textContent      = formatBytes(file.size);
+  uploadFilenameEl.textContent = file.name;
+  progressFill.style.width     = '0%';
+  progressPct.textContent      = '0%';
+  progressSize.textContent     = formatBytes(file.size);
   showUploadState('uploading');
-
   try {
     await mockUploadProject(file, (pct) => {
       progressFill.style.width = pct + '%';
@@ -147,7 +189,7 @@ async function startUpload(file: File): Promise<void> {
     renderValidation();
     showUploadState('success');
   } catch {
-    showError({ title: 'UPLOAD FAILED', message: 'An unexpected error occurred. Please try again.' });
+    showUploadError({ title: 'UPLOAD FAILED', message: 'An unexpected error occurred. Please try again.' });
   }
 }
 
@@ -158,7 +200,6 @@ async function startDemoUpload(): Promise<void> {
   progressPct.textContent      = '0%';
   progressSize.textContent     = DEMO_PROJECT.sizeMB + ' MB';
   showUploadState('uploading');
-
   try {
     await mockUploadProject({ name: DEMO_PROJECT.name, size: demoBytes } as File, (pct) => {
       progressFill.style.width = pct + '%';
@@ -170,17 +211,17 @@ async function startDemoUpload(): Promise<void> {
     renderValidation();
     showUploadState('success');
   } catch {
-    showError({ title: 'DEMO LOAD FAILED', message: 'Could not load the demo project. Please try again.' });
+    showUploadError({ title: 'DEMO LOAD FAILED', message: 'Could not load the demo project. Please try again.' });
   }
 }
 
 // Upload events
 selectFileBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 uploadPanel.addEventListener('click', () => {
-  if (!stateEls.empty?.classList.contains('hidden')) fileInput.click();
+  if (!uploadStateEls.empty?.classList.contains('hidden')) fileInput.click();
 });
 uploadPanel.addEventListener('keydown', (e) => {
-  if ((e.key === 'Enter' || e.key === ' ') && !stateEls.empty?.classList.contains('hidden')) {
+  if ((e.key === 'Enter' || e.key === ' ') && !uploadStateEls.empty?.classList.contains('hidden')) {
     e.preventDefault(); fileInput.click();
   }
 });
@@ -199,7 +240,7 @@ continueAnalBtn.addEventListener('click', (e) => {
 // Drag and drop
 uploadPanel.addEventListener('dragenter', (e) => {
   e.preventDefault();
-  if (!stateEls.empty?.classList.contains('hidden')) {
+  if (!uploadStateEls.empty?.classList.contains('hidden')) {
     uploadPanel.classList.add('drag-over');
     showUploadState('dragging');
   }
@@ -233,15 +274,19 @@ const APPLY_STEPS_DATA = [
   'Preparing optimized build',
 ];
 
-const optIdleEl     = document.getElementById('opt-idle')!;
-const optApplyingEl = document.getElementById('opt-applying')!;
-const optDoneEl     = document.getElementById('opt-done')!;
-const applyStepsEl  = document.getElementById('apply-steps')!;
+const applyBtn        = document.getElementById('apply-btn')!;
+const diffBtn         = document.getElementById('diff-btn')!;
+const toBenchBtn      = document.getElementById('to-benchmark-btn')!;
+const applyingSection = document.getElementById('opt-applying-section')!;
+const applyStepsEl    = document.getElementById('apply-steps')!;
+const doneSection     = document.getElementById('opt-done-section')!;
 
-function showOptState(s: 'idle' | 'applying' | 'done'): void {
-  optIdleEl.classList.toggle('hidden', s !== 'idle');
-  optApplyingEl.classList.toggle('hidden', s !== 'applying');
-  optDoneEl.classList.toggle('hidden', s !== 'done');
+function setOptState(s: 'idle' | 'applying' | 'done'): void {
+  applyBtn.style.display    = s === 'idle'     ? '' : 'none';
+  diffBtn.style.display     = s === 'idle'     ? '' : 'none';
+  toBenchBtn.style.display  = s === 'done'     ? '' : 'none';
+  applyingSection.style.display = s === 'applying' ? '' : 'none';
+  doneSection.style.display     = s === 'done'     ? '' : 'none';
 }
 
 function buildApplySteps(): void {
@@ -255,9 +300,8 @@ function buildApplySteps(): void {
 }
 
 async function runApply(): Promise<void> {
-  showOptState('applying');
+  setOptState('applying');
   buildApplySteps();
-
   for (let i = 0; i < APPLY_STEPS_DATA.length; i++) {
     const row  = document.getElementById(`opt-step-${i}`)!;
     const icon = document.getElementById(`opt-step-icon-${i}`)!;
@@ -266,21 +310,19 @@ async function runApply(): Promise<void> {
     if (i === APPLY_STEPS_DATA.length - 1) await sleep(400);
     row.classList.remove('active'); row.classList.add('done'); icon.textContent = '✓';
   }
-
   await sleep(300);
-  showOptState('done');
+  setOptState('done');
 }
 
-document.getElementById('apply-btn')?.addEventListener('click', () => void runApply());
-document.getElementById('diff-btn')?.addEventListener('click', () => {
+applyBtn.addEventListener('click', () => void runApply());
+diffBtn.addEventListener('click', () => {
   const dp = document.querySelector<HTMLElement>('#sec-optimize .diff-panel');
   if (!dp) return;
   dp.style.outline = '1px solid var(--cyan)';
   dp.scrollIntoView({ behavior: 'smooth', block: 'center' });
   setTimeout(() => { dp.style.outline = ''; }, 1500);
 });
-
-document.getElementById('to-benchmark-btn')?.addEventListener('click', () => {
+toBenchBtn.addEventListener('click', () => {
   unlockSection('sec-benchmark', 'lock-benchmark', 3);
 });
 
@@ -296,19 +338,21 @@ const BENCH_LOG_STEPS = [
   { label: 'Comparing results',        delay: 800  },
 ];
 
-const benchIdleEl     = document.getElementById('bench-idle')!;
-const benchRunningEl  = document.getElementById('bench-running')!;
-const benchCompleteEl = document.getElementById('bench-complete')!;
-const benchLogEl      = document.getElementById('bench-log')!;
-const progOrig        = document.getElementById('prog-orig') as HTMLElement;
-const progOpt         = document.getElementById('prog-opt') as HTMLElement;
-const pctOrig         = document.getElementById('pct-orig') as HTMLElement;
-const pctOpt          = document.getElementById('pct-opt') as HTMLElement;
+const startBenchBtn    = document.getElementById('start-bench-btn')!;
+const toProveBtn       = document.getElementById('to-prove-btn')!;
+const benchRunning     = document.getElementById('bench-running')!;
+const benchComplete    = document.getElementById('bench-complete')!;
+const benchLogEl       = document.getElementById('bench-log')!;
+const progOrig         = document.getElementById('prog-orig') as HTMLElement;
+const progOpt          = document.getElementById('prog-opt')  as HTMLElement;
+const pctOrigEl        = document.getElementById('pct-orig')  as HTMLElement;
+const pctOptEl         = document.getElementById('pct-opt')   as HTMLElement;
 
-function showBenchState(s: 'idle' | 'running' | 'complete'): void {
-  benchIdleEl.classList.toggle('hidden', s !== 'idle');
-  benchRunningEl.classList.toggle('hidden', s !== 'running');
-  benchCompleteEl.classList.toggle('hidden', s !== 'complete');
+function setBenchState(s: 'idle' | 'running' | 'complete'): void {
+  startBenchBtn.style.display  = s === 'idle'     ? '' : 'none';
+  toProveBtn.style.display     = s === 'complete' ? '' : 'none';
+  benchRunning.style.display   = s === 'running'  ? '' : 'none';
+  benchComplete.style.display  = s === 'complete' ? '' : 'none';
 }
 
 async function animateProgress(
@@ -337,13 +381,11 @@ function buildBenchLog(): void {
 }
 
 async function runBenchmark(): Promise<void> {
-  showBenchState('running');
+  setBenchState('running');
   buildBenchLog();
-
   const totalTime = BENCH_LOG_STEPS.reduce((a, s) => a + s.delay, 0);
-  void animateProgress(progOrig, pctOrig, 85, totalTime * 0.9);
-  void animateProgress(progOpt,  pctOpt,  91, totalTime * 0.95);
-
+  void animateProgress(progOrig, pctOrigEl, 85, totalTime * 0.9);
+  void animateProgress(progOpt,  pctOptEl,  91, totalTime * 0.95);
   for (let i = 0; i < BENCH_LOG_STEPS.length; i++) {
     const entry = document.getElementById(`blog-${i}`)!;
     const icon  = document.getElementById(`blog-icon-${i}`)!;
@@ -351,29 +393,27 @@ async function runBenchmark(): Promise<void> {
     await sleep(BENCH_LOG_STEPS[i].delay);
     entry.classList.remove('active'); entry.classList.add('done'); icon.textContent = '✓';
   }
-
-  progOrig.style.width = '100%'; pctOrig.textContent = '100%';
-  progOpt.style.width  = '100%'; pctOpt.textContent  = '100%';
+  progOrig.style.width = '100%'; pctOrigEl.textContent = '100%';
+  progOpt.style.width  = '100%'; pctOptEl.textContent  = '100%';
   await sleep(400);
-  showBenchState('complete');
+  setBenchState('complete');
 }
 
-document.getElementById('start-bench-btn')?.addEventListener('click', () => void runBenchmark());
-
-document.getElementById('to-prove-btn')?.addEventListener('click', () => {
+startBenchBtn.addEventListener('click', () => void runBenchmark());
+toProveBtn.addEventListener('click', () => {
   unlockSection('sec-prove', 'lock-prove', 4);
-  // animate the throughput bars after a short delay
+  // animate throughput bars after layout settles
   setTimeout(() => {
     const barOrig = document.getElementById('bar-orig') as HTMLElement | null;
     const barOpt  = document.getElementById('bar-opt')  as HTMLElement | null;
     if (barOrig) barOrig.style.width = '38.85%';
     if (barOpt)  barOpt.style.width  = '100%';
-  }, 500);
+  }, 600);
 });
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 showUploadState('empty');
-showOptState('idle');
-showBenchState('idle');
+setOptState('idle');
+setBenchState('idle');
 setActiveStep(0);
