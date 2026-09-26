@@ -8,7 +8,7 @@
 - TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` are all on — any unused symbol is a compile error. Run `npm run build` to validate before finishing changes.
 - No test runner exists; `npm run dev` + browser is the only way to validate rendering changes.
 - `src/services/harnessService.ts` uses Node APIs — it is excluded from `tsconfig.json` and must never be imported from browser-side code. Same for `*.test.ts` files.
-- `types/review.ts` is outside `tsconfig.json`'s `include` — reference it from Node scripts via JSDoc `@type {import('...')}`, never via `import`.
+- `src/types/review.ts` is included by `tsconfig.json` — reference it from Node scripts via JSDoc `@type {import('...')}`, never via runtime `import`.
 - New container IDs added to `index.html` require a matching `document.querySelector('#id')` block in `src/main.ts` and sample data in `src/data.ts`.
 - `.badge-estimated` (amber outline, transparent bg) must never share styles with `.badge-measured` (cyan filled). This is a non-negotiable UI contract.
 - Preflight tier pill classes: `.tier-measured`, `.tier-estimated`, `.tier-unavailable` — all must be defined in CSS before use.

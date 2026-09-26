@@ -29,7 +29,7 @@ npm run preview  # preview built output on port 4173
 - `src/main.ts` — queries container IDs and injects HTML strings; imports only from `./data`
 - `src/lib/preflight/` — pure TS library (browser-safe; no Node APIs); compiled by Vite
 - `src/services/` — Node-only service (`harnessService.ts`); **excluded from tsconfig** (DOM types would conflict)
-- `types/review.ts` — shared types for `merge-report.mjs`; outside Vite bundle, referenced via JSDoc only
+- `src/types/review.ts` — shared types for `merge-report.mjs`; referenced via JSDoc only
 - `templates/modernization/` — harness templates copied verbatim (with `@PLACEHOLDER@` substitution) into `<project>/.modernization/`
 
 ### Container IDs rendered by `src/main.ts`
@@ -96,7 +96,7 @@ Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat re
 
 - `index.html` loads `./src/styles.css` via `<link>` — do **not** import CSS in any `.ts` file (breaks the build silently).
 - `src/services/harnessService.ts` and all `*.test.ts` files are excluded from `tsconfig.json` — they use Node APIs and must not be compiled by Vite.
-- `types/review.ts` is outside `tsconfig.json`'s `include`; used only via JSDoc `@type` in `merge-report.mjs`.
+- `src/types/review.ts` is included by `tsconfig.json`; used by `merge-report.mjs` via JSDoc `@type`.
 - Harness injection contract: everything goes under `<project>/.modernization/`; the ONLY pre-existing file that may be modified is the root aggregator (`pom.xml` / `settings.gradle[.kts]`), backed up as `*.optiscale.bak` first, append-only.
 - `revert()` in `harnessService.ts` verifies the post-revert SHA-256 tree hash against the value recorded before injection — throws if they differ.
 - `FixtureReplay.java` returns a `VOID_SENTINEL` object (never `null`) so JMH Blackhole always has a non-null value.

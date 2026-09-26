@@ -10,7 +10,7 @@
  *   <out>/sql/*.log
  *
  * Emits ONE JSON object to stdout that conforms to MergeReportOutput in
- * types/review.ts.
+ * src/types/review.ts.
  *
  * Contract:
  *   • Every metric carries "source": "measured" | "estimated"
@@ -164,7 +164,7 @@ const k6Modern  = extractK6(k6ModernRaw,  'modern');
 const jmh       = extractJmh(jmhRaw);
 const sql       = extractSqlCounts(sqlDir);
 
-/** @type {import('../../types/review.js').PerfMetricDelta[]} */
+/** @type {import('../../../src/types/review.js').PerfMetricDelta[]} */
 const metrics = [];
 
 // ── k6: p95 latency ──────────────────────────────────────────────────────────
@@ -252,7 +252,7 @@ const metrics = [];
 const paritySource = parityRaw !== null ? 'measured' : 'estimated';
 const parity = buildParityReport(parityRaw, paritySource);
 
-/** @type {import('../../types/review.js').MergeReportOutput} */
+/** @type {import('../../../src/types/review.js').MergeReportOutput} */
 const output = {
   generatedAt: new Date().toISOString(),
   metrics,
