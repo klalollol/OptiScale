@@ -6,7 +6,6 @@
   top: 0;
   z-index: 100;
   background: var(--bg);
-  /* re-apply the border; topbar normally has border-bottom already */
 }
 
 .spa-workflow-bar {
@@ -16,11 +15,12 @@
   background: var(--bg);
 }
 
-/* ─── Section dividers ───────────────────────────────────────────────────── */
+/* ─── Section wrapper ────────────────────────────────────────────────────── */
 .spa-section {
   position: relative;
 }
 
+/* ─── Section dividers ───────────────────────────────────────────────────── */
 .spa-section-divider {
   display: flex;
   align-items: center;
@@ -48,24 +48,43 @@
   flex-shrink: 0;
 }
 
+/* ─── Consistent CTA bar — always the last block of every section ────────── */
+/* Sits outside the inner <section> elements so its top edge is always at a   */
+/* predictable depth: content ends → CTA bar begins.                          */
+.spa-cta-bar {
+  padding: 28px 0 40px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Hide the bar itself when locked — the overlay blocks interaction anyway,
+   but this prevents the bar from contributing to section height estimates */
+.spa-locked .spa-cta-bar {
+  visibility: hidden;
+}
+
 /* ─── Locked state ───────────────────────────────────────────────────────── */
 .spa-locked {
   position: relative;
 }
 
-/* Dim the section content when locked */
+/* Dim locked section content */
 .spa-locked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
-  opacity: 0.18;
+  opacity: 0.15;
   pointer-events: none;
   user-select: none;
-  filter: blur(0.5px);
-  transition: opacity 0.4s ease, filter 0.4s ease;
+  filter: blur(0.6px);
+  transition: opacity 0.5s ease, filter 0.5s ease;
 }
 
-/* Overlay shown on locked sections */
+/* Overlay */
 .spa-lock-overlay {
   position: absolute;
-  top: 60px;      /* below the divider */
+  top: 60px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -78,9 +97,7 @@
   pointer-events: none;
 }
 
-.spa-lock-overlay.hidden {
-  display: none;
-}
+.spa-lock-overlay.hidden { display: none; }
 
 .spa-lock-icon {
   font-size: 1.8rem;
@@ -99,26 +116,238 @@
   background: var(--bg);
 }
 
-/* ─── Unlocked reveal animation ──────────────────────────────────────────── */
-.spa-section.spa-unlocking > *:not(.spa-section-divider):not(.spa-lock-overlay) {
-  opacity: 1 !important;
-  filter: none !important;
-  pointer-events: auto !important;
-}
-
+/* ─── Unlocked state ─────────────────────────────────────────────────────── */
 .spa-section.spa-unlocked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
   opacity: 1;
   filter: none;
   pointer-events: auto;
-  transition: opacity 0.5s ease, filter 0.5s ease;
+  visibility: visible;
 }
 
-/* ─── Section reveal keyframe ────────────────────────────────────────────── */
+/* ─── Section reveal animation (triggered once on unlock) ───────────────── */
 @keyframes spa-reveal {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .spa-section.spa-unlocked > *:not(.spa-section-divider):not(.spa-lock-overlay) {
-  animation: spa-reveal 0.45s ease both;
+  animation: spa-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── CTA hint text (shown when action is not yet available) ─────────────── */
+.spa-cta-hint {
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   COMPACT LAYOUT SYSTEM — keeps each section visible within one viewport
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Two-column body grid ───────────────────────────────────────────────── */
+/* Main content 55%, side column 42%, with a 1px border gap */
+.spa-body-grid {
+  display: grid;
+  grid-template-columns: 55fr 42fr;
+  gap: 0 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 16px 0 0;
+}
+
+/* Analyze section has slightly wider main (bottleneck code needs space) */
+.spa-body-grid--analyze {
+  grid-template-columns: 58fr 38fr;
+}
+
+.spa-body-main,
+.spa-body-side {
+  background: var(--bg);
+  padding: 20px 20px 20px;
+}
+
+/* ─── Compact hero (reduced vertical padding) ────────────────────────────── */
+.page-hero--compact {
+  padding-top: 28px;
+  padding-bottom: 20px;
+}
+
+/* ─── Compact upload hero (left column) ─────────────────────────────────── */
+.upload-hero--compact {
+  padding: 28px 0 0;
+  border-bottom: none;
+}
+
+/* ─── Compact upload panel (side column) ────────────────────────────────── */
+.upload-panel--compact {
+  padding: 28px 24px;
+}
+
+/* ─── Stats strip (full-width, 4 columns, no top border) ────────────────── */
+.spa-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-top: none;
+  margin-top: 0;
+}
+
+/* Inherit stat-mini-card styles from pages.css */
+
+/* ─── Compact bottleneck panel (no outer section padding) ───────────────── */
+.bottleneck-panel--compact {
+  padding: 16px 16px 14px;
+}
+
+/* ─── Compact why-panel (vertical chain in narrow column) ───────────────── */
+.why-panel--compact {
+  padding: 12px 14px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.why-panel--compact .why-header {
+  min-width: unset;
+  margin-bottom: 6px;
+}
+
+.why-chain--vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-wrap: nowrap;
+}
+
+.why-arrow--v {
+  display: block;
+  text-align: center;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+/* ─── Compact bob panel ──────────────────────────────────────────────────── */
+.bob-panel--compact .bob-row {
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 14px;
+}
+
+.bob-panel--compact .bob-row-label {
+  min-width: unset;
+  font-size: 0.62rem;
+}
+
+/* ─── Compact info panel (no bottom padding overflow) ────────────────────── */
+.info-panel--compact {
+  padding: 14px 16px;
+  gap: 8px;
+}
+
+/* ─── Compact change grid ────────────────────────────────────────────────── */
+.change-grid--compact .change-key {
+  min-width: 60px;
+  font-size: 0.62rem;
+}
+
+/* ─── Compact throughput comparison ─────────────────────────────────────── */
+.throughput-comparison--compact {
+  gap: 10px;
+}
+
+/* ─── Metric cards 2-column variant ─────────────────────────────────────── */
+.metric-cards--2col {
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+
+/* ─── Horizontal prediction flow ─────────────────────────────────────────── */
+.prediction-flow--horiz {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  max-width: 100%;
+}
+
+.prediction-flow--horiz .pred-block {
+  flex: 1;
+}
+
+.pred-arrow--h {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  opacity: 0.4;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* ─── Compact infra panel ────────────────────────────────────────────────── */
+.infra-panel--compact {
+  padding: 14px 16px;
+}
+
+.infra-panel--compact .infra-headline {
+  font-size: 0.84rem;
+}
+
+/* ─── Final strip (compact message above CTA) ───────────────────────────── */
+.spa-final-strip {
+  padding: 20px 0 4px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.final-headline--inline {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.final-sub--inline {
+  font-size: 0.76rem;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ─── Responsive overrides for compact layouts ───────────────────────────── */
+@media (max-width: 860px) {
+  .spa-body-grid,
+  .spa-body-grid--analyze {
+    grid-template-columns: 1fr;
+    background: var(--bg);
+    border: none;
+  }
+
+  .spa-body-main,
+  .spa-body-side {
+    padding: 12px 0;
+    border: none;
+  }
+
+  .metric-cards--2col {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .prediction-flow--horiz {
+    flex-direction: column;
+  }
+
+  .pred-arrow--h {
+    height: 28px;
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
 }
