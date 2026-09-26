@@ -36,11 +36,34 @@ describe('homepage regression and navigation', () => {
     expect(root.querySelector('.hero-headline')?.textContent).toBe(original.querySelector('.hero-headline')?.textContent);
     expect(root.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 320 200');
   });
+  it('opens the upload page when swiping left from the homepage hero', () => {
+    vi.useFakeTimers();
+    try {
+      dispose = initRouter(root);
+      const hero = root.querySelector<HTMLElement>('.hero-headline')!;
+      const touch = (type: string, x: number): void => {
+        const event = new Event(type, { bubbles: true, cancelable: true });
+        const point = { identifier: 1, clientX: x, clientY: 100 };
+        Object.assign(event, { touches: type === 'touchend' ? [] : [point], changedTouches: [point] });
+        hero.dispatchEvent(event);
+      };
+      touch('touchstart', 200);
+      touch('touchend', 100);
+      vi.runAllTimers();
+      expect(window.location.pathname).toBe('/upload');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
   it('navigates home → upload → offline demo and restores a popped route', () => {
     const fetch = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Offline'));
     dispose = initRouter(root);
+    expect(root.querySelector('.home-nav')?.textContent).toBe('Home');
+    expect(root.querySelector('[data-swipe-next]')?.textContent).toContain('Continue to upload');
     root.querySelector<HTMLAnchorElement>('a[href="/upload"]')?.click();
     expect(window.location.pathname).toBe('/upload');
+    expect(root.querySelector('.flow-nav')?.textContent).toBe('Home');
+    expect(root.querySelector<HTMLButtonElement>('#browse-zip')?.textContent).toContain('Upload ZIP');
     expect(root.querySelector<HTMLButtonElement>('#review-button')?.disabled).toBe(true);
     root.querySelector<HTMLButtonElement>('#demo-button')?.click();
     expect(window.location.pathname).toBe('/result/demo');

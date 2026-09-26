@@ -7,6 +7,7 @@ A frontend concept demo for the Idea 3 hackathon submission: automated legacy co
 - Legacy modernization narrative with modern landing page design
 - Workflow sections for document understanding, refactoring, parity testing, and deployment
 - TypeScript-driven rendering with CSS styling
+- Three-page flow: use Continue to upload or swipe left on the homepage, then choose a ZIP with the Upload ZIP button on the upload page
 - Required `bob_sessions` evidence folder structure for Bob IDE task summaries
 
 ## Run locally

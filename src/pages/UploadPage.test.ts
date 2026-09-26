@@ -5,7 +5,7 @@ import type { ReviewJob } from '../types/review';
 import { UploadPage } from './UploadPage';
 
 vi.mock('../services/uploadService', async (importOriginal) => {
-  const original = await importOriginal<typeof import('../services/uploadService')>();
+  const original = await importOriginal<typeof uploadService>();
   return { ...original, validateZip: vi.fn(), uploadZip: vi.fn() };
 });
 
@@ -29,6 +29,14 @@ function choose(file: File): void {
 }
 
 describe('upload page interactions', () => {
+  it('opens the file picker from the Upload ZIP button', () => {
+    const input = root.querySelector<HTMLInputElement>('#zip-file')!;
+    const openPicker = vi.spyOn(input, 'click').mockImplementation(() => undefined);
+    const button = root.querySelector<HTMLButtonElement>('#browse-zip')!;
+    expect(button.textContent).toContain('Upload ZIP');
+    button.click();
+    expect(openPicker).toHaveBeenCalledOnce();
+  });
   it('keeps constraints visible and Review disabled before validation', () => {
     expect(root.querySelector<HTMLButtonElement>('#review-button')?.disabled).toBe(true);
     expect(root.querySelector<HTMLButtonElement>('#demo-button')?.disabled).toBe(false);

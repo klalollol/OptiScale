@@ -1,11 +1,15 @@
 import { subagentCards, codeDiff, footerStats } from '../data';
 import type { PageContext } from '../types/page';
+import { bindSwipeNext } from '../components/SwipeNext';
 
-export function HomePage({ root }: PageContext): void {
+export function HomePage({ root, navigate, signal }: PageContext): void {
   document.title = 'OptiScale · Automated Modernization Engine';
   const template = document.querySelector<HTMLTemplateElement>('#home-template');
   if (!template) throw new Error('Homepage template is missing.');
   root.replaceChildren(template.content.cloneNode(true));
+  const page = root.querySelector<HTMLElement>('.home-page');
+  const next = root.querySelector<HTMLAnchorElement>('[data-swipe-next]');
+  if (page && next) bindSwipeNext(page, next, navigate, signal);
   // ─── Subagent cards ───────────────────────────────────────────────────────────
   
   const subagentRoot = root.querySelector('#subagent-cards');

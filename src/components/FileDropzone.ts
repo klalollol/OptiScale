@@ -1,9 +1,9 @@
 export function FileDropzone(): string {
   return `<div class="dropzone" id="dropzone">
     <input type="file" id="zip-file" class="visually-hidden" accept=".zip,application/zip,application/x-zip-compressed" aria-label="Choose a project ZIP" aria-describedby="upload-constraints upload-error" />
-    <button type="button" id="browse-zip" class="dropzone-button" aria-describedby="upload-constraints upload-error">
-      <span class="dropzone-symbol" aria-hidden="true">[ ↑ ]</span><strong>Drop your project ZIP here</strong><span>or click to browse files</span>
-    </button>
+    <div class="dropzone-copy"><span class="dropzone-symbol" aria-hidden="true">[ ZIP ]</span><strong>Drop your project archive here</strong><span>or select it from your device</span></div>
+    <button type="button" id="browse-zip" class="upload-zip-button" aria-controls="zip-file" aria-describedby="upload-constraints upload-error"><span aria-hidden="true">↑</span> Upload ZIP</button>
+    <p class="dropzone-note">ZIP archive only · review before sending</p>
   </div>`;
 }
 

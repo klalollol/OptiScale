@@ -17,7 +17,7 @@
   <body>
     <main id="app"></main>
     <template id="home-template">
-    <div class="page-shell">
+    <div class="page-shell home-page">
 
       <!-- ── Top bar ─────────────────────────────────────────────────────── -->
       <header class="topbar">
@@ -31,7 +31,7 @@
         </div>
       </header>
 
-      <nav class="home-nav" aria-label="Main navigation"><a href="/" data-nav aria-current="page">Home</a><a href="/upload" data-nav>Upload ZIP →</a></nav>
+      <nav class="home-nav" aria-label="Main navigation"><a href="/" data-nav aria-current="page">Home</a></nav>
 
       <!-- ── Hero ───────────────────────────────────────────────────────── -->
       <section class="hero-section">
@@ -47,6 +47,14 @@
             <span class="pill arrow">→</span>
             <span class="pill label">target</span>
             <span class="pill value">Java 17 · Spring Boot 3</span>
+          </div>
+          <div class="next-step">
+            <p class="next-step-label"><span>01 / Explore</span><span>02 / Upload</span></p>
+            <a class="next-page-link" href="/upload" data-nav data-swipe-next aria-describedby="next-page-hint">
+              <span class="next-page-copy"><strong>Continue to upload</strong><span>Your project starts on the next page</span></span>
+              <span class="next-page-arrow" aria-hidden="true">→</span>
+            </a>
+            <p id="next-page-hint">Click or swipe left to continue <span aria-hidden="true">←</span></p>
           </div>
         </div>
         <div class="hero-right">
