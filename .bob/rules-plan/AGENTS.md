@@ -1,8 +1,10 @@
 # Project Architecture Rules (Non-Obvious Only)
 
 - **Two separate compilation targets**: Vite bundles `src/` (browser, DOM types); `src/services/` and `*.test.ts` are Node-only and excluded from `tsconfig.json`. Adding a Node import to `src/` or `src/lib/` will fail silently at type-check but crash at runtime.
-- `src/lib/preflight/` and `src/data.ts` must stay browser-safe — no `node:fs`, no `node:crypto`, no `node:child_process`.
-- **Single data flow**: `src/data.ts` → `src/main.ts` → DOM. All new display data (preflight, perf) must be typed and exported from `src/data.ts`; render functions live only in `src/main.ts`.
+- `src/lib/preflight/`, `src/lib/suggestions/`, and `src/data.ts`/`src/demo-data.ts` must stay browser-safe — no `node:fs`, no `node:crypto`, no `node:child_process`.
+- **Two distinct data layers**: `src/data.ts` → `src/main.ts` → `index.html` DOM. `src/demo-data.ts` → inner pipeline page TS modules. They must never be merged; inner pages do not use `src/main.ts`.
+- **Multi-page Vite build**: 8 entry points declared in `vite.config.ts` `rollupOptions.input`. Every new page requires both an HTML file and a TS entry registered there. CSS is not bundled into JS — it is loaded via `<link>` in each HTML file.
+- **CSS cascade for inner pages** (order matters): `styles.css` (base) → `upload.css` (topbar) → `pages.css` (page hero/steps) → `app.css` (SPA-only, only `app.html`). Missing a layer = missing styles with no error.
 - **Harness injection contract** (non-negotiable):
   - Everything generated goes under `<project>/.modernization/` — nothing else.
   - Only the root aggregator (`pom.xml` / `settings.gradle[.kts]`) may be modified.

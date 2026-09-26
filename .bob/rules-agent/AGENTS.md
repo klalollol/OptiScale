@@ -1,12 +1,11 @@
 # Project Coding Rules (Non-Obvious Only)
 
-- All content data lives in `src/data.ts`; `src/main.ts` only renders. Never add data inline in the render file.
-- CSS is loaded via `<link>` in `index.html` — adding a CSS `import` in any `.ts` file will break the build.
+- All content data lives in `src/data.ts` (for `index.html`) and `src/demo-data.ts` (for all inner pipeline pages). Never merge them or cross-import.
+- CSS is loaded via `<link>` in each HTML file — adding a CSS `import` in any `.ts` file will break the build.
 - `SubagentCard.status` values (`running`, `verifying`, `queued`) are applied as CSS class names on `.sa-status`; adding a new status requires a matching CSS rule in `src/styles.css`.
 - The progress bar fill colour is controlled by an extra class on `.sa-progress-fill`: no class = cyan (running), `amber` = verifying, `muted` = queued. This is set in `src/main.ts` via a ternary on `card.status`.
 - `codeDiff.legacy` / `codeDiff.modern` strings contain raw HTML with `<span class="kw">` etc. — assign to `.innerHTML`, never `.textContent`. The span classes (`.kw`, `.ty`, `.fn`, `.cm`, `.st`, `.nu`, `.op`) must be defined in `src/styles.css`.
-- TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` are all on — any unused symbol is a compile error. Run `npm run build` to validate before finishing changes.
-- No test runner exists; `npm run dev` + browser is the only way to validate rendering changes.
+- TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` are all on — any unused symbol is a compile error. Run `npm run build` to validate before finishing changes. Use `void expr;` to silence intentional future-wiring imports (pattern used in `analyze.ts`, `prove.ts`).
 - `src/services/harnessService.ts` uses Node APIs — it is excluded from `tsconfig.json` and must never be imported from browser-side code. Same for `*.test.ts` files.
 - `types/review.ts` is outside `tsconfig.json`'s `include` — reference it from Node scripts via JSDoc `@type {import('...')}`, never via `import`.
 - New container IDs added to `index.html` require a matching `document.querySelector('#id')` block in `src/main.ts` and sample data in `src/data.ts`.
@@ -15,3 +14,5 @@
 - Harness injection: `injectHarness()` must record tree SHA-256 BEFORE writing any file. `revert()` verifies this hash after restoring — mismatch throws.
 - Template placeholders use `@UPPER_SNAKE_CASE@` syntax — `fillPlaceholders()` in `harnessService.ts` replaces them via regex `/@([A-Z_]+)@/g`.
 - `run-bench.sh` exits `2` (not `1`) on build failure — callers check for exit code `2` specifically to fall back to `tier="estimated"`.
+- Adding a new inner page requires: new HTML file + new `src/<page>.ts` + entry in `vite.config.ts` `rollupOptions.input` + correct CSS `<link>` stack in the HTML (`styles.css` → `upload.css` → `pages.css`, then `app.css` only for `app.html`).
+- `src/lib/suggestions/` anti-pattern engine: `AntiPattern.beforeCode`/`afterCode` are illustrative text snippets (not generated from real source) — never treat them as file-accurate diffs.
