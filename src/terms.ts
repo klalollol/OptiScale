@@ -27,7 +27,7 @@ consentBox.addEventListener('keydown', (e) => {
 // Navigate to upload on continue
 continueBtn.addEventListener('click', () => {
   if (!checkbox.checked) return;
-  window.location.href = './upload.html';
+  window.location.href = './app.html';
 });
 
 // Init state
