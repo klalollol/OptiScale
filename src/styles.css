@@ -93,6 +93,11 @@ button { font: inherit; cursor: pointer; border: none; }
   50%       { opacity: 0.4; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .status-dot { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
 .hero-section {
   display: grid;

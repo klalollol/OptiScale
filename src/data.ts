@@ -7,23 +7,28 @@ export type HomeStep = {
 export const homeSteps: HomeStep[] = [
   {
     number: '01',
-    title: 'Choose a project',
+    title: 'Upload',
     description: 'Select a Python/FastAPI project .ZIP, or pick a bundled demo on the upload screen.',
   },
   {
     number: '02',
-    title: 'Read the finding',
-    description: 'OptiScale checks Python source for supported patterns such as repeated database queries and possible missing indexes.',
+    title: 'Analyze',
+    description: 'BOB scans the Python source for supported patterns such as repeated queries and possible missing indexes.',
   },
   {
     number: '03',
-    title: 'Review a suggestion',
-    description: 'See why the pattern may matter and inspect an illustrative before-and-after code proposal.',
+    title: 'Optimize',
+    description: 'Review an illustrative before-and-after code proposal for the detected pattern. The app does not modify your files.',
   },
   {
     number: '04',
-    title: 'Explore the comparison',
-    description: 'Step through a simulated benchmark and review example before-and-after metrics.',
+    title: 'Benchmark',
+    description: 'Step through a simulated benchmark comparing the original and proposed versions under the same workload.',
+  },
+  {
+    number: '05',
+    title: 'Prove',
+    description: 'See example before-and-after metrics — throughput, latency, CPU, and memory — for the demo scenario.',
   },
 ];
 
@@ -37,7 +42,7 @@ export const homeHighlights: HomeHighlight[] = [
   {
     label: '01 / SOURCE SCAN',
     title: 'Potential bottlenecks',
-    description: 'A browser-side scan checks for selected Python performance patterns. Treat each finding as a starting point for review.',
+    description: 'A browser-side scan checks for selected Python performance patterns. Treat each finding as a starting point for review, not a confirmed diagnosis.',
   },
   {
     label: '02 / CODE PROPOSAL',
