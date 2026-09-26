@@ -27,3 +27,26 @@ if (highlightsRoot) {
     )
     .join('');
 }
+
+const homeSections = document.querySelectorAll<HTMLElement>('.home-page main > section');
+if (
+  homeSections.length > 0 &&
+  'IntersectionObserver' in window &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+) {
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.05, rootMargin: '0px 0px -40px 0px' },
+  );
+
+  homeSections.forEach((section) => {
+    section.classList.add('home-reveal');
+    revealObserver.observe(section);
+  });
+}

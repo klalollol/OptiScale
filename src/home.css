@@ -9,23 +9,10 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border);
-  background: rgba(11, 25, 41, 0.6);
+  background: var(--bg);
   min-height: 220px;
   position: relative;
   overflow: hidden;
-}
-
-/* subtle grid overlay inside the panel */
-.hero-brand-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.6;
-  pointer-events: none;
 }
 
 .hero-brand-inner {
@@ -46,7 +33,7 @@
 }
 
 .hero-brand-name {
-  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.9rem, 4vw, 3rem);
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.02em;
@@ -54,7 +41,7 @@
 }
 
 .hero-brand-by {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: var(--muted);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -481,6 +468,19 @@
 }
 
 /* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .home-page .home-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-page .home-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cta-btn,
   .home-secondary-btn {
