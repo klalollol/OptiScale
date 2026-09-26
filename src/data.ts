@@ -394,28 +394,23 @@ export type HomeStep = {
 export const homeSteps: HomeStep[] = [
   {
     number: '01',
-    title: 'Upload',
+    title: 'Choose a project',
     description: 'Select a Python/FastAPI project .ZIP, or pick a bundled demo on the upload screen.',
   },
   {
     number: '02',
-    title: 'Analyze',
-    description: 'BOB scans the Python source for supported patterns such as repeated queries and possible missing indexes.',
+    title: 'Read the finding',
+    description: 'OptiScale looks for supported patterns in your source and reports possible performance bottlenecks.',
   },
   {
     number: '03',
-    title: 'Optimize',
-    description: 'Review an illustrative before-and-after code proposal for the detected pattern. The app does not modify your files.',
+    title: 'Review a suggestion',
+    description: 'See why the pattern matters and inspect an illustrative before-and-after code proposal.',
   },
   {
     number: '04',
-    title: 'Benchmark',
-    description: 'Step through a simulated benchmark comparing the original and proposed versions under the same workload.',
-  },
-  {
-    number: '05',
-    title: 'Prove',
-    description: 'See example before-and-after metrics — throughput, latency, CPU, and memory — for the demo scenario.',
+    title: 'Explore the comparison',
+    description: 'Step through a simulated benchmark and review example before-and-after metrics.',
   },
 ];
 
