@@ -4,7 +4,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Project
 
-Vanilla TypeScript + Vite static page (no framework, no test runner). ESM-only (`"type": "module"`). JetBrains Mono is the sole font — Inter was removed in the redesign.
+Vanilla TypeScript + Vite static page (no framework, no test runner). ESM-only (`"type": "module"`). JetBrains Mono is the sole font.
 
 ## Commands
 
@@ -14,14 +14,23 @@ npm run build    # tsc type-check + vite bundle → dist/
 npm run preview  # preview built output on port 4173
 ```
 
-No lint script, no test script.
+**No lint script, no test runner.** Tests are plain TS/JS files that throw on failure:
+- `node --loader ts-node/esm src/lib/preflight/preflight.test.ts`  — preflight + detectJavaVersion
+- `node --loader ts-node/esm src/lib/preflight/revert.test.ts`     — tree-hash revert proof
+- `node --loader ts-node/esm src/lib/preflight/math.test.ts`       — percentage math
+- `node templates/modernization/tools/merge-report.test.mjs`       — merge-report (plain Node, no loader needed)
+
+`npm run build` is the only validation available for browser-side TS.
 
 ## Architecture
 
 - `index.html` — DOM skeleton; CSS loaded here via `<link>` (not imported in TS)
-- `src/data.ts` — all typed content: `SubagentCard[]`, `CodeDiff`, `FooterStat[]`
+- `src/data.ts` — **all content data lives here**; `src/main.ts` only renders
 - `src/main.ts` — queries container IDs and injects HTML strings; imports only from `./data`
-- `src/styles.css` — full blueprint/grid design; all CSS vars defined in `:root`
+- `src/lib/preflight/` — pure TS library (browser-safe; no Node APIs); compiled by Vite
+- `src/services/` — Node-only service (`harnessService.ts`); **excluded from tsconfig** (DOM types would conflict)
+- `types/review.ts` — shared types for `merge-report.mjs`; outside Vite bundle, referenced via JSDoc only
+- `templates/modernization/` — harness templates copied verbatim (with `@PLACEHOLDER@` substitution) into `<project>/.modernization/`
 
 ### Container IDs rendered by `src/main.ts`
 
@@ -30,86 +39,67 @@ No lint script, no test script.
 | `#subagent-cards` | `subagentCards` array |
 | `#diff-label`, `#diff-legacy`, `#diff-modern`, `#diff-parity` | `codeDiff` object |
 | `#stats-footer` | `footerStats` array |
+| `#preflight-checks` | `samplePreflightPanel` (Page 2 upload section) |
+| `#review-btn` | disabled while any `blocker`+`fail` check exists |
+| `#requirements-panel` | `samplePreflightPanel` (Page 3 requirements section) |
+| `#perf-table` | `samplePerfMetrics` array |
 
 ## Code Style
 
-- TypeScript strict mode + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**
+- TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**
 - `moduleResolution: "Bundler"` — no `.js` extensions on local imports
 - All content data in `src/data.ts`; all DOM mutation in `src/main.ts` — keep this separation
 - CSS uses `--bg`, `--border`, `--border-bright`, `--cyan`, `--cyan-soft`, `--green`, `--amber`, `--muted`, `--red`, `--mono` — use these vars, never hard-coded values
 - `SubagentCard.status` values (`running`/`verifying`/`queued`) map directly to CSS class names on `.sa-status`
 - `sa-progress-fill` colour modifier: `running` = no extra class (cyan default), `verifying` = `amber`, `queued` = `muted`
-- Code diff HTML in `codeDiff.legacy` / `codeDiff.modern` uses inline `<span>` with classes `.kw`, `.ty`, `.fn`, `.cm`, `.st`, `.nu`, `.op` for syntax highlighting — these classes are defined in `src/styles.css`
+- Code diff HTML in `codeDiff.legacy` / `codeDiff.modern` — assign to `.innerHTML`, never `.textContent`
+- **Badge law**: `.badge-estimated` must never look like `.badge-measured`. Measured = cyan filled; estimated = amber outline only, transparent background. Never swap or unify these classes.
 
 ## UX / UI Design System
 
-### Visual Language
-OptiScale uses a **blueprint / technical schematic** aesthetic: dark navy background with a fine grid overlay, flat rectangular panels separated by single-pixel lines, and a monospace font throughout. No rounded cards, no drop shadows, no gradients on content panels. Every element should feel like it belongs on an engineering dashboard.
+Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat rectangular panels, 1px dividers, monospace everywhere.
 
-### Colour Tokens (all in `:root`, `src/styles.css`)
+### Colour Tokens (`:root` in `src/styles.css`)
 
-| Token | Hex / value | Usage |
+| Token | Hex | Usage |
 |---|---|---|
 | `--bg` | `#0b1929` | Page background |
-| `--grid` | `rgba(30,58,95,0.55)` | Blueprint grid lines (background-image only) |
-| `--border` | `rgba(30,70,110,0.7)` | All panel/section borders and divider lines |
-| `--border-bright` | `rgba(0,188,212,0.35)` | Highlighted/active borders (cyan-accent elements) |
+| `--grid` | `rgba(30,58,95,0.55)` | Blueprint grid (background-image only) |
+| `--border` | `rgba(30,70,110,0.7)` | All panel borders |
+| `--border-bright` | `rgba(0,188,212,0.35)` | Active/highlighted borders |
 | `--text` | `#cce8f4` | Body text |
-| `--muted` | `#5a7a99` | Labels, metadata, secondary text, disabled states |
-| `--cyan` | `#00bcd4` | Primary accent — active states, links, highlights |
-| `--cyan-soft` | `rgba(0,188,212,0.12)` | Tinted backgrounds for cyan-accent elements |
-| `--green` | `#4ade80` | Success / live status dot |
-| `--amber` | `#f59f00` | Warning / in-progress / legacy code side |
-| `--red` | `#f87171` | Error / failure states |
-| `--mono` | `'JetBrains Mono', monospace` | The only font; applied to `body` |
+| `--muted` | `#5a7a99` | Labels, secondary text, disabled |
+| `--cyan` | `#00bcd4` | Primary accent |
+| `--cyan-soft` | `rgba(0,188,212,0.12)` | Tinted backgrounds |
+| `--green` | `#4ade80` | Success / live dot |
+| `--amber` | `#f59f00` | Warning / legacy side |
+| `--red` | `#f87171` | Error / blocker |
+| `--mono` | `'JetBrains Mono', monospace` | Only font |
 
-**Rule:** Never use a hard-coded colour value anywhere in the CSS or inline styles. Always reference a token.
-
-### Typography
-- **Font**: JetBrains Mono exclusively — no other typeface is permitted.
-- **Base**: `13px`, `line-height: 1.6` on `body`
-- **Hero headline**: `clamp(1.7rem, 3.5vw, 2.6rem)`, weight `700`, `letter-spacing: -0.02em`, colour `#ffffff`
-- **Section labels** (eyebrows): `0.68rem`, `letter-spacing: 0.12em`, `text-transform: uppercase`, colour `--muted`
-- **Card titles** (`.sa-title`): `1rem`, weight `700`, colour `#ffffff`
-- **Body/description text**: `0.78–0.84rem`, colour `--muted`, `line-height: 1.65–1.75`
-- **Metadata / progress counters**: `0.68rem`, colour `--muted`; percentages use `--cyan`
-- **Stats numbers** (`.stat-num`): `clamp(2rem, 4vw, 3rem)`, weight `700`, `letter-spacing: -0.04em`, colour `#ffffff`
-
-### Layout Principles
+### Layout Rules
 - Max content width: `min(1100px, calc(100% - 40px))`, centred.
-- Sections are stacked vertically and separated by `border-bottom: 1px solid var(--border)`. Padding is `40px 0` per section.
-- **Multi-column panels** (subagent grid, diff panel, stats footer) use `gap: 1px` + `background: var(--border)` on the **parent** to produce divider lines — child cells set `background: var(--bg)`. Do not add individual borders to cells.
-- The hero is a 2-column `1fr 1fr` grid (left: headline + text + pills; right: SVG diagram). The diagram column is hidden at `≤860px`.
-- The blueprint grid background (`32px` intervals, `linear-gradient` lines) must remain on `body` and must not be overridden by any child panel background.
+- Multi-column panels use `gap: 1px` + `background: var(--border)` on the **parent**; children set `background: var(--bg)`. Never add individual borders to cells.
+- No `border-radius > 4px` on panels or grid cells.
+- No hover states that change layout or size — colour/opacity transitions only.
+- No rounded cards with box-shadows, no gradients on content panels, no second font.
+- Blueprint grid (`32px` intervals, `linear-gradient`) lives on `body` — must not be overridden.
 
 ### Component Patterns
 
-**Status badges** (`.sa-status`): small `0.65rem` pill, `border-radius: 3px`, `lowercase` text, `border: 1px solid`. Three states — colour comes from CSS class only, never inline style:
-- `.running` → cyan border + cyan-soft background
-- `.verifying` → amber border + amber tint
-- `.queued` → muted border + transparent background
-
-**Progress bars**: `3px` track (`--border` background), fill with `border-radius: 2px`. Colour modifier classes on `.sa-progress-fill`: no class = `--cyan`, `.amber` = `--amber`, `.muted` = `--muted` at 40% opacity.
-
-**Pills** (`.pill`): `0.72rem`, `border-radius: 4px`, `letter-spacing: 0.04em`. Three variants: `.label` (muted text, transparent bg, border), `.value` (cyan text, cyan-soft bg, bright border), `.arrow` (muted, no border, minimal padding).
-
-**Diff panel**: two columns separated by a `1px` divider. Legacy side header uses `--amber`; modern side uses `--cyan`. Code inside uses `<pre class="diff-code">` with syntax spans (`.kw`, `.ty`, `.fn`, `.cm`, `.st`, `.nu`, `.op`). The parity confirmation line below uses `--green`, centred, `0.72rem`.
-
-**SVG diagram**: inline in `index.html`, `viewBox="0 0 320 200"`. Hex shapes in `--cyan` (`#00bcd4`), connecting lines in `--border` (`#1e3a5f`), source node amber, target node green, labels in `--cyan`. Do not replace with a canvas or img tag.
-
-**Pulsing live dot** (`.status-dot`): `8px` circle, `--green`, `@keyframes pulse` opacity `1→0.4→1` over `2s ease-in-out`.
-
-### What to Never Do
-- Do not add rounded cards with box-shadows (the previous design used these — they were intentionally removed)
-- Do not introduce a second font family
-- Do not add gradients to panel backgrounds
-- Do not use `border-radius > 4px` on any panel or grid cell (pills and badges can use small radii)
-- Do not add hover states that change layout or size — only colour/opacity transitions are appropriate
-- Do not add new CSS colour values outside `:root` tokens
+- **Status badges** (`.sa-status`): colour comes from CSS class only, never inline style.
+- **Preflight checks**: icon + severity are driven by `status`+`severity` combo; `skip` rows use `–` icon and muted colour, `blocker` rows use `✕` and `--red`, `warning` uses `⚠` and `--amber`, `pass` uses `✓` and `--green`.
+- **Tier pill** (`.preflight-tier`): `.tier-measured` = cyan, `.tier-estimated` = amber, `.tier-unavailable` = red.
+- **Perf delta**: `.delta-good` (green) for latency improvement (negative %) or throughput gain (positive %); `.delta-bad` (red) otherwise; `.delta-neutral` for zero.
+- **SVG diagram**: inline in `index.html`, `viewBox="0 0 320 200"` — do not replace with `<canvas>` or `<img>`.
 
 ## Non-obvious
 
-- `index.html` references `./src/styles.css` directly; Vite resolves this at dev time — do NOT import CSS in TS
-- The blueprint grid background is pure CSS (`background-image` with `linear-gradient` lines at `32px` intervals) — it is not an image file
-- `codeDiff.legacy` / `codeDiff.modern` are assigned via `.innerHTML`, not `.textContent` — HTML entities and `<span>` tags in the strings are intentional
-- `bob_sessions/` contains evidence SVGs referenced by hard-coded filename in the old HTML; the redesigned `index.html` no longer has an evidence section — that folder is now unused by the page
+- `index.html` loads `./src/styles.css` via `<link>` — do **not** import CSS in any `.ts` file (breaks the build silently).
+- `src/services/harnessService.ts` and all `*.test.ts` files are excluded from `tsconfig.json` — they use Node APIs and must not be compiled by Vite.
+- `types/review.ts` is outside `tsconfig.json`'s `include`; used only via JSDoc `@type` in `merge-report.mjs`.
+- Harness injection contract: everything goes under `<project>/.modernization/`; the ONLY pre-existing file that may be modified is the root aggregator (`pom.xml` / `settings.gradle[.kts]`), backed up as `*.optiscale.bak` first, append-only.
+- `revert()` in `harnessService.ts` verifies the post-revert SHA-256 tree hash against the value recorded before injection — throws if they differ.
+- `FixtureReplay.java` returns a `VOID_SENTINEL` object (never `null`) so JMH Blackhole always has a non-null value.
+- `Normalizer.java` rounds floating-point values to 9 significant digits (`MathContext(9)`) before equality comparison — the tolerance is 1e-9, not byte equality.
+- `merge-report.mjs` always emits `"source": "estimated"` when an input file is missing — it never fabricates a number, it uses `0` as the value.
+- `bob_sessions/` is unused by the current page (evidence section was removed in redesign).

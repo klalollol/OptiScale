@@ -1,0 +1,25 @@
+# OptiScale legacy benchmark image — Java 8
+# eclipse-temurin:8-jre-alpine, non-root, read-only rootfs compatible.
+FROM eclipse-temurin:8-jre-alpine
+
+# Create a non-root user/group
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Application directory
+WORKDIR /app
+
+# Copy the legacy JAR (built with -Plegacy classifier)
+# The caller is expected to have run: mvnw -Plegacy -DskipTests package
+COPY --chown=appuser:appgroup target/*-legacy.jar app.jar
+
+# p6spy config is bind-mounted at runtime as /app/spy.properties (see docker-compose.bench.yml)
+# tmpfs is mounted at /tmp by docker-compose — no writes needed elsewhere.
+
+USER appuser
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", \
+  "-Djava.security.egd=file:/dev/./urandom", \
+  "-Dloader.path=/app/spy.properties", \
+  "-jar", "/app/app.jar"]
