@@ -234,20 +234,31 @@
 
 /* ─── Demo project picker ────────────────────────────────────────────────── */
 .demo-picker {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 340px;
+  position: fixed;
+  width: 300px;
   background: #0d1f35;
   border: 1px solid var(--border-bright);
   border-radius: 3px;
-  z-index: 100;
+  z-index: 9999;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,188,212,0.08);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  visibility: hidden;
+  transition: opacity 0.15s ease, transform 0.18s cubic-bezier(0.22,1,0.36,1);
 }
 
-.demo-picker.hidden { display: none; }
+.demo-picker.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-picker { transition: none; }
+}
 
 .demo-picker-label {
   padding: 8px 14px 6px;
@@ -257,6 +268,11 @@
   font-family: var(--mono);
   border-bottom: 1px solid var(--border);
   text-transform: uppercase;
+}
+
+.demo-picker-label--section {
+  border-top: 1px solid var(--border);
+  margin-top: 0;
 }
 
 .demo-pick-row {
@@ -272,11 +288,15 @@
   cursor: pointer;
   text-align: left;
   transition: background 0.15s;
+  color: inherit;
 }
 
 .demo-pick-row:last-child { border-bottom: none; }
 
-.demo-pick-row:hover { background: rgba(0,188,212,0.07); }
+.demo-pick-row:hover,
+.demo-pick-row:focus-visible { background: rgba(0,188,212,0.09); outline: none; }
+
+.demo-pick-row:focus-visible { box-shadow: inset 0 0 0 1px var(--cyan); }
 
 .demo-pick-name {
   font-size: 0.72rem;

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="OptiScale — AI-powered application performance optimization. Upload a project ZIP, find potential bottlenecks, and review a suggested fix with a benchmark comparison." />
+    <meta name="description" content="OptiScale — AI-powered application performance optimization. Upload a project ZIP, find potential bottlenecks, and see a suggested fix with a benchmark comparison." />
     <title>OptiScale · AI-Powered Performance Optimization</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,7 +17,7 @@
   <body class="home-page">
     <div class="page-shell" id="top">
       <header class="topbar">
-        <a class="logo-wrap" href="./" aria-label="OptiScale home">
+        <a class="logo-wrap" href="./index.html" aria-label="OptiScale home">
           <span class="logo-diamond" aria-hidden="true">◇</span>
           <span class="logo-name">OptiScale</span>
         </a>
@@ -39,7 +39,7 @@
             <div class="stack-pills" aria-label="Input and output">
               <span class="pill label">input</span>
               <span class="pill value">project .ZIP or demo</span>
-            <span class="pill arrow">→</span>
+              <span class="pill arrow" aria-hidden="true">→</span>
               <span class="pill label">output</span>
               <span class="pill value">finding + suggestion</span>
             </div>
@@ -58,6 +58,7 @@
           </div>
         </section>
 
+        <!-- ── Problem section ──────────────────────────────────────────── -->
         <section class="section" aria-labelledby="problem-title">
           <div class="home-section-head">
             <div>
@@ -71,10 +72,22 @@
               <p class="home-panel-label">A common pattern</p>
               <p class="home-panel-title">Traffic increases. Response time increases. Add more servers.</p>
               <div class="home-chain" role="list" aria-label="Scaling cost chain">
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">↑</span><span>Traffic increases</span></div>
-                <div class="home-chain-row warn" role="listitem"><span class="home-chain-icon" aria-hidden="true">↑</span><span>Response time increases</span></div>
-                <div class="home-chain-row warn" role="listitem"><span class="home-chain-icon" aria-hidden="true">+</span><span>Add more servers</span></div>
-                <div class="home-chain-row bad" role="listitem"><span class="home-chain-icon" aria-hidden="true">↑</span><span>Infrastructure cost increases</span></div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">↑</span>
+                  <span>Traffic increases</span>
+                </div>
+                <div class="home-chain-row warn" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">↑</span>
+                  <span>Response time increases</span>
+                </div>
+                <div class="home-chain-row warn" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">+</span>
+                  <span>Add more servers</span>
+                </div>
+                <div class="home-chain-row bad" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">↑</span>
+                  <span>Infrastructure cost increases</span>
+                </div>
               </div>
             </div>
             <div class="home-panel">
@@ -82,16 +95,29 @@
               <p class="home-panel-title">The extra servers may not fix the underlying problem.</p>
               <p class="home-panel-copy">Slow response times can stem from how the application itself uses its resources — not just from insufficient capacity.</p>
               <div class="home-chain" role="list" aria-label="Possible bottleneck sources">
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">◇</span><span>Repeated or inefficient database queries</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">◇</span><span>Missing database indexes</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">◇</span><span>CPU-intensive work in the request path</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">◇</span><span>Unnecessary I/O or memory allocations</span></div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">◇</span>
+                  <span>Repeated or inefficient database queries</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">◇</span>
+                  <span>Missing database indexes</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">◇</span>
+                  <span>CPU-intensive work in the request path</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">◇</span>
+                  <span>Unnecessary I/O or memory allocations</span>
+                </div>
               </div>
-              <p class="home-panel-copy home-panel-note">These are examples of patterns to look for, not guaranteed causes in every application.</p>
+              <p class="home-panel-copy" style="margin-top:4px;font-size:0.68rem;">These are examples of patterns to look for, not guaranteed causes in every application.</p>
             </div>
           </div>
         </section>
 
+        <!-- ── Solution section ─────────────────────────────────────────── -->
         <section class="section" aria-labelledby="solution-title">
           <div class="home-section-head">
             <div>
@@ -111,15 +137,28 @@
               <p class="home-panel-label">What it does not do</p>
               <p class="home-panel-title">Honest about its scope.</p>
               <div class="home-chain" role="list" aria-label="Scope limitations">
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">–</span><span>Does not modify your uploaded project files</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">–</span><span>Benchmark figures are simulated demo data, not measurements of your ZIP</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">–</span><span>Pattern detection is heuristic — findings are suggestions, not diagnoses</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">–</span><span>Current demo targets Python · FastAPI · PostgreSQL</span></div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">–</span>
+                  <span>Does not modify your uploaded project files</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">–</span>
+                  <span>Benchmark figures are simulated demo data, not measurements of your ZIP</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">–</span>
+                  <span>Pattern detection is heuristic — findings are suggestions, not diagnoses</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">–</span>
+                  <span>Current demo targets Python · FastAPI · PostgreSQL</span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
+        <!-- ── Workflow section ─────────────────────────────────────────── -->
         <section class="section" id="how-it-works" aria-labelledby="workflow-title">
           <div class="home-section-head">
             <div>
@@ -131,6 +170,7 @@
           <ol class="home-step-grid" id="home-steps" aria-label="OptiScale workflow steps"></ol>
         </section>
 
+        <!-- ── BOB section ──────────────────────────────────────────────── -->
         <section class="section" aria-labelledby="bob-title">
           <div class="home-section-head">
             <div>
@@ -140,7 +180,9 @@
           </div>
           <div class="home-two-col">
             <div class="home-panel">
-              <div class="home-bob-tag" aria-label="BOB AI analysis engine"><span aria-hidden="true">◇</span> BOB — AI ANALYSIS</div>
+              <div class="home-bob-tag" aria-label="BOB AI analysis engine">
+                <span aria-hidden="true">◇</span> BOB — AI ANALYSIS
+              </div>
               <p class="home-panel-title">What BOB does in OptiScale.</p>
               <p class="home-panel-copy">BOB analyzes the uploaded Python source code and helps identify potential performance bottlenecks. It matches recognized patterns and surfaces the most likely candidate for optimization.</p>
               <p class="home-panel-copy">The findings are presented as proposals for review. BOB does not automatically apply changes to your project.</p>
@@ -148,15 +190,32 @@
             <div class="home-panel">
               <p class="home-panel-label">BOB's role in the pipeline</p>
               <div class="home-flow" role="list" aria-label="BOB analysis pipeline">
-                <div class="home-flow-row" role="listitem"><strong>Scan source</strong><span class="arrow" aria-hidden="true">→</span><span>Read Python files from ZIP</span></div>
-                <div class="home-flow-row" role="listitem"><strong>Match patterns</strong><span class="arrow" aria-hidden="true">→</span><span>N+1 queries, missing indexes</span></div>
-                <div class="home-flow-row" role="listitem"><strong>Propose change</strong><span class="arrow" aria-hidden="true">→</span><span>Before-and-after code diff</span></div>
-                <div class="home-flow-row" role="listitem"><strong>Show comparison</strong><span class="arrow" aria-hidden="true">→</span><span>Simulated benchmark metrics</span></div>
+                <div class="home-flow-row" role="listitem">
+                  <strong>Scan source</strong>
+                  <span class="arrow" aria-hidden="true">→</span>
+                  <span>Read Python files from ZIP</span>
+                </div>
+                <div class="home-flow-row" role="listitem">
+                  <strong>Match patterns</strong>
+                  <span class="arrow" aria-hidden="true">→</span>
+                  <span>N+1 queries, missing indexes</span>
+                </div>
+                <div class="home-flow-row" role="listitem">
+                  <strong>Propose change</strong>
+                  <span class="arrow" aria-hidden="true">→</span>
+                  <span>Before-and-after code diff</span>
+                </div>
+                <div class="home-flow-row" role="listitem">
+                  <strong>Show comparison</strong>
+                  <span class="arrow" aria-hidden="true">→</span>
+                  <span>Simulated benchmark metrics</span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
+        <!-- ── Benchmark concept section ────────────────────────────────── -->
         <section class="section" aria-labelledby="bench-title">
           <div class="home-section-head">
             <div>
@@ -171,10 +230,22 @@
               <p class="home-panel-title">Original vs optimized. Same conditions.</p>
               <p class="home-panel-copy">OptiScale runs both the original and the proposed optimized version through the same simulated workload — same environment, same endpoint, same duration — so the comparison is fair.</p>
               <div class="home-fair-grid" role="list" aria-label="Fair benchmark conditions">
-                <div class="home-fair-cell" role="listitem"><strong>Environment</strong>Identical for both versions</div>
-                <div class="home-fair-cell" role="listitem"><strong>Workload</strong>Same concurrent users</div>
-                <div class="home-fair-cell" role="listitem"><strong>Duration</strong>Same test window</div>
-                <div class="home-fair-cell" role="listitem"><strong>Endpoint</strong>Same target route</div>
+                <div class="home-fair-cell" role="listitem">
+                  <strong>Environment</strong>
+                  Identical for both versions
+                </div>
+                <div class="home-fair-cell" role="listitem">
+                  <strong>Workload</strong>
+                  Same concurrent users
+                </div>
+                <div class="home-fair-cell" role="listitem">
+                  <strong>Duration</strong>
+                  Same test window
+                </div>
+                <div class="home-fair-cell" role="listitem">
+                  <strong>Endpoint</strong>
+                  Same target route
+                </div>
               </div>
             </div>
             <div class="home-panel">
@@ -182,15 +253,28 @@
               <p class="home-panel-title">A measured difference, not a claim.</p>
               <p class="home-panel-copy">The Prove screen shows throughput, latency, CPU, and memory for both versions. In the demo scenario these are preset illustrative figures — not measurements of your uploaded project.</p>
               <div class="home-chain" role="list" aria-label="Result metrics">
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">→</span><span>Throughput — requests per second</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">→</span><span>Latency — p95 response time</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">→</span><span>CPU and memory usage</span></div>
-                <div class="home-chain-row" role="listitem"><span class="home-chain-icon" aria-hidden="true">→</span><span>Side-by-side delta for each metric</span></div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">→</span>
+                  <span>Throughput — requests per second</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">→</span>
+                  <span>Latency — p95 response time</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">→</span>
+                  <span>CPU and memory usage</span>
+                </div>
+                <div class="home-chain-row" role="listitem">
+                  <span class="home-chain-icon" aria-hidden="true">→</span>
+                  <span>Side-by-side delta for each metric</span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
+        <!-- ── What you will see section ────────────────────────────────── -->
         <section class="section" aria-labelledby="output-title">
           <div class="home-section-head">
             <div>
@@ -199,9 +283,13 @@
             </div>
           </div>
           <div class="home-feature-grid" id="home-highlights"></div>
-          <p class="home-scope-note"><span class="home-scope-label">PROTOTYPE NOTE</span>Analysis uses pattern matching. Benchmark figures are simulated demo data, not measurements of your uploaded project.</p>
+          <p class="home-scope-note">
+            <span class="home-scope-label">PROTOTYPE NOTE</span>
+            Analysis uses pattern matching. Benchmark figures are simulated demo data, not measurements of your uploaded project.
+          </p>
         </section>
 
+        <!-- ── Final CTA ─────────────────────────────────────────────────── -->
         <section class="section home-final" aria-labelledby="final-title">
           <p class="section-label">Ready to begin?</p>
           <h2 class="home-section-title" id="final-title">Before you scale, optimize first.</h2>

@@ -4,7 +4,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Project
 
-Vanilla TypeScript + Vite static page (no framework, no test runner). ESM-only (`"type": "module"`). JetBrains Mono is the sole font.
+Vanilla TypeScript + Vite multi-page application (no framework, no test runner). ESM-only (`"type": "module"`). JetBrains Mono is the sole font.
 
 ## Commands
 
@@ -24,9 +24,11 @@ npm run preview  # preview built output on port 4173
 
 ## Architecture
 
+- `index.html` — redirects to the landing page at `src/pages/home/`
 - `src/pages/<page>/index.html` — page DOM skeletons; CSS loaded via `<link>` from `src/css/`
-- `src/data.ts` — **all content data lives here**; `src/pages/home/main.ts` only renders
-- `src/pages/home/main.ts` — home page renderer; imports shared data from `../../data`
+- `src/data.ts` — shared and landing-page display data
+- `src/pages/home/main.ts` — landing page renderer; imports `homeSteps` and `homeHighlights` from `../../data`
+- `src/pages/app/app.ts` — five-step SPA controller; imports the ZIP analyzer and swipe helper
 - `src/pages/<page>/` — each page's HTML and TypeScript entry point
 - `src/css/` — shared and page-specific stylesheets
 - `src/lib/preflight/` — pure TS library (browser-safe; no Node APIs); compiled by Vite
@@ -34,27 +36,19 @@ npm run preview  # preview built output on port 4173
 - `src/types/review.ts` — shared types for `merge-report.mjs`; referenced via JSDoc only
 - `templates/modernization/` — harness templates copied verbatim (with `@PLACEHOLDER@` substitution) into `<project>/.modernization/`
 
-### Container IDs rendered by `src/pages/home/main.ts`
+### Landing page containers rendered by `src/pages/home/main.ts`
 
 | ID | Data source |
 |---|---|
-| `#subagent-cards` | `subagentCards` array |
-| `#diff-label`, `#diff-legacy`, `#diff-modern`, `#diff-parity` | `codeDiff` object |
-| `#stats-footer` | `footerStats` array |
-| `#preflight-checks` | `samplePreflightPanel` (Page 2 upload section) |
-| `#review-btn` | disabled while any `blocker`+`fail` check exists |
-| `#requirements-panel` | `samplePreflightPanel` (Page 3 requirements section) |
-| `#perf-table` | `samplePerfMetrics` array |
+| `#home-steps` | `homeSteps` array |
+| `#home-highlights` | `homeHighlights` array |
 
 ## Code Style
 
 - TypeScript `strict` + `noUnusedLocals` + `noUnusedParameters` — unused symbols are **compile errors**
 - `moduleResolution: "Bundler"` — no `.js` extensions on local imports
-- All content data in `src/data.ts`; page DOM mutation stays in its `src/pages/<page>/` script
+- Landing-page display data lives in `src/data.ts`; rendering and DOM mutation stay in the corresponding `src/pages/<page>/` script
 - CSS uses `--bg`, `--border`, `--border-bright`, `--cyan`, `--cyan-soft`, `--green`, `--amber`, `--muted`, `--red`, `--mono` — use these vars, never hard-coded values
-- `SubagentCard.status` values (`running`/`verifying`/`queued`) map directly to CSS class names on `.sa-status`
-- `sa-progress-fill` colour modifier: `running` = no extra class (cyan default), `verifying` = `amber`, `queued` = `muted`
-- Code diff HTML in `codeDiff.legacy` / `codeDiff.modern` — assign to `.innerHTML`, never `.textContent`
 - **Badge law**: `.badge-estimated` must never look like `.badge-measured`. Measured = cyan filled; estimated = amber outline only, transparent background. Never swap or unify these classes.
 
 ## UX / UI Design System
@@ -88,11 +82,8 @@ Blueprint / technical schematic aesthetic: dark navy, fine grid overlay, flat re
 
 ### Component Patterns
 
-- **Status badges** (`.sa-status`): colour comes from CSS class only, never inline style.
-- **Preflight checks**: icon + severity are driven by `status`+`severity` combo; `skip` rows use `–` icon and muted colour, `blocker` rows use `✕` and `--red`, `warning` uses `⚠` and `--amber`, `pass` uses `✓` and `--green`.
-- **Tier pill** (`.preflight-tier`): `.tier-measured` = cyan, `.tier-estimated` = amber, `.tier-unavailable` = red.
-- **Perf delta**: `.delta-good` (green) for latency improvement (negative %) or throughput gain (positive %); `.delta-bad` (red) otherwise; `.delta-neutral` for zero.
-- **SVG diagram**: inline in `src/pages/home/index.html`, `viewBox="0 0 320 200"` — do not replace with `<canvas>` or `<img>`.
+- **Demo picker** (`#demo-picker`): its open state is `.is-open`; preserve `aria-expanded` synchronization and keyboard dismissal/navigation.
+- **Swipe navigation** in the app advances only to the next unlocked workflow section and respects `prefers-reduced-motion`.
 
 ## Non-obvious
 

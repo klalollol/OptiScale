@@ -2,7 +2,7 @@
 
 - **Two separate compilation targets**: Vite bundles `src/` (browser, DOM types); `src/services/` and `*.test.ts` are Node-only and excluded from `tsconfig.json`. Adding a Node import to `src/` or `src/lib/` will fail silently at type-check but crash at runtime.
 - `src/lib/preflight/` and `src/data.ts` must stay browser-safe — no `node:fs`, no `node:crypto`, no `node:child_process`.
-- **Single data flow**: `src/data.ts` → `src/pages/home/main.ts` → DOM. All new display data (preflight, perf) must be typed and exported from `src/data.ts`; home render functions live only in `src/pages/home/main.ts`.
+- **Landing-page data flow**: `src/data.ts` → `src/pages/home/main.ts` → DOM. Keep landing content arrays typed in `src/data.ts` and render them only from the home entry point; other pages keep their own controllers.
 - **Harness injection contract** (non-negotiable):
   - Everything generated goes under `<project>/.modernization/` — nothing else.
   - Only the root aggregator (`pom.xml` / `settings.gradle[.kts]`) may be modified.

@@ -282,34 +282,34 @@ const MOCK_VALIDATION_CHECKS = [
   'Supported technology detected',
 ];
 
-type DemoKey = 'ecommerce' | 'inventory' | 'analytics';
+type DemoKey = 'tc-severe-n-plus-one' | 'tc-missing-index' | 'tc-no-bottleneck';
 
 const DEMO_PROJECTS: Record<DemoKey, {
   name: string; sizeMB: number; stack: string; files: number; deps: number; path: string;
 }> = {
-  ecommerce: {
-    name: 'sample-fastapi-ecommerce.zip',
-    sizeMB: 4.2,
+  'tc-severe-n-plus-one': {
+    name: 'tc-severe-n-plus-one.zip',
+    sizeMB: 5.5,
     stack: 'Python 3.11 · FastAPI · PostgreSQL',
-    files: 126,
-    deps: 47,
-    path: '/demo-zips/sample-fastapi-ecommerce.zip',
+    files: 134,
+    deps: 49,
+    path: '/demo-zips/tc-severe-n-plus-one.zip',
   },
-  inventory: {
-    name: 'sample-fastapi-inventory.zip',
-    sizeMB: 2.3,
+  'tc-missing-index': {
+    name: 'tc-missing-index.zip',
+    sizeMB: 5.7,
     stack: 'Python 3.11 · FastAPI · PostgreSQL',
-    files: 98,
-    deps: 41,
-    path: '/demo-zips/sample-fastapi-inventory.zip',
+    files: 118,
+    deps: 45,
+    path: '/demo-zips/tc-missing-index.zip',
   },
-  analytics: {
-    name: 'sample-fastapi-analytics.zip',
-    sizeMB: 2.5,
+  'tc-no-bottleneck': {
+    name: 'tc-no-bottleneck.zip',
+    sizeMB: 5.6,
     stack: 'Python 3.11 · FastAPI · PostgreSQL',
-    files: 112,
-    deps: 44,
-    path: '/demo-zips/sample-fastapi-analytics.zip',
+    files: 121,
+    deps: 46,
+    path: '/demo-zips/tc-no-bottleneck.zip',
   },
 };
 
@@ -403,10 +403,62 @@ async function startUpload(file: File): Promise<void> {
   }
 }
 
-function togglePicker(force?: boolean): void {
-  const show = force !== undefined ? force : demoPicker.classList.contains('hidden');
-  demoPicker.classList.toggle('hidden', !show);
+let pickerOpen = false;
+
+function positionPicker(): void {
+  const rect = demoBtn.getBoundingClientRect();
+  const width = 300;
+  const left = Math.max(8, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 8));
+  demoPicker.style.top = `${rect.bottom + 6}px`;
+  demoPicker.style.left = `${left}px`;
 }
+
+function closePicker(): void {
+  if (!pickerOpen) return;
+  pickerOpen = false;
+  demoPicker.classList.remove('is-open');
+  demoBtn.setAttribute('aria-expanded', 'false');
+  demoBtn.focus();
+}
+
+function openPicker(): void {
+  positionPicker();
+  pickerOpen = true;
+  demoPicker.classList.add('is-open');
+  demoBtn.setAttribute('aria-expanded', 'true');
+  demoPicker.querySelector<HTMLElement>('.demo-pick-row')?.focus();
+}
+
+function togglePicker(force?: boolean): void {
+  const shouldOpen = force ?? !pickerOpen;
+  if (shouldOpen) openPicker();
+  else closePicker();
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && pickerOpen) {
+    event.stopPropagation();
+    closePicker();
+  }
+});
+
+document.addEventListener(
+  'pointerdown',
+  (event) => {
+    const target = event.target;
+    if (pickerOpen && target instanceof Element && !target.closest('#demo-picker, #demo-btn')) {
+      closePicker();
+    }
+  },
+  { capture: true },
+);
+
+window.addEventListener('scroll', () => {
+  if (pickerOpen) positionPicker();
+}, { passive: true });
+window.addEventListener('resize', () => {
+  if (pickerOpen) positionPicker();
+}, { passive: true });
 
 async function startDemoUpload(key: DemoKey): Promise<void> {
   const demo = DEMO_PROJECTS[key];
@@ -449,10 +501,8 @@ async function startDemoUpload(key: DemoKey): Promise<void> {
 // Upload events
 selectFileBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 uploadPanel.addEventListener('click', (e) => {
-  // Close picker if clicking outside it
-  if (!(e.target as HTMLElement).closest('#demo-picker, #demo-btn')) togglePicker(false);
   if (!uploadStateEls.empty?.classList.contains('hidden')) return;
-  if (!(e.target as HTMLElement).closest('#demo-picker, #demo-btn, #select-file-btn')) fileInput.click();
+  if (!(e.target as HTMLElement).closest('#demo-btn, #select-file-btn')) fileInput.click();
 });
 uploadPanel.addEventListener('keydown', (e) => {
   if ((e.key === 'Enter' || e.key === ' ') && !uploadStateEls.empty?.classList.contains('hidden')) {
@@ -471,6 +521,18 @@ demoPicker.querySelectorAll<HTMLButtonElement>('.demo-pick-row').forEach((btn) =
     const key = btn.dataset['demo'] as DemoKey | undefined;
     if (key && key in DEMO_PROJECTS) void startDemoUpload(key);
   });
+});
+demoPicker.addEventListener('keydown', (event) => {
+  const rows = Array.from(demoPicker.querySelectorAll<HTMLElement>('.demo-pick-row'));
+  const index = rows.indexOf(document.activeElement as HTMLElement);
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    rows[(index + 1) % rows.length]?.focus();
+  }
+  if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    rows[(index - 1 + rows.length) % rows.length]?.focus();
+  }
 });
 retryBtn.addEventListener('click', (e) => { e.stopPropagation(); showUploadState('empty'); });
 continueAnalBtn.addEventListener('click', (e) => {

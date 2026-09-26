@@ -7,5 +7,5 @@
 - The `src/lib/preflight/*.test.ts` files are plain assertion scripts (no test framework). Run them with `node --loader ts-node/esm <file>`. They are excluded from `tsconfig.json`.
 - `merge-report.test.mjs` does NOT require a loader — it is plain ESM JavaScript.
 - `bob_sessions/` folder is a dead artefact from a previous design; its SVGs are not referenced anywhere in the current page.
-- The page has conceptual "pages" (upload/review, requirements/perf) but it is a single HTML file — there is no routing.
+- The landing page and pipeline are separate Vite entries under `src/pages/`; keep their markup, styles, and scripts within the existing page directories.
 - Pipeline order: preflight blockers stop everything → static analysis always runs → `measured` tier requires Docker.
