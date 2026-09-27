@@ -52,8 +52,8 @@ const STEP_STATUS = [
   'system ready',
   'analysis complete',
   'optimization ready',
-  'benchmarking',
-  'results verified',
+  'playing demo comparison',
+  'demo results ready',
 ];
 
 function setActiveStep(idx: number): void {
@@ -255,14 +255,14 @@ function injectProfile(profile: AnalysisProfile): void {
   const memDelta = document.getElementById('tbl-mem-d');
   if (memDelta) { memDelta.textContent = negPct(r.memDeltaPct); memDelta.className = deltaClass(r.memDeltaPct, true); }
 
-  // Prediction vs measured
+  // Prediction vs preset demo result
   const predEl = document.getElementById('prove-prediction');
   if (predEl) {
     predEl.textContent = r.bobPrediction;
     predEl.style.color = b.severity === 'critical' ? 'var(--red)' :
                          b.severity === 'moderate' ? 'var(--amber)' : 'var(--green)';
   }
-  setText('prove-measured', r.benchmarkMeasured);
+  setText('prove-demo-result', r.benchmarkDemoDelta);
 
   // Bar widths — recalculated when PROVE unlocks (in toProveBtn handler)
   // Store on window so the unlock handler can re-read them
@@ -622,13 +622,13 @@ toBenchBtn.addEventListener('click', () => {
 // ─── BENCHMARK logic ──────────────────────────────────────────────────────────
 
 const BENCH_LOG_STEPS = [
-  { label: 'Sandbox initialized',     delay: 400  },
-  { label: 'PostgreSQL ready',         delay: 600  },
-  { label: 'Application started',      delay: 700  },
-  { label: 'Load generator connected', delay: 500  },
-  { label: 'Running workload',         delay: 3000 },
-  { label: 'Collecting metrics',       delay: 1200 },
-  { label: 'Comparing results',        delay: 800  },
+  { label: 'Showing example environment', delay: 400  },
+  { label: 'Loading preset workload',     delay: 600  },
+  { label: 'Loading original example',    delay: 700  },
+  { label: 'Loading optimized example',   delay: 500  },
+  { label: 'Animating comparison',        delay: 3000 },
+  { label: 'Displaying preset metrics',   delay: 1200 },
+  { label: 'Preparing demo results',      delay: 800  },
 ];
 
 const startBenchBtn    = document.getElementById('start-bench-btn')!;

@@ -935,11 +935,6 @@ a.wf-step:hover { border-color: var(--border-bright); color: var(--cyan); backgr
   width: 100%;
 }
 
-.pred-block.proven {
-  border-color: rgba(74,222,128,0.3);
-  background: rgba(74,222,128,0.04);
-}
-
 .pred-header {
   font-size: 0.65rem;
   color: var(--muted);
@@ -950,8 +945,6 @@ a.wf-step:hover { border-color: var(--border-bright); color: var(--cyan); backgr
   gap: 7px;
   margin-bottom: 6px;
 }
-
-.pred-block.proven .pred-header { color: var(--green); }
 
 .pred-body { font-size: 0.78rem; color: var(--text); line-height: 1.5; }
 

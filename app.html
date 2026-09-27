@@ -363,7 +363,7 @@
         <div class="spa-cta-bar">
           <button class="btn-primary" id="apply-btn">APPLY OPTIMIZATION →</button>
           <button class="btn-ghost" id="diff-btn">REVIEW DIFF</button>
-          <button class="btn-primary" id="to-benchmark-btn" style="display:none">RUN BENCHMARK →</button>
+          <button class="btn-primary" id="to-benchmark-btn" style="display:none">VIEW DEMO BENCHMARK →</button>
         </div>
       </div>
 
@@ -383,8 +383,8 @@
         <section class="page-hero page-hero--compact">
           <div class="page-hero-left">
             <p class="section-label">step 04 of 05</p>
-            <h1 class="page-headline">FAIR PERFORMANCE BENCHMARK</h1>
-            <p class="page-sub">Same conditions. Same workload. Objective comparison.</p>
+            <h1 class="page-headline">SIMULATED BENCHMARK WALKTHROUGH</h1>
+            <p class="page-sub">Preset demo metrics illustrate a matched-workload comparison. No application load test runs here.</p>
           </div>
           <div class="page-hero-right">
             <div class="fairness-badges">
@@ -399,37 +399,37 @@
         <!-- Two-column: config left | versions right -->
         <div class="spa-body-grid">
           <div class="spa-body-main">
-            <p class="section-label" style="margin-bottom:10px;">test configuration</p>
+            <p class="section-label" style="margin-bottom:10px;">illustrative test configuration</p>
             <div class="config-grid">
               <div class="config-row"><span class="config-key">CONCURRENT USERS</span><span class="config-val">1,000</span></div>
               <div class="config-row"><span class="config-key">DURATION</span><span class="config-val">60 seconds</span></div>
               <div class="config-row"><span class="config-key">TARGET</span><span class="config-val cyan" id="bench-endpoint">—</span></div>
-              <div class="config-row"><span class="config-key">ENVIRONMENT</span><span class="config-val">Docker sandbox</span></div>
+              <div class="config-row"><span class="config-key">ENVIRONMENT</span><span class="config-val">Docker sandbox example</span></div>
               <div class="config-row"><span class="config-key">DATABASE</span><span class="config-val" id="bench-db">PostgreSQL</span></div>
             </div>
           </div>
           <div class="spa-body-side">
-            <p class="section-label" style="margin-bottom:10px;">versions under test</p>
+            <p class="section-label" style="margin-bottom:10px;">versions in the demo</p>
             <div class="version-cards" style="flex-direction:column;">
               <div class="version-card">
                 <div class="version-card-header amber-header">ORIGINAL</div>
                 <div class="version-card-body">
                   <div class="version-row"><span class="version-key">Version</span><span class="version-val">Baseline</span></div>
-                  <div class="version-row"><span class="version-key">Status</span><span class="version-val good">READY</span></div>
+                  <div class="version-row"><span class="version-key">Status</span><span class="version-val">PRESET</span></div>
                 </div>
               </div>
               <div class="version-card" style="border-top:none;">
                 <div class="version-card-header modern-header">OPTIMIZED</div>
                 <div class="version-card-body">
                   <div class="version-row"><span class="version-key">Version</span><span class="version-val">BOB Optimization</span></div>
-                  <div class="version-row"><span class="version-key">Status</span><span class="version-val good">READY</span></div>
+                  <div class="version-row"><span class="version-key">Status</span><span class="version-val">PRESET</span></div>
                 </div>
               </div>
             </div>
 
             <!-- Running progress inline in side column -->
             <div id="bench-running" style="display:none;margin-top:16px;">
-              <p class="section-label" style="margin-bottom:8px;">running performance test</p>
+              <p class="section-label" style="margin-bottom:8px;">playing simulated comparison</p>
               <div class="bench-run-grid" style="grid-template-columns:1fr;">
                 <div class="bench-run-card">
                   <div class="bench-run-label amber-text">ORIGINAL</div>
@@ -450,12 +450,12 @@
 
             <!-- Complete summary inline -->
             <div id="bench-complete" style="display:none;margin-top:16px;">
-              <div class="done-banner"><span class="done-check">✓</span><span class="done-text">BENCHMARK COMPLETE</span></div>
+              <div class="done-banner"><span class="done-check">✓</span><span class="done-text">DEMO COMPARISON READY</span></div>
               <div class="bench-complete-checks" style="margin-top:8px;">
-                <div class="val-row"><span class="val-icon">✓</span> Original test complete</div>
-                <div class="val-row"><span class="val-icon">✓</span> Optimized test complete</div>
-                <div class="val-row"><span class="val-icon">✓</span> Metrics collected</div>
-                <div class="val-row"><span class="val-icon">✓</span> Comparison generated</div>
+                <div class="val-row"><span class="val-icon">✓</span> Original example loaded</div>
+                <div class="val-row"><span class="val-icon">✓</span> Optimized example loaded</div>
+                <div class="val-row"><span class="val-icon">✓</span> Preset metrics displayed</div>
+                <div class="val-row"><span class="val-icon">✓</span> Demo comparison ready</div>
               </div>
             </div>
           </div>
@@ -468,7 +468,7 @@
 
         <!-- CTA bar §4 -->
         <div class="spa-cta-bar">
-          <button class="btn-primary" id="start-bench-btn">START BENCHMARK</button>
+          <button class="btn-primary" id="start-bench-btn">PLAY DEMO COMPARISON</button>
           <button class="btn-primary" id="to-prove-btn" style="display:none">VIEW RESULTS →</button>
         </div>
       </div>
@@ -484,20 +484,20 @@
         </div>
         <div class="spa-lock-overlay" id="lock-prove">
           <span class="spa-lock-icon">◇</span>
-          <span class="spa-lock-text">Run the benchmark to unlock results</span>
+          <span class="spa-lock-text">Play the demo comparison to view preset results</span>
         </div>
 
         <!-- Hero -->
         <section class="page-hero prove-hero page-hero--compact">
           <div class="page-hero-left">
             <p class="section-label">step 05 of 05 · <span class="demo-data-tag">DEMO BENCHMARK RESULTS</span></p>
-            <h1 class="page-headline prove-headline">PERFORMANCE PROVEN</h1>
-            <p class="page-sub">Measured improvement under the same workload.</p>
+            <h1 class="page-headline prove-headline">DEMO PERFORMANCE COMPARISON</h1>
+            <p class="page-sub">Preset illustrative figures, not measurements of your uploaded project.</p>
           </div>
           <div class="page-hero-right">
             <div class="multiplier-block">
               <span class="multiplier-num" id="prove-multiplier">—×</span>
-              <span class="multiplier-label">PERFORMANCE IMPROVEMENT</span>
+              <span class="multiplier-label">EXAMPLE THROUGHPUT RATIO</span>
             </div>
           </div>
         </section>
@@ -527,7 +527,7 @@
               </div>
               <div class="throughput-delta">
                 <span class="delta-badge" id="prove-tp-delta">—</span>
-                throughput increase
+                demo throughput difference
               </div>
             </div>
 
@@ -560,26 +560,22 @@
               </div>
               <div class="pred-arrow pred-arrow--h">→</div>
               <div class="pred-block">
-                <div class="pred-header">BENCHMARK</div>
-                <div class="pred-body">Measured: <span style="color:var(--green);font-weight:700;" id="prove-measured">—</span></div>
+                <div class="pred-header">SIMULATED RESULT</div>
+                <div class="pred-body">Preset demo result: <span style="color:var(--green);font-weight:700;" id="prove-demo-result">—</span></div>
               </div>
               <div class="pred-arrow pred-arrow--h">→</div>
-              <div class="pred-block proven">
-                <div class="pred-header">PROVEN</div>
-                <div class="pred-body">Validated under same workload.</div>
+              <div class="pred-block">
+                <div class="pred-header">NEXT STEP</div>
+                <div class="pred-body">Run matched-workload tests to validate.</div>
               </div>
             </div>
 
             <!-- Infra insight -->
             <div class="infra-panel infra-panel--compact" style="margin-top:16px;">
-              <div class="infra-headline">MORE CAPACITY. SAME INFRA.</div>
+              <div class="infra-headline">RIGHT-SIZE AFTER REAL TESTS.</div>
               <div class="infra-illustrative" style="margin-top:8px;">
                 <span class="infra-note-tag">ILLUSTRATIVE — not a measured result</span>
-                <div class="infra-scenario" style="margin-top:6px;">
-                  <span class="infra-instance">4 instances</span>
-                  <span class="infra-narrow">→</span>
-                  <span class="infra-instance green">2 instances</span>
-                </div>
+                <p class="infra-desc">No instance reduction or cloud savings has been measured for this prototype.</p>
               </div>
             </div>
           </div>

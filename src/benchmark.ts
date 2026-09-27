@@ -4,13 +4,13 @@ import { benchmarkData } from './demo-data';
 void benchmarkData; // available for future backend wiring
 
 const LOG_STEPS: Array<{ label: string; delay: number }> = [
-  { label: 'Sandbox initialized',     delay: 400  },
-  { label: 'PostgreSQL ready',         delay: 600  },
-  { label: 'Application started',      delay: 700  },
-  { label: 'Load generator connected', delay: 500  },
-  { label: 'Running workload',         delay: 3000 },
-  { label: 'Collecting metrics',       delay: 1200 },
-  { label: 'Comparing results',        delay: 800  },
+  { label: 'Showing example environment', delay: 400  },
+  { label: 'Loading preset workload',     delay: 600  },
+  { label: 'Loading original example',    delay: 700  },
+  { label: 'Loading optimized example',   delay: 500  },
+  { label: 'Animating comparison',        delay: 3000 },
+  { label: 'Displaying preset metrics',   delay: 1200 },
+  { label: 'Preparing demo results',      delay: 800  },
 ];
 
 const idleEl     = document.querySelector<HTMLElement>('#bench-idle')!;
@@ -61,7 +61,7 @@ async function animateProgress(
 
 async function runBenchmark(): Promise<void> {
   showState('running');
-  statusText.textContent = 'running benchmark…';
+  statusText.textContent = 'playing demo comparison…';
   buildLog();
 
   const totalTime = LOG_STEPS.reduce((a, s) => a + s.delay, 0);
@@ -92,7 +92,7 @@ async function runBenchmark(): Promise<void> {
   progOpt.style.width  = '100%'; pctOpt.textContent  = '100%';
 
   await new Promise<void>((r) => setTimeout(r, 400));
-  statusText.textContent = 'benchmark complete';
+  statusText.textContent = 'demo comparison ready';
   showState('complete');
 }
 

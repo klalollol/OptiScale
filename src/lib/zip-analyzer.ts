@@ -45,7 +45,7 @@ export interface ResultsProfile {
   latencyDeltaPct: number;
   cpuDeltaPct: number;
   memDeltaPct: number;
-  benchmarkMeasured: string;
+  benchmarkDemoDelta: string;
   bobPrediction: string;
 }
 
@@ -150,7 +150,7 @@ const PROFILE_SEVERE_N1: AnalysisProfile = {
     latencyDeltaPct: -92,
     cpuDeltaPct: -78,
     memDeltaPct: -63,
-    benchmarkMeasured: '+1,133%',
+    benchmarkDemoDelta: '+1,133%',
     bobPrediction: 'CRITICAL',
   },
 };
@@ -214,7 +214,7 @@ const PROFILE_MISSING_INDEX: AnalysisProfile = {
     latencyDeltaPct: -78,
     cpuDeltaPct: -57,
     memDeltaPct: -61,
-    benchmarkMeasured: '+354%',
+    benchmarkDemoDelta: '+354%',
     bobPrediction: 'MODERATE',
   },
 };
@@ -278,7 +278,7 @@ const PROFILE_NO_BOTTLENECK: AnalysisProfile = {
     latencyDeltaPct: -4,
     cpuDeltaPct: -3,
     memDeltaPct: 0,
-    benchmarkMeasured: '+2%',
+    benchmarkDemoDelta: '+2%',
     bobPrediction: 'NONE',
   },
 };
@@ -426,7 +426,7 @@ export async function analyzeZip(file: File): Promise<AnalysisProfile> {
       multiplier: 2.57,
       throughputDeltaPct: 157, latencyDeltaPct: -62,
       cpuDeltaPct: -31,        memDeltaPct: -28,
-      benchmarkMeasured: '+157%', bobPrediction: 'HIGH',
+      benchmarkDemoDelta: '+157%', bobPrediction: 'HIGH',
     };
     return buildProfile(base, projectName, entries, filesCount, depsCount, loc);
   }
