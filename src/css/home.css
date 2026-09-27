@@ -358,6 +358,44 @@
 }
 
 /* ── Business impact planning case ──────────────────────────────────────── */
+.home-impact-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+.home-impact-budget-panel {
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+.home-impact-budget-panel summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 14px;
+  color: var(--cyan);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.home-impact-budget-panel summary span { color: var(--muted); }
+.home-impact-budget-body { padding: 15px 14px 14px; border-top: 1px solid var(--border); }
+.home-impact-budget-body > p:first-child { color: var(--muted); font-size: 0.68rem; line-height: 1.6; margin-bottom: 14px; }
+.home-impact-budget-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.home-impact-budget-grid label { color: var(--text); font-size: 0.68rem; }
+.home-impact-budget-grid label span { display: block; color: var(--muted); font-size: 0.6rem; margin: 2px 0 5px; }
+.home-impact-budget-grid input { width: 100%; padding: 8px 8px; border: 1px solid var(--border); border-radius: 0; background: var(--bg); color: var(--text); font: inherit; font-size: 0.72rem; }
+.home-impact-budget-grid input:focus { outline: 1px solid var(--cyan); outline-offset: 1px; }
+.home-impact-budget-grid input[aria-invalid="true"] { border-color: var(--red); }
+.home-impact-budget-formula { margin-top: 12px; color: var(--muted); font-size: 0.64rem; line-height: 1.6; }
+.home-impact-budget-error { margin-top: 9px; color: var(--red); font-size: 0.68rem; }
+.home-impact-budget-reset { margin-top: 11px; padding: 7px 10px; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); font: inherit; font-size: 0.66rem; cursor: pointer; }
+.home-impact-budget-reset:hover { background: var(--cyan-soft); }
+.home-impact-budget-state { margin-top: 8px; color: var(--muted); font-size: 0.62rem; line-height: 1.5; }
+.home-impact-lead.is-increase .home-impact-reduction strong { color: var(--red); }
+
 .home-impact-main,
 .home-impact-scenarios,
 .home-impact-details {
@@ -500,6 +538,8 @@
 }
 
 @media (max-width: 700px) {
+  .home-impact-heading { flex-direction: column; gap: 12px; }
+  .home-impact-budget-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-impact-main,
   .home-impact-details { grid-template-columns: 1fr; }
   .home-step-grid {
@@ -534,6 +574,8 @@
 }
 
 @media (max-width: 480px) {
+  .home-impact-budget-grid { grid-template-columns: 1fr; }
+  .home-impact-budget-panel summary { flex-direction: column; gap: 4px; }
   .home-impact-scenarios { grid-template-columns: 1fr; }
   .home-impact-chart-title { flex-wrap: wrap; margin-bottom: 24px; }
   .home-impact-bar-meta { flex-direction: column; align-items: flex-start; gap: 2px; }
