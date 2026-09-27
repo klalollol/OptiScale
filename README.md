@@ -5,7 +5,7 @@
 OptiScale is an AI-powered application performance optimization platform. Upload your Python/FastAPI project as a ZIP, let BOB analyze the codebase for performance bottlenecks, apply the proposed optimization, run a fair benchmark, and prove the improvement — all in one guided flow.
 
 ```
-Vanilla TypeScript   Vite   JetBrains Mono   No framework   No backend required
+Vanilla TypeScript   Vite   JetBrains Mono   No framework 
 ```
 
 ---
