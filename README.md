@@ -1,99 +1,304 @@
-# OptiScale
+﻿# ◇ OptiScale
 
 **Optimize before you scale.**
 
-OptiScale is a browser-based performance-analysis prototype for Python and FastAPI projects. Upload a ZIP, review heuristic findings and a suggested code change, then explore an illustrative benchmark comparison.
+OptiScale is an AI-powered application performance optimization platform. Upload your Python/FastAPI project as a ZIP, let BOB analyze the codebase for performance bottlenecks, apply the proposed optimization, run a fair benchmark, and prove the improvement — all in one guided flow.
 
-The five-step flow is **Upload → Analyze → Optimize → Benchmark → Prove**. It runs without a backend: ZIP analysis happens in the browser, and benchmark figures come from preset profiles rather than measurements of the uploaded project.
-
-## Features
-
-- Reads ZIP archives locally in the browser, including stored and deflate-compressed entries.
-- Scans Python source for selected N+1 query patterns, unindexed foreign keys, and existing eager-loading optimizations.
-- Injects a matching analysis profile into the Analyze, Optimize, Benchmark, and Prove sections.
-- Includes three demo test cases with distinct outcomes: severe N+1, missing index, and an already-optimized baseline.
-- Uses a blueprint-style interface built with vanilla TypeScript, Vite, and CSS custom properties.
-
-## Run locally
-
-Prerequisite: Node.js 18 or newer.
-
-```bash
-npm install
-npm run dev
+```
+Vanilla TypeScript   Vite   JetBrains Mono   No framework   No backend required
 ```
 
-Vite serves the landing page at `http://localhost:5173/`. The routed landing page is `http://localhost:5173/src/pages/home/`; the main five-step app is `http://localhost:5173/src/pages/app/`.
+---
+
+## 🤖 Built with IBM Bob
+
+This entire project was developed in partnership with **IBM Bob** as an AI development assistant.
+
+OptiScale demonstrates how IBM Bob accelerates software development by turning ideas into production-ready applications in record time. What would typically take 40–50 hours was completed in significantly less time with Bob's assistance.
+
+### Bob's Impact
+
+| Metric | Value |
+|--------|-------|
+| Pages Built | 8 HTML entry points (landing, terms, SPA + 5 standalone pages) |
+| TypeScript Files | 10 source files with strict mode + `noUnusedLocals` |
+| CSS Files | 5 design-system stylesheets (zero framework dependencies) |
+| Complex Problems Solved | ZIP binary parsing, browser-side regex analyzer, multi-state SPA, fair benchmark simulation |
+| Design System | Blueprint/terminal aesthetic built from scratch with CSS custom properties 
+### How Bob Was Used
+
+- **Architecture** — Bob designed the multi-entry Vite build, SPA section-unlock flow, and state management
+- **ZIP Analyzer** — Bob implemented the browser-side ZIP binary reader + Python regex pattern classifier
+- **UI/UX** — Bob created the blueprint/terminal dark navy design system with cyan accents and JetBrains Mono
+- **Problem Solving** — Bob resolved TypeScript strict-mode errors, regex precedence bugs, and docstring false-positives
+- **Test Cases** — Bob generated 3 distinct FastAPI projects with measurably different performance profiles
+- **Documentation** — Bob wrote this README and all inline code documentation
+
+---
+
+## 🎯 What OptiScale Does
+
+OptiScale guides developers through a 5-step performance optimization pipeline:
+
+```
+01 UPLOAD → 02 ANALYZE → 03 OPTIMIZE → 04 BENCHMARK → 05 PROVE
+```
+
+| Step | Description |
+|------|-------------|
+| **UPLOAD** | Drop a `.zip` of your FastAPI project. OptiScale reads it in the browser. |
+| **ANALYZE** | BOB scans the Python source for performance anti-patterns using regex heuristics. |
+| **OPTIMIZE** | A concrete code change is proposed with a before/after diff. |
+| **BENCHMARK** | A simulated fair benchmark runs both the original and optimized versions. |
+| **PROVE** | Side-by-side metrics prove the improvement with throughput, latency, CPU, and memory numbers. |
+
+The entire pipeline runs **without a backend** — ZIP analysis is heuristic, benchmark results are preset profiles matched to the detected pattern. The architecture is designed so real API responses can replace mock data later.
+
+---
+
+## ✨ Features
+
+### Browser-side ZIP Analysis
+- Reads `.zip` binary format natively in the browser (no server upload needed)
+- Supports both stored (method 0) and deflate-compressed (method 8) entries via `DecompressionStream`
+- Strips Python comments and docstrings before pattern matching to avoid false positives
+
+### Intelligent Pattern Classification
+- **Severe N+1** — nested for-loop with `db.query()` inside the inner loop → 12.3× improvement profile
+- **N+1** — single for-loop with `db.query()` in the body → 2.57× improvement profile
+- **Missing Index** — unindexed `ForeignKey` columns with no `__table_args__` composite index → 4.5× improvement profile
+- **Already Optimized** — uses `joinedload` / `selectinload` → PASS profile (1.02×, no changes needed)
+
+### Dynamic Result Injection
+Every section of the SPA (ANALYZE, OPTIMIZE, BENCHMARK, PROVE) renders from the detected profile — different ZIPs produce genuinely different results across all metrics, code diffs, file locations, and comparison tables.
+
+### Blueprint / Terminal Aesthetic
+Dark navy background, fine grid overlay, 1px dividers, flat rectangular panels, JetBrains Mono everywhere, cyan/amber/green/red status colors — no framework, no component library, pure CSS custom properties.
+
+### Demo Mode
+Three prebuilt demo projects selectable from the upload screen — each triggers a different analysis profile for presentation without preparing a ZIP file.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Notes |
+|-------|-----------|-------|
+| Language | TypeScript 5.6 (strict) | `noUnusedLocals` + `noUnusedParameters` enforced |
+| Bundler | Vite 5 | Multi-entry build, 8 HTML pages |
+| Font | JetBrains Mono | Only font used throughout |
+| CSS | Vanilla CSS with custom properties | No Tailwind, no CSS-in-JS |
+| ZIP parsing | Native browser APIs | `DecompressionStream`, `ArrayBuffer`, `TextDecoder` |
+| Routing | Multi-page (Vite `rollupOptions.input`) | No client-side router |
+| Backend | None | All analysis is frontend heuristics |
+
+---
+
+## 🚀 Getting Started
+
+**Prerequisites:** Node.js 18+
 
 ```bash
+# Install dependencies
+npm install
+
+# Start dev server (http://localhost:5173)
+npm run dev
+
+# Type-check + production build → dist/
 npm run build
+
+# Preview production build (http://localhost:4173)
 npm run preview
 ```
 
-No environment variables or backend services are required.
+No environment variables required. Everything runs in the browser.
 
-## Project structure
+---
+
+## 📁 Project Structure
+
+```
+OptiScale/
+├── index.html              # Landing page
+├── terms.html              # Terms of use checkpoint
+├── app.html                # Main SPA (all 5 pipeline steps)
+├── upload.html             # Standalone upload page
+├── analyze.html            # Standalone analyze page
+├── optimize.html           # Standalone optimize page
+├── benchmark.html          # Standalone benchmark page
+├── prove.html              # Standalone results page
+│
+├── src/
+│   ├── styles.css          # Global design tokens + shared components
+│   ├── upload.css          # Upload drop zone + demo picker styles
+│   ├── pages.css           # Inner-page shared styles (bottleneck, diff, bench, prove)
+│   ├── app.css             # SPA-specific layout styles
+│   ├── terms.css           # Terms page styles
+│   │
+│   ├── main.ts             # Landing page renderer
+│   ├── terms.ts            # Terms page → routes to app.html on consent
+│   ├── upload.ts           # Standalone upload page logic
+│   ├── analyze.ts          # Standalone analyze page
+│   ├── optimize.ts         # Standalone optimize page state machine
+│   ├── benchmark.ts        # Standalone benchmark progress simulation
+│   ├── prove.ts            # Standalone results page
+│   ├── app.ts              # Main SPA controller (all 5 sections, profile injection)
+│   │
+│   ├── data.ts             # Landing page content data (subagentCards, codeDiff, etc.)
+│   ├── demo-data.ts        # Mock data constants for standalone pages
+│   │
+│   └── lib/
+│       ├── zip-analyzer.ts         # Browser ZIP reader + Python pattern classifier
+│       ├── preflight/              # Preflight check utilities
+│       └── suggestions/            # Suggestion engine
+│
+├── public/
+│   └── demo-zips/
+│       ├── sample-fastapi-ecommerce.zip   # Demo 1: N+1 pattern
+│       ├── sample-fastapi-inventory.zip   # Demo 2: Missing index
+│       └── sample-fastapi-analytics.zip   # Demo 3: Already optimized
+│
+├── demo-projects/          # Source files used to generate demo ZIPs
+│   ├── sample-fastapi-ecommerce/
+│   ├── sample-fastapi-inventory/
+│   └── sample-fastapi-analytics/
+│
+├── test-cases/             # Test ZIPs for manual upload testing (git-ignored)
+│   ├── README.md
+│   ├── tc-severe-n-plus-one.zip    # 3-level nested N+1 → 12.3× result
+│   ├── tc-missing-index.zip        # Unindexed FK → 4.5× result
+│   └── tc-no-bottleneck.zip        # Already optimized → PASS result
+│
+├── templates/              # Harness templates for modernization pipeline
+├── types/                  # Shared TypeScript types (JSDoc only, outside Vite bundle)
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+---
+
+## 🧪 Test Cases
+
+Three ready-to-use test ZIPs are included in `test-cases/` to demonstrate distinct analysis outcomes:
+
+| ZIP File | Bottleneck | Severity | Result |
+|----------|-----------|----------|--------|
+| `tc-severe-n-plus-one.zip` | 3-level nested N+1 (1,001+ queries/req) | 🔴 CRITICAL | **12.3× throughput**, −92% latency |
+| `tc-missing-index.zip` | Unindexed FK columns, full table scans | 🟡 MODERATE | **4.5× throughput**, −78% latency |
+| `tc-no-bottleneck.zip` | Already uses `joinedload` + composite indexes | 🟢 PASS | **1.02× throughput**, −4% latency |
+
+Drop any of these into the upload zone on `app.html` to see a different result flow.
+
+### Adding Your Own Test Cases
+
+Place any `.zip` of a FastAPI/Python project in `test-cases/` — the folder is git-ignored. Files are not committed.
+
+---
+
+## 🎨 Design System
+
+OptiScale uses a **blueprint / technical schematic** aesthetic throughout.
+
+### Color Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--bg` | `#0b1929` | Page background |
+| `--border` | `rgba(30,70,110,0.7)` | All panel borders |
+| `--border-bright` | `rgba(0,188,212,0.35)` | Active/highlighted borders |
+| `--text` | `#cce8f4` | Body text |
+| `--muted` | `#5a7a99` | Labels, secondary text |
+| `--cyan` | `#00bcd4` | Primary accent |
+| `--green` | `#4ade80` | Success / pass |
+| `--amber` | `#f59f00` | Warning / moderate |
+| `--red` | `#f87171` | Error / critical |
+
+### Layout Rules
+- Max content width: `min(1100px, calc(100% - 40px))`, centred
+- `gap: 1px` + `background: var(--border)` on multi-column parent — children set `background: var(--bg)`
+- No `border-radius > 4px` on panels
+- No hover states that change layout — colour/opacity transitions only
+- Blueprint grid lives on `body` (32px intervals, `linear-gradient`)
+
+---
+
+## 🔬 How the ZIP Analyzer Works
+
+`src/lib/zip-analyzer.ts` runs entirely in the browser:
+
+1. **Parse ZIP binary** — reads local file headers, extracts entries, decompresses deflate (method 8) via `DecompressionStream`
+2. **Strip noise** — removes Python docstrings and `#` comments to prevent false positives from English prose
+3. **Run patterns** — applies regex patterns against comment-stripped source in priority order:
+   - `severeN1` — two nested `for` loops with `db.query()` in the inner body
+   - `n1` — one `for` loop with `db.query()` assignment in the body
+   - `unindexedFk` — `ForeignKey(...)` column without `index=True` on the same line, and no `__table_args__` composite index
+   - `alreadyOptimized` — calls to `joinedload(`, `selectinload(`, `subqueryload(`
+4. **Map to profile** — selects a preset `AnalysisProfile` matching the detected pattern
+5. **Inject into DOM** — `injectProfile()` in `app.ts` writes all values to ~40 named element IDs across §2–§5
+
+---
+
+## 📋 MVP Support
+
+The current analysis engine targets:
+
+| Stack | Version |
+|-------|---------|
+| Language | Python 3.10 / 3.11 |
+| Framework | FastAPI |
+| ORM | SQLAlchemy 2.x |
+| Database | PostgreSQL |
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Real backend — replace mock `analyzeZip()` with an actual BOB API call
+- [ ] Java / Spring Boot support — extend pattern library
+- [ ] Export — download results as PDF or JSON
+- [ ] GitHub integration — analyze a repo URL without manual ZIP export
+- [ ] Multi-file diff — show all changed files, not just the primary bottleneck
+- [ ] Persistent sessions — save analysis results across page reloads
+
+---
+
+## 💼 Business Impact cost model (main branch)
+
+The Business Impact section on `main` is an **illustrative planning model for one Java 8 to Java 17 / Spring Boot 3 modernization project**. It is separate from this Python/FastAPI prototype's performance demo. The model uses a planning labour rate of **$50 per engineer-hour**.
 
 ```text
-src/
-	pages/
-		home/       Landing page markup and renderer
-		terms/      Consent checkpoint
-		app/        Main five-step analysis flow and controller
-		upload/     Standalone upload page
-		analyze/    Standalone analysis page
-		optimize/   Standalone optimization page
-		benchmark/  Standalone benchmark page
-		prove/      Standalone results page
-	css/          Shared and page-specific stylesheets
-	data.ts       Shared display data and homepage content
-	demo-data.ts  Preset profile data for standalone pages
-	lib/
-		zip-analyzer.ts  Browser ZIP reader and Python pattern classifier
-		preflight/       Archive and project checks used by the modernization tools
-		suggestions/     Suggestion helpers
-public/demo-zips/    ZIP files served to the main app's demo picker
-demo-projects/       Source demo projects and test-case ZIP archives
-templates/           Modernization harness templates
+Conventional cost = conventional engineer-hours × $50 + $300 project CI/test
+OptiScale scenario cost = scenario engineer-hours × $50 + $400 tools/AI + $350 project CI/test
+Potential savings = conventional cost − OptiScale scenario cost
+Projected cost reduction (%) = potential savings ÷ conventional cost × 100
+Engineer-hours potentially saved = conventional hours − scenario hours
 ```
 
-The Vite multi-entry configuration lives in `vite.config.ts`. Keep page HTML and TypeScript under `src/pages/<page>/`, and load CSS through HTML `<link>` elements.
+The conventional hours are `120 + 60 + 20 + 40 = 240`. In the base case, the same workstreams are `84 + 54 + 16 + 42 = 196` hours (analysis/refactor/performance, QA/verification, deployment preparation, and human review/rework respectively). The base case therefore models **44 engineer-hours potentially saved**; these are effort hours, not guaranteed elapsed delivery time.
 
-## Demo cases
+| Planning case | Cost calculation | Modeled cost | Potential savings | Projected cost reduction |
+|---------------|------------------|--------------|-------------------|--------------------------|
+| Conventional | `240 × $50 + $300` | $12,300 | — | — |
+| Conservative | `230 × $50 + $400 + $350` | $12,250 | $50 | 0.4% |
+| Base | `196 × $50 + $400 + $350` | $10,550 | $1,750 | 14.2% |
+| Optimistic | `160 × $50 + $400 + $350` | $8,750 | $3,550 | 28.9% |
 
-The main app's demo picker loads these archives from `public/demo-zips/`:
+For example, the base reduction is `($12,300 − $10,550) ÷ $12,300 × 100 = 14.2276…%`, displayed as **14.2%** after rounding to one decimal place. The cost bars use the same `$0–$12,300` scale; each bar's width is `scenario cost ÷ $12,300 × 100`.
 
-| Archive | Detected case | Example profile |
-| --- | --- | --- |
-| `tc-severe-n-plus-one.zip` | Nested N+1 query pattern | 12.3× throughput profile, approximately 92% lower latency |
-| `tc-missing-index.zip` | Missing database index | 4.5× throughput profile, approximately 78% lower latency |
-| `tc-no-bottleneck.zip` | Existing eager loading and indexes | Pass profile, approximately 1.02× throughput |
+In the base case, the $1,750 net saving breaks down as: 44 fewer engineer-hours × $50 = $2,200 labour reduction, minus $450 in additional overhead (the $400 tools/AI charge plus the $50 increase in CI/test from $300 to $350), leaving a net modelled saving of $1,750.
 
-These are illustrative profiles, not measured results. The ZIPs are also stored under `demo-projects/` for inspection. For manual upload testing, place other ZIPs in the git-ignored `test-cases/` directory and use the app's upload control.
+The Conventional bar occupies 100% of the $0–$12,300 scale. The OptiScale base bar width is $10,550 ÷ $12,300 × 100 ≈ 85.8%; both bars share the same origin and scale.
 
-## ZIP analysis
+The hourly rate, workstream hours, tools/AI charge, and CI/test budgets are **planning assumptions**. The 120-hour baseline refactor estimate comes from the demo scenario, not a timed customer project. These figures are not measured customer savings, do not include production cloud cost, and do not establish ROI or payback. The external research linked on the Home page provides context; it does not prove OptiScale's percentages. See the [`main` model inputs](https://github.com/klalollol/OptiScale/blob/main/src/data.ts) and [Home calculation code](https://github.com/klalollol/OptiScale/blob/main/src/pages/home/main.ts).
 
-`src/lib/zip-analyzer.ts` reads ZIP entries using browser APIs. It supports stored entries and deflate decompression through `DecompressionStream`, strips Python comments and docstrings before matching, and selects a preset profile based on recognized patterns. The current heuristics include:
+---
 
-- Nested loops with database queries in the inner loop (severe N+1).
-- A database query inside one loop (N+1).
-- Foreign-key columns without an index or a relevant composite index.
-- Existing `joinedload`, `selectinload`, or `subqueryload` usage.
-
-Treat findings as suggestions for review. The prototype does not modify uploaded files, and its benchmark numbers are simulated.
-
-## Design system
-
-The UI uses a dark navy blueprint grid, JetBrains Mono, flat panels, and cyan, green, amber, and red status colors. Shared CSS tokens are defined in `src/css/styles.css`; page-specific rules live alongside them in `src/css/`.
-
-## Tests and checks
-
-There is no general test runner. `npm run build` runs the TypeScript check and production bundle. Assertion-based checks are documented in [AGENTS.md](AGENTS.md), and the merge-report test can be run with:
-
-```bash
-node templates/modernization/tools/merge-report.test.mjs
-```
-
-## License
+## 📄 License
 
 MIT
+
+---
+
+*Developed with IBM Bob · Optimize before you scale.*
