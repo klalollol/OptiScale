@@ -1,4 +1,4 @@
-# ◇ OptiScale
+﻿# ◇ OptiScale
 
 **Optimize before you scale.**
 
@@ -24,8 +24,7 @@ OptiScale demonstrates how IBM Bob accelerates software development by turning i
 | TypeScript Files | 10 source files with strict mode + `noUnusedLocals` |
 | CSS Files | 5 design-system stylesheets (zero framework dependencies) |
 | Complex Problems Solved | ZIP binary parsing, browser-side regex analyzer, multi-state SPA, fair benchmark simulation |
-| Design System | Blueprint/terminal aesthetic built from scratch with CSS custom properties |
-
+| Design System | Blueprint/terminal aesthetic built from scratch with CSS custom properties 
 ### How Bob Was Used
 
 - **Architecture** — Bob designed the multi-entry Vite build, SPA section-unlock flow, and state management
@@ -262,6 +261,37 @@ The current analysis engine targets:
 - [ ] GitHub integration — analyze a repo URL without manual ZIP export
 - [ ] Multi-file diff — show all changed files, not just the primary bottleneck
 - [ ] Persistent sessions — save analysis results across page reloads
+
+---
+
+## 💼 Business Impact cost model (main branch)
+
+The Business Impact section on `main` is an **illustrative planning model for one Java 8 to Java 17 / Spring Boot 3 modernization project**. It is separate from this Python/FastAPI prototype's performance demo. The model uses a planning labour rate of **$50 per engineer-hour**.
+
+```text
+Conventional cost = conventional engineer-hours × $50 + $300 project CI/test
+OptiScale scenario cost = scenario engineer-hours × $50 + $400 tools/AI + $350 project CI/test
+Potential savings = conventional cost − OptiScale scenario cost
+Projected cost reduction (%) = potential savings ÷ conventional cost × 100
+Engineer-hours potentially saved = conventional hours − scenario hours
+```
+
+The conventional hours are `120 + 60 + 20 + 40 = 240`. In the base case, the same workstreams are `84 + 54 + 16 + 42 = 196` hours (analysis/refactor/performance, QA/verification, deployment preparation, and human review/rework respectively). The base case therefore models **44 engineer-hours potentially saved**; these are effort hours, not guaranteed elapsed delivery time.
+
+| Planning case | Cost calculation | Modeled cost | Potential savings | Projected cost reduction |
+|---------------|------------------|--------------|-------------------|--------------------------|
+| Conventional | `240 × $50 + $300` | $12,300 | — | — |
+| Conservative | `230 × $50 + $400 + $350` | $12,250 | $50 | 0.4% |
+| Base | `196 × $50 + $400 + $350` | $10,550 | $1,750 | 14.2% |
+| Optimistic | `160 × $50 + $400 + $350` | $8,750 | $3,550 | 28.9% |
+
+For example, the base reduction is `($12,300 − $10,550) ÷ $12,300 × 100 = 14.2276…%`, displayed as **14.2%** after rounding to one decimal place. The cost bars use the same `$0–$12,300` scale; each bar's width is `scenario cost ÷ $12,300 × 100`.
+
+In the base case, the $1,750 net saving breaks down as: 44 fewer engineer-hours × $50 = $2,200 labour reduction, minus $450 in additional overhead (the $400 tools/AI charge plus the $50 increase in CI/test from $300 to $350), leaving a net modelled saving of $1,750.
+
+The Conventional bar occupies 100% of the $0–$12,300 scale. The OptiScale base bar width is $10,550 ÷ $12,300 × 100 ≈ 85.8%; both bars share the same origin and scale.
+
+The hourly rate, workstream hours, tools/AI charge, and CI/test budgets are **planning assumptions**. The 120-hour baseline refactor estimate comes from the demo scenario, not a timed customer project. These figures are not measured customer savings, do not include production cloud cost, and do not establish ROI or payback. The external research linked on the Home page provides context; it does not prove OptiScale's percentages. See the [`main` model inputs](https://github.com/klalollol/OptiScale/blob/main/src/data.ts) and [Home calculation code](https://github.com/klalollol/OptiScale/blob/main/src/pages/home/main.ts).
 
 ---
 
