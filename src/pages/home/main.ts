@@ -128,154 +128,25 @@ if (highlightsRoot) {
     .join('');
 }
 
-// ─── Swipe to next section ───────────────────────────────────────────────────
+const homeSections = document.querySelectorAll<HTMLElement>('.home-page main > section');
+if (
+  homeSections.length > 0
+  && 'IntersectionObserver' in window
+  && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+) {
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.05, rootMargin: '0px 0px -40px 0px' },
+  );
 
-const SWIPE_THRESHOLD_Y = 55;
-const SWIPE_MAX_X = 45;
-const SCROLL_DURATION = 320;
-const SWIPE_COOLDOWN_MS = 600;
-const HINT_VISIBLE_MS = 900;
-const swipeSections = Array.from(
-  document.querySelectorAll<HTMLElement>('main > section'),
-);
-
-let touchStartY = 0;
-let touchStartX = 0;
-let touchSectionIndex = 0;
-let thresholdMet = false;
-let scrolling = false;
-let lastScrollAt = 0;
-let hintTimer: ReturnType<typeof setTimeout> | null = null;
-let hintElement: HTMLElement | null = null;
-
-function currentSwipeSectionIndex(): number {
-  let currentIndex = 0;
-  let closestTop = -Infinity;
-
-  swipeSections.forEach((section, index) => {
-    const top = section.getBoundingClientRect().top;
-    if (top <= 8 && top > closestTop) {
-      closestTop = top;
-      currentIndex = index;
-    }
+  homeSections.forEach((section) => {
+    section.classList.add('home-reveal');
+    revealObserver.observe(section);
   });
-
-  return currentIndex;
 }
-
-function getSwipeHint(): HTMLElement {
-  if (!hintElement) {
-    hintElement = document.createElement('div');
-    hintElement.className = 'swipe-hint-pill';
-    hintElement.textContent = '↑ next section';
-    document.body.appendChild(hintElement);
-  }
-  return hintElement;
-}
-
-function showSwipeHint(): void {
-  const hint = getSwipeHint();
-  if (hintTimer) clearTimeout(hintTimer);
-  hint.classList.add('visible');
-  hintTimer = setTimeout(() => {
-    hint.classList.remove('visible');
-    hintTimer = null;
-  }, HINT_VISIBLE_MS);
-}
-
-function hideSwipeHint(): void {
-  if (hintTimer) clearTimeout(hintTimer);
-  hintTimer = null;
-  getSwipeHint().classList.remove('visible');
-}
-
-function scrollToSection(targetY: number, onDone: () => void): void {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    window.scrollTo(0, targetY);
-    onDone();
-    return;
-  }
-
-  const startY = window.scrollY;
-  const distance = targetY - startY;
-  if (Math.abs(distance) < 2) {
-    onDone();
-    return;
-  }
-
-  let startTime: number | null = null;
-
-  function step(now: number): void {
-    if (startTime === null) startTime = now;
-    const progress = Math.min((now - startTime) / SCROLL_DURATION, 1);
-    const easedProgress = 1 - Math.pow(1 - progress, 3);
-    window.scrollTo(0, startY + distance * easedProgress);
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      onDone();
-    }
-  }
-
-  requestAnimationFrame(step);
-}
-
-document.addEventListener(
-  'touchstart',
-  (event: TouchEvent) => {
-    const touch = event.touches[0];
-    if (!touch) return;
-
-    const target = event.target;
-    if (target instanceof Element && target.closest('a, button, input, select, textarea')) {
-      thresholdMet = false;
-      return;
-    }
-
-    touchStartY = touch.clientY;
-    touchStartX = touch.clientX;
-    touchSectionIndex = currentSwipeSectionIndex();
-    thresholdMet = false;
-  },
-  { passive: true },
-);
-
-document.addEventListener(
-  'touchmove',
-  (event: TouchEvent) => {
-    if (scrolling) return;
-    const touch = event.touches[0];
-    if (!touch) return;
-
-    const verticalDistance = touchStartY - touch.clientY;
-    const horizontalDistance = Math.abs(touch.clientX - touchStartX);
-    if (verticalDistance >= SWIPE_THRESHOLD_Y && horizontalDistance < SWIPE_MAX_X && !thresholdMet) {
-      thresholdMet = true;
-      showSwipeHint();
-    }
-  },
-  { passive: true },
-);
-
-document.addEventListener(
-  'touchend',
-  () => {
-    if (!thresholdMet) return;
-    thresholdMet = false;
-    hideSwipeHint();
-
-    const now = Date.now();
-    if (scrolling || now - lastScrollAt < SWIPE_COOLDOWN_MS) return;
-
-    const target = swipeSections[touchSectionIndex + 1];
-    if (!target) return;
-
-    scrolling = true;
-    const targetY = target.getBoundingClientRect().top + window.scrollY;
-    scrollToSection(targetY, () => {
-      scrolling = false;
-      lastScrollAt = Date.now();
-    });
-  },
-  { passive: true },
-);
